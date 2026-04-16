@@ -16,6 +16,7 @@ import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
 import { Cpu } from 'lucide-react-native';
+import { analyzePitch } from '../services/gemini';
 
 type LoadingScreenRouteProp = RouteProp<RootStackParamList, 'Loading'>;
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Loading'>;
@@ -50,31 +51,21 @@ const LoadingScreen = () => {
       setMessageIndex((prev) => (prev + 1) % MESSAGES.length);
     }, 2500);
 
-    // Mock analysis completion
-    const timer = setTimeout(() => {
-      navigation.replace('Dashboard', {
-        result: {
-          score: Math.floor(Math.random() * 100),
-          reasoning: [
-            "Pazar büyüklüğü iddiaları %40 oranında şişirilmiş görünüyor.",
-            "Ürün-pazar uyumu için sunulan veriler sadece 'cherry-picked' anketlerden oluşuyor.",
-            "Teknik mimaride 'blockchain' kullanımı sadece hype amaçlı, operasyonel bir gereklilik değil.",
-            "Rakiplerle kıyaslama yapılırken pazarın liderleri bilerek göz ardı edilmiş."
-          ],
-          socialSensor: {
-            competitors: ["Competitor Alpha (Daha düşük maliyet)", "OpenSource Project X"],
-            warnings: [
-              "Reddit'te benzer bir ürün için 'overhyped' yorumları yoğunlukta.",
-              "Sektör uzmanları bu mimarinin ölçeklenemeyeceğini tartışıyor."
-            ]
-          }
-        }
-      });
-    }, 12000); // 12 seconds for "Premium" feeling analysis
+    // Dynamic analysis call
+    const runAnalysis = async () => {
+      const result = await analyzePitch(route.params.pitch);
+      
+      // Delay slightly if the analysis was too fast, to ensure the "wow" factor of the animations
+      const minAnalysisTime = 5000;
+      setTimeout(() => {
+        navigation.replace('Dashboard', { result });
+      }, Math.max(0, minAnalysisTime));
+    };
+
+    runAnalysis();
 
     return () => {
       clearInterval(interval);
-      clearTimeout(timer);
     };
   }, []);
 
