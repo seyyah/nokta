@@ -1,10 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import Svg, { Circle, Path } from 'react-native-svg';
-import Animated, { useAnimatedProps, withTiming, withDelay } from 'react-native-reanimated';
+import Svg, { Circle } from 'react-native-svg';
 import { COLORS, SPACING } from '../theme/colors';
-
-const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 interface SlopGaugeProps {
   score: number;

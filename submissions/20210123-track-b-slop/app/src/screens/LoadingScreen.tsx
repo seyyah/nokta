@@ -1,16 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Animated, { 
-  FadeIn, 
-  FadeOut, 
-  useAnimatedStyle, 
-  withRepeat, 
-  withTiming, 
-  withSequence,
-  useSharedValue,
-  withDelay
-} from 'react-native-reanimated';
 import { COLORS, SPACING } from '../theme/colors';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -33,19 +23,8 @@ const LoadingScreen = () => {
   const route = useRoute<LoadingScreenRouteProp>();
   const navigation = useNavigation<NavigationProp>();
   const [messageIndex, setMessageIndex] = useState(0);
-  const opacity = useSharedValue(0.5);
 
   useEffect(() => {
-    // Pulsing animation for the icon
-    opacity.value = withRepeat(
-      withSequence(
-        withTiming(1, { duration: 1000 }),
-        withTiming(0.4, { duration: 1000 })
-      ),
-      -1,
-      true
-    );
-
     // Message cycling logic
     const interval = setInterval(() => {
       setMessageIndex((prev) => (prev + 1) % MESSAGES.length);
@@ -53,13 +32,15 @@ const LoadingScreen = () => {
 
     // Dynamic analysis call
     const runAnalysis = async () => {
-      const result = await analyzePitch(route.params.pitch);
-      
-      // Delay slightly if the analysis was too fast, to ensure the "wow" factor of the animations
-      const minAnalysisTime = 5000;
-      setTimeout(() => {
-        navigation.replace('Dashboard', { result });
-      }, Math.max(0, minAnalysisTime));
+      try {
+        const result = await analyzePitch(route.params.pitch);
+        // Ensure a minimum loading time for better UX
+        setTimeout(() => {
+          navigation.replace('Dashboard', { result });
+        }, 5000);
+      } catch (error) {
+        console.error("Analysis failed:", error);
+      }
     };
 
     runAnalysis();
@@ -69,36 +50,24 @@ const LoadingScreen = () => {
     };
   }, []);
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-  }));
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Animated.View style={[styles.iconContainer, animatedStyle]}>
+        <View style={styles.iconContainer}>
           <Cpu color={COLORS.secondary} size={64} />
-        </Animated.View>
+        </View>
 
         <Text style={styles.title}>Agent at Work</Text>
         
         <View style={styles.messageBox}>
-          <Animated.Text 
-            key={messageIndex}
-            entering={FadeIn.duration(500)}
-            exiting={FadeOut.duration(500)}
-            style={styles.message}
-          >
+          <Text style={styles.message}>
             {MESSAGES[messageIndex]}
-          </Animated.Text>
+          </Text>
         </View>
 
         <View style={styles.progressContainer}>
            <View style={styles.progressBar}>
-              <Animated.View 
-                entering={FadeIn.delay(100)}
-                style={styles.progressFill} 
-              />
+              <View style={styles.progressFill} />
            </View>
         </View>
 
@@ -158,7 +127,7 @@ const styles = StyleSheet.create({
   },
   progressFill: {
     height: '100%',
-    width: '100%',
+    width: '50%', // Static or simple animation can be added later if needed
     backgroundColor: COLORS.secondary,
   },
   disclaimer: {
