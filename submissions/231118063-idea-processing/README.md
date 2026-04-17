@@ -9,9 +9,15 @@ Bu klasör, Nokta Away Mission kapsamında **Track A: Dot Capture & Enrich (Spec
 Kullanıcılardan gelen ham ve dağınık fikirleri (nokta), mühendislik disipliniyle sorgulayan ve bunları ayağı yere basan profesyonel teknik spesifikasyonlara (spec) dönüştüren otonom bir asistan.
 
 ## Teslimat İçeriği
+<<<<<<< HEAD
 - [x] Expo Linki: [https://expo.dev/accounts/aatesoglu/projects/nokta-spec-gen/updates/7c29875a-6d06-43fc-8563-fb01eb50f305](https://expo.dev/accounts/aatesoglu/projects/nokta-spec-gen/updates/7c29875a-6d06-43fc-8563-fb01eb50f305)
 - [ ] Demo Video: [YouTube/Drive Linki] (Geliştirme aşamasında)
 - [x] APK: [app-release.apk](./app-release.apk)
+=======
+-  Expo Linki: [https://expo.dev/@aatesoglu/nokta-spec-gen](https://expo.dev/@aatesoglu/nokta-spec-gen)
+-  Demo Video: [https://youtu.be/smqaeb8w1Pw]
+-  APK: [app-release.apk](./app-release.apk)
+>>>>>>> 22469107c00ae68d94f3544e74ea9adebaaee440
 
 ## Karar Günlüğü (Decision Log)
 
