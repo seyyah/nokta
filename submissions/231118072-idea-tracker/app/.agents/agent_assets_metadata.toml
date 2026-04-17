@@ -1,0 +1,8 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "FAGj25Ad4pV1Eog3_gefa"
+uri = "file://artifacts/idea-tracker/assets/images/icon.png"
+type = "image"
+title = "idea tracker icon"

@@ -1,0 +1,27 @@
+kind = "mobile"
+previewPath = "/idea-tracker/"
+title = "Idea Tracker"
+version = "1.0.0"
+id = "artifacts/idea-tracker"
+router = "expo-domain"
+
+[[integratedSkills]]
+name = "expo"
+version = "1.0.0"
+
+[[services]]
+ensurePreviewReachable = "/status"
+name = "expo"
+paths = [ "/idea-tracker/" ]
+localPort = 21554
+
+[services.development]
+run = "pnpm --filter @workspace/idea-tracker run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/idea-tracker", "run", "build" ]
+run = [ "pnpm", "--filter", "@workspace/idea-tracker", "run", "serve" ]
+
+[services.env]
+PORT = "21554"
+BASE_PATH = "/idea-tracker/"
