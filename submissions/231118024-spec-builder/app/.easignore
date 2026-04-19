@@ -1,0 +1,9 @@
+node_modules
+.expo
+.vscode
+.git
+android
+ios
+bin
+build
+dist
