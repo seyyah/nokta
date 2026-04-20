@@ -30,7 +30,7 @@ Nokta Capture, kullanıcının ham bir uygulama veya girişim fikrini alıp kıs
 
 - React Native
 - Expo
-- TypeScript
+- JavaScript
 - Local state yönetimi
 - Mock/local summary generation logic
 
@@ -57,11 +57,12 @@ submissions/201118062-mergen-wolfscatt/
 ├─ README.md
 ├─ idea.md
 ├─ app/
-│  ├─ app/
 │  ├─ components/
 │  ├─ constants/
+│  ├─ data/
+│  ├─ screens/
 │  ├─ utils/
-│  ├─ assets/
+│  ├─ App.js
 │  ├─ package.json
 │  └─ app.json
 └─ app-release.apk

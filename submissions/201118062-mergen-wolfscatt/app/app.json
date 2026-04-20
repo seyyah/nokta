@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "name": "Nokta Capture",
+    "slug": "nokta-capture",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
