@@ -56,20 +56,36 @@ function parseModelJson(rawText: string): SlopResult {
           : 'Bu alan model tarafindan doldurulamadi.',
       severity: normalizeSeverity(typeof item.severity === 'string' ? item.severity : 'Low'),
     })),
+    similarProjects: Array.isArray(parsed.similarProjects) 
+      ? parsed.similarProjects.map(String) 
+      : [],
   };
 }
 
-export async function analyzeIdeaWithAiService(ideaText: string): Promise<SlopResult> {
+export type AiMode = 'mentor' | 'roast';
+
+export async function analyzeIdeaWithAiService(ideaText: string, mode: AiMode = 'mentor'): Promise<SlopResult> {
   try {
     if (!GROQ_API_KEY) {
       throw new Error('Groq API key is missing.');
     }
 
+    const nonce = `Req-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
+    const isRoast = mode === 'roast';
+    const personaText = isRoast 
+      ? `"Sen aşırı sinirli, sabırsız, inanılmaz ukala ve acımasız bir teknoloji milyarderi ve Y-Combinator yöneticisisin. Görevin gelen girişim fikirlerini YERLE BİR ETMEK ve kurucuyla dalga geçmek. Asla yapıcı olma!
+1. Fikri paramparça et: 'Bu ne saçmalık?', 'İki tane havalı kelimeyi yan yana koyunca Steve Jobs olmuyorsun.', 'Hangi enayi buna yatırım yapar?', 'Sıfır mantık, %100 slop.' gibi spesifik cümleler kullanarak fikri acımasızca ez!
+2. Spesifik Analiz: Dili son derece alaycı, küstah ve sinirli tut. 'analysis' (genel değerlendirme) ve 'description/why_critical' gibi tüm uzun açıklama alanlarında bu vahşi dili sürdür. Kesinlikle kibar geçişler yapma.
+3. Market Analizi: Pazarda onlardan daha iyi yapanları gösterip, kurucunun ne kadar hayalperest olduğunu ve bu rezil fikirle kimsenin ilgilenmeyeceğini sertçe vurgula."`
+      : `"Sen deneyimli, yapıcı ve vizyoner bir Mentor Mühendissin. Amacın, girişim fikirlerindeki gereksiz karmaşıklığı ('Slop') bulmak ve kullanıcıya pozitif bir dille yol göstermektir.
+1. Fikri değerlendir: Gereksiz teknolojiler (AI, Blockchain vb.) kullanılıyorsa, yapıcı ve yüreklendirici bir şekilde daha basit alternatiflere yönlendir.
+2. Spesifik Analiz: Asla heves kırma. Çözüm odaklı yapıcı eleştiriler sun.
+3. Market Analizi: Pazardaki benzer projeleri göster, onlardan ilham almasını sağla."`;
+
     const prompt = `
-"Sen acımasız ve son derece zeki, Y-Combinator tarzı bir baş mühendissin. Görevin gelen girişim fikirlerindeki 'Slop'u (aşırı mühendislik, uydurma blockchain/AI kelimeleri, gerçek dünya faydasından uzak süslü laflar) tespit etmektir.
-1. Fikre meydan oku: 'Blockchain' veya 'AI' gibi buzzword'ler varsa, BUNLARA NEDEN İHTİYAÇ OLDUĞUNU sertçe sorgula. Yoksa direkt puan kır.
-2. Spesifik Analiz: Asla genelgeçer hatalar sunma. Örneğin 'Kedi Yüz Tanıma' fikriyse, spesifik olarak kedilerin yüz hatlarının çıkarım zorluğunu ve donanım maliyetini eleştir.
-ÇOK ÖNEMLİ: Yanıtlarını kesinlikle kusursuz ve tam Türkçe karakterler (ç, ş, ğ, ü, ö, ı) kullanarak ver. Başka bir dil kullanma."
+${personaText}
+ÇOK ÖNEMLİ: Yanıtlarını kesinlikle kusursuz ve tam Türkçe karakterler (ç, ş, ğ, ü, ö, ı) kullanarak ver. Başka bir dil kullanma.
 
 Beklenen schema:
 {
@@ -81,6 +97,10 @@ Beklenen schema:
   ],
   "engineering_questions": [
     { "question": string, "why_critical": string, "severity": "Critical" | "High" | "Medium" | "Low" }
+  ],
+  "similarProjects": [
+    "Proje 1: Neden benziyor...",
+    "Proje 2: Neden benziyor..."
   ]
 }
 
@@ -92,6 +112,8 @@ Kurallar:
 
 Fikir:
 ${ideaText}
+
+Benzersiz İşlem Kimliği: ${nonce} (Bu ID'yi analizde yansıtma, sadece cache kırmak içindir ve her seferinde sıfırdan düşün)
 `.trim();
 
     const controller = new AbortController();
@@ -110,7 +132,7 @@ ${ideaText}
           messages: [
             {
               role: 'system',
-              content: 'Sen acımasız bir baş mühendissin. Aşırı mühendisliği ve buzzword (AI, Blockchain vb.) kullanımını tespit etmek temel görevin. Yanıtlarında UTF-8 Türkçe karakterler (ç, ş, ğ, ü, ö, ı) kullanmalısın. You must return ONLY a raw, valid JSON object. DO NOT output any Markdown formatting (like * or **), bullet points, conversational text, or code blocks. The response must start with { and end with }.',
+              content: `Sen ${mode === 'roast' ? 'aşırı sinirli, alaycı ve acımasız biçimde ukala bir teknoloji milyarderisin. Fikirleri aşağıla ve sert çık, asla kibar olma.' : 'yapıcı bir mühendissin.'} Yanıtlarında UTF-8 Türkçe karakterler (ç, ş, ğ, ü, ö, ı) kullanmalısın. You must return ONLY a raw, valid JSON object. DO NOT output any Markdown formatting (like * or **), bullet points, conversational text, or code blocks. The response must start with { and end with }.`,
             },
             {
               role: 'user',
@@ -158,4 +180,45 @@ ${ideaText}
 
     throw resolvedError;
   }
+}
+
+export async function detoxIdeaWithAiService(ideaText: string): Promise<string> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  let response: Response;
+  try {
+    response = await fetch(GROQ_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${GROQ_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: GROQ_MODEL,
+        temperature: 0.2, // Lower temp for more deterministic stripping
+        messages: [
+          {
+             role: 'system',
+             content: 'Sen bir MVP minimalistisin. Sana verilen saçma sapan ve buzzword dolu (AI, Web3, Blockchain) fikirleri alıp, teknoloji kelimelerini budayarak sadece işin "özünü" anlatan, en ucuz ve yapılabilir (MVP) versiyonuna çevirip 1-2 cümlelik tertemiz, no-code veya basit yazılım odaklı bir fikir olarak geri döndürürsün. Sadece sonucu ver, Merhaba gibi girişler yapma. Türkçe cevap ver.'
+          },
+          {
+             role: 'user',
+             content: ideaText
+          }
+        ]
+      }),
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
+
+  if (!response.ok) {
+     throw new Error('Groq detoks failed');
+  }
+
+  const data = await response.json();
+  const result = data.choices?.[0]?.message?.content;
+  if (!result) throw new Error('Detoks sonuc bos');
+  return result.trim();
 }

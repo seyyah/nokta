@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useLocalSearchParams } from 'expo-router';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
   ActivityIndicator,
   Alert,
@@ -9,11 +11,16 @@ import {
   Text,
   TextInput,
   View,
+  Pressable,
+  Switch,
 } from 'react-native';
+import type { AiMode } from '@/lib/ai-service';
+
+import BottomSheet from '@gorhom/bottom-sheet';
 
 import { CircularScore } from '@/components/circular-score';
-import { GradientScreen } from '@/components/gradient-screen';
 import { PremiumButton } from '@/components/premium-button';
+import { AnalysisBottomSheet } from '@/components/analysis-bottom-sheet';
 import type { SlopResult } from '@/constants/slop-types';
 import { useAppTheme } from '@/lib/theme-context';
 import { analyzeIdeaWithAiService } from '@/lib/ai-service';
@@ -24,6 +31,39 @@ export default function AnalyzeScreen() {
   const [ideaText, setIdeaText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [latestResult, setLatestResult] = useState<SlopResult | null>(null);
+  const [aiMode, setAiMode] = useState<AiMode>('mentor');
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const { idea } = useLocalSearchParams<{ idea?: string }>();
+
+  useEffect(() => {
+    if (idea) {
+      setIdeaText(idea);
+    }
+  }, [idea]);
+
+  const loadingSteps = [
+    "Checking technical feasibility...",
+    "Scanning for buzzwords...",
+    "Calculating Slop Score...",
+    "Pivoting to AI...",
+    "Destroying your dreams..."
+  ];
+  const [loadingStepIndex, setLoadingStepIndex] = useState(0);
+
+  useEffect(() => {
+    if (isLoading) {
+      const interval = setInterval(() => {
+        setLoadingStepIndex((prev) => (prev + 1) % loadingSteps.length);
+      }, 1500);
+      return () => clearInterval(interval);
+    } else {
+      setLoadingStepIndex(0);
+    }
+  }, [isLoading]);
+
+  const handleOpenDetail = () => {
+    bottomSheetRef.current?.expand();
+  };
 
   const handleAnalyze = async () => {
     if (!ideaText.trim()) {
@@ -36,7 +76,7 @@ export default function AnalyzeScreen() {
 
     try {
       console.log('AI service istegi basladi...');
-      const result = await analyzeIdeaWithAiService(ideaText.trim());
+      const result = await analyzeIdeaWithAiService(ideaText.trim(), aiMode);
       console.log('AI service yaniti alindi.');
 
       await saveAnalysis({
@@ -55,13 +95,28 @@ export default function AnalyzeScreen() {
   };
 
   return (
-    <LinearGradient colors={['#e0c3fc', '#8ec5fc']} style={{ flex: 1 }}>
-      <GradientScreen>
-        <SafeAreaView style={styles.safeArea}>
+    <LinearGradient colors={theme.gradientColors} style={{ flex: 1 }}>
+      <SafeAreaView style={styles.safeArea}>
         <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
-          <Text style={[styles.header, { color: theme.textPrimary }]}>Nokta Analyzer</Text>
+          <View style={styles.heroSection}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+              <MaterialCommunityIcons name="radar" size={28} color={theme.textPrimary} />
+              <Text style={[styles.header, { color: theme.textPrimary }]}>Slop</Text>
+            </View>
+            <View style={styles.toggleWrapper}>
+              <Text style={[styles.toggleLabel, { color: aiMode === 'roast' ? '#FE5E73' : '#36D887' }]}>
+                {aiMode === 'roast' ? 'Y-Combinator' : 'Mentor Mode'}
+              </Text>
+              <Switch
+                value={aiMode === 'roast'}
+                onValueChange={(val) => setAiMode(val ? 'roast' : 'mentor')}
+                trackColor={{ false: '#36D887', true: '#FE5E73' }}
+                thumbColor={'#fff'}
+              />
+            </View>
+          </View>
           <Text style={[styles.subHeader, { color: theme.textSecondary }]}>
-            Fikrini yaz, teknik risk puanini premium analiz panelinde aninda gor.
+            Yapay zeka ile girişim fikrindeki aşırı mühendislik ve buzzword riskini analiz et.
           </Text>
 
           {latestResult && (
@@ -75,11 +130,23 @@ export default function AnalyzeScreen() {
               <Text style={[styles.analysisText, { color: theme.textSecondary }]}>
                 {latestResult.analysis}
               </Text>
+              <PremiumButton
+                onPress={handleOpenDetail}
+                title="Açıklamaları Gör"
+              />
             </View>
           )}
 
           <View style={[styles.card, { backgroundColor: theme.cardBackground, borderColor: theme.cardBorder }]}>
-            <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>GIRISIM FIKRI</Text>
+            <View style={styles.inputHeaderRow}>
+              <Text style={[styles.sectionTitle, { color: theme.textSecondary, marginBottom: 0 }]}>GIRISIM FIKRI</Text>
+              {(ideaText.length > 0 || latestResult) ? (
+                <Pressable onPress={() => { setIdeaText(''); setLatestResult(null); }} style={styles.clearBtn}>
+                  <MaterialCommunityIcons name="trash-can-outline" size={16} color={theme.textSecondary} />
+                  <Text style={[styles.clearBtnText, { color: theme.textSecondary }]}>Temizle</Text>
+                </Pressable>
+              ) : null}
+            </View>
             <TextInput
               value={ideaText}
               onChangeText={setIdeaText}
@@ -104,16 +171,21 @@ export default function AnalyzeScreen() {
             />
             {isLoading && (
               <View style={styles.loadingInline}>
-                <ActivityIndicator size="small" color={theme.textSecondary} />
+                <ActivityIndicator size="small" color={theme.textPrimary} />
                 <Text style={[styles.loadingText, { color: theme.textSecondary }]}>
-                  Model yaniti bekleniyor...
+                  {loadingSteps[loadingStepIndex]}
                 </Text>
               </View>
             )}
           </View>
         </ScrollView>
       </SafeAreaView>
-      </GradientScreen>
+
+      <AnalysisBottomSheet
+        ref={bottomSheetRef}
+        result={latestResult}
+        ideaText={ideaText}
+      />
     </LinearGradient>
   );
 }
@@ -124,12 +196,28 @@ const styles = StyleSheet.create({
   },
   container: {
     paddingHorizontal: 18,
-    paddingTop: 8,
+    paddingTop: 16,
     paddingBottom: 32,
-    gap: 12,
+    gap: 14,
+  },
+  heroSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
+  toggleWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  toggleLabel: {
+    fontSize: 12,
+    fontWeight: '800',
+    textTransform: 'uppercase',
   },
   header: {
-    fontSize: 34,
+    fontSize: 28,
     fontWeight: '800',
     letterSpacing: -0.4,
   },
@@ -154,6 +242,26 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     textTransform: 'uppercase',
     letterSpacing: 1.2,
+  },
+  inputHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  clearBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    backgroundColor: 'rgba(0,0,0,0.05)',
+  },
+  clearBtnText: {
+    fontSize: 12,
+    fontWeight: '600',
+    textTransform: 'uppercase',
   },
   input: {
     minHeight: 220,

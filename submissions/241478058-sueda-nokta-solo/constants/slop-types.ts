@@ -18,4 +18,5 @@ export type SlopResult = {
   analysis: string;
   flaws: SlopFlaw[];
   engineering_questions: EngineeringQuestion[];
+  similarProjects?: string[];
 };
