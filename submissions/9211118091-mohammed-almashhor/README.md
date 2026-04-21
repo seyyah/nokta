@@ -28,7 +28,7 @@ Projeyi yerel ortamınızda çalıştırmak için aşağıdaki adımları izleyi
 ### 2. Kurulum
 ```bash
 # Bağımlılıkları yükleyin
-cd submissions/10001000-meshur-meshur/app
+cd submissions/9211118091-mohammed-almashhor/app
 npm install
 ```
 
