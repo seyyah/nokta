@@ -6,8 +6,8 @@
 **GitHub Reposu:** https://github.com/ceydasaricelik/nokta_2
 
 ## Proje Teslim Bağlantıları
-- **Expo QR Linki:** *(Uygulamayı yerel ağınızda `npx expo start` veya tünel ile başlatarak oluşan güvenilir QR kodunu YouTube videonuz sırasında veya buraya bağlantı olarak ekleyebilirsiniz. Temsili link SDK uyuşmazlığı oluşturmaması adına kaldırılmıştır.)*
-- **60 Saniyelik Demo Video:** https://youtu.be/slopdetector_demo_ceyda
+- **Expo QR Linki:** `exp://l3ba9t8-anonymous-8081.exp.direct` *(Expo Go uygulamanızın arama kısmına bu adresi yapıştırarak veya kodu okutarak bağlanabilirsiniz.)*
+- **60 Saniyelik Demo Video:** https://youtube.com/shorts/c9-Xjyoh8vM
 
 ## Decision Log (Mühendislik Kararları)
 
