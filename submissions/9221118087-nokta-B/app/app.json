@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "Nokta Slop Detector",
+    "slug": "nokta-slop-detector-b",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "jsEngine": "hermes",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "f1aa3b7a-dd57-43ae-85b1-0591fdefb17a"
+      }
+    },
+    "android": {
+      "package": "com.moncat.noktaslopdetectorb"
+    }
+  }
+}
