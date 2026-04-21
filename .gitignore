@@ -1,0 +1,8 @@
+node_modules/
+.expo/
+android/
+ios/
+.cxx/
+build/
+*.apk
+!submissions/231118021-nokta-vision/app-release.apk
