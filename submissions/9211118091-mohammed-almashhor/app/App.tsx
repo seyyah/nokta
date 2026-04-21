@@ -23,67 +23,106 @@ export default function App() {
   const [currentAnswer, setCurrentAnswer] = useState('');
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [trustScore, setTrustScore] = useState(0);
-
   const [probes, setProbes] = useState<Array<{id: string, label: string, hint: string}>>([]);
+  const [groqKey, setGroqKey] = useState('');
+  const [isLlmLoading, setIsLlmLoading] = useState(false);
 
   useEffect(() => {
     try {
       AsyncStorage.getItem('@nokta_history').then(data => {
         if (data) setHistory(JSON.parse(data));
-      }).catch(() => console.log('AsyncStorage native module absent, using RAM'));
-    } catch (e) {
-      console.log('AsyncStorage block failed', e);
-    }
+      }).catch(() => {});
+      AsyncStorage.getItem('@nokta_groq_key').then(key => {
+        if (key) setGroqKey(key);
+      }).catch(() => {});
+    } catch (e) { }
   }, []);
 
-  const handleDotSubmit = () => {
+  const handleDotSubmit = async () => {
     if (ideaDot.trim().length < 10) return;
     setPhase('SLOP_CHECK');
     
-    const lowercaseIdea = ideaDot.toLowerCase();
-    const ideaSnippet = ideaDot.length > 20 ? ideaDot.substring(0, 20) + "..." : ideaDot;
-    
-    let dynamicProbes = [];
-    if (lowercaseIdea.includes('game') || lowercaseIdea.includes('play') || lowercaseIdea.includes('fun')) {
-      dynamicProbes = [
-        { id: 'problem', label: '🎮 CORE LOOP', hint: `What is the core 30-second gameplay loop that makes "${ideaSnippet}" addictive?` },
-        { id: 'user', label: '🎯 PLAYER DEMOGRAPHIC', hint: `Is this for casual mobile commuters or hardcore PC gamers? Be specific.` },
-        { id: 'scope', label: '🚧 MVP SCOPE', hint: `What asset classes (multiplayer, 3D, skins) will you EXCLUDE from v1?` },
-        { id: 'constraint', label: '⚙️ ENGINE RISK', hint: `What is the hardest rendering, latency, or state synching problem here?` }
-      ];
-    } else if (lowercaseIdea.includes('hardware') || lowercaseIdea.includes('device') || lowercaseIdea.includes('sensor')) {
-      dynamicProbes = [
-        { id: 'problem', label: '🔌 PHYSICAL FRICTION', hint: `Hardware is brutal. Why can't "${ideaSnippet}" simply be a software app?` },
-        { id: 'user', label: '🏭 EARLY ADOPTER', hint: `Who is willing to pay the premium hardware margin for this device today?` },
-        { id: 'scope', label: '📏 PROTOTYPE SCOPE', hint: `What does the v1 prototype look like? (e.g. bare circuit board, 3D printed?)` },
-        { id: 'constraint', label: '📉 SUPPLY BOTTLENECK', hint: `Which physical component (chip, battery, casing) is your biggest supply risk?` }
-      ];
-    } else if (lowercaseIdea.includes('ai') || lowercaseIdea.includes('data') || lowercaseIdea.includes('automation')) {
-      dynamicProbes = [
-        { id: 'problem', label: '🧠 DATA MOAT', hint: `Everyone uses AI. What unique proprietary data makes "${ideaSnippet}" defensible?` },
-        { id: 'user', label: '💼 END-USER WORKFLOW', hint: `Whose specific daily 9-to-5 job is this AI automating or replacing?` },
-        { id: 'scope', label: '✂️ FEATURE PRUNING', hint: `What AI capabilities (voice, imagegen, agent loops) will you strictly cut for the MVP?` },
-        { id: 'constraint', label: '💸 INFERENCE COSTS', hint: `How will you survive the massive API rate limits or LLM hosting costs for this?` }
-      ];
-    } else {
-      dynamicProbes = [
-        { id: 'problem', label: '🔍 PROBLEM ISOLATION', hint: `What exact painful friction does "${ideaSnippet}" solve for the user today?` },
-        { id: 'user', label: '💳 TARGET PAYER', hint: `Who is the desperate buyer that will literally pay $10/mo for this immediately?` },
-        { id: 'scope', label: '🔪 EXCLUSION ZONE', hint: `List exactly 3 cool features you MUST cut from the v1 release to launch in 2 weeks.` },
-        { id: 'constraint', label: '🚧 FATAL RISK', hint: `What is the single biggest technical, legal, or adoption risk for this idea?` }
-      ];
+    if (groqKey) {
+      AsyncStorage.setItem('@nokta_groq_key', groqKey).catch(() => {});
+    }
+
+    try {
+      setIsLlmLoading(true);
+      if (groqKey.trim() !== '') {
+        // ACTUAL AI GENERATION VIA GROQ
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${groqKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: "llama-3.3-70b-versatile",
+            messages: [{
+              role: "system",
+              content: `You are a brutal, top-tier engineering architect reviewing startup ideas. 
+The user will provide an idea. You must generate EXACTLY 4 highly critical, highly specific engineering/product questions testing their idea. 
+Include EMOJIS in the labels.
+Return ONLY a raw JSON array of objects with 'id', 'label', and 'hint' keys. No markdown blocks, no other text.
+Example format: [{"id": "problem", "label": "💥 CORE FRICTION", "hint": "Why does this specific problem exist?"}, ...]`
+            }, {
+              role: "user",
+              content: `The idea is: "${ideaDot}"`
+            }],
+            temperature: 0.7
+          })
+        });
+
+        const data = await response.json();
+        if (data.choices && data.choices[0] && data.choices[0].message) {
+           let rawContent = data.choices[0].message.content.trim();
+           // Remove markdown formatting if Llama 3 adds it
+           if (rawContent.startsWith('```')) {
+             rawContent = rawContent.replace(/```(json)?\n/g, '').replace(/```/g, '');
+           }
+           const aiProbes = JSON.parse(rawContent);
+           if (Array.isArray(aiProbes) && aiProbes.length >= 2) {
+             setProbes(aiProbes);
+           } else {
+             throw new Error("Invalid format");
+           }
+        }
+      } else {
+        // Fallback robust logic if no key
+        const lowercaseIdea = ideaDot.toLowerCase();
+        const ideaSnippet = ideaDot.length > 20 ? ideaDot.substring(0, 20) + "..." : ideaDot;
+        let dynamicProbes = [];
+        if (lowercaseIdea.includes('game') || lowercaseIdea.includes('play') || lowercaseIdea.includes('fun')) {
+          dynamicProbes = [
+            { id: 'problem', label: '🎮 CORE LOOP', hint: `What is the core 30-second gameplay loop that makes "${ideaSnippet}" addictive?` },
+            { id: 'user', label: '🎯 PLAYER DEMOGRAPHIC', hint: `Is this for casual mobile commuters or hardcore PC gamers? Be specific.` },
+            { id: 'scope', label: '🚧 MVP SCOPE', hint: `What asset classes (multiplayer, 3D, skins) will you EXCLUDE from v1?` },
+            { id: 'constraint', label: '⚙️ ENGINE RISK', hint: `What is the hardest rendering, latency, or state synching problem here?` }
+          ];
+        } else {
+          dynamicProbes = [
+            { id: 'problem', label: '🔍 PROBLEM ISOLATION', hint: `What exact painful friction does "${ideaSnippet}" solve for the user today?` },
+            { id: 'user', label: '💳 TARGET PAYER', hint: `Who is the desperate buyer that will literally pay $10/mo for this immediately?` },
+            { id: 'scope', label: '🔪 EXCLUSION ZONE', hint: `List exactly 3 cool features you MUST cut from the v1 release to launch in 2 weeks.` },
+            { id: 'constraint', label: '🚧 FATAL RISK', hint: `What is the single biggest technical, legal, or adoption risk for this idea?` }
+          ];
+        }
+        setProbes(dynamicProbes);
+      }
+    } catch(e) {
+       console.log(e);
+       // Fallback on error
+       setProbes([
+          { id: 'problem', label: '⚠️ API ERROR (FALLBACK)', hint: `Check your Groq Key. For now: What is the core friction solved?` },
+          { id: 'user', label: '💳 TARGET AUDIENCE', hint: `Who pays for this?` }
+       ]);
     }
     
-    setProbes(dynamicProbes);
-    
-    // Simulate AI Slop Check
-    setTimeout(() => setSlopMetric(25), 600);
-    setTimeout(() => setSlopMetric(60), 1200);
-    setTimeout(() => {
-      setSlopMetric(100);
-      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-      setPhase('ENGINEERING_PROBE');
-    }, 1800);
+    // UI Animations
+    setIsLlmLoading(false);
+    setSlopMetric(100);
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setPhase('ENGINEERING_PROBE');
   };
 
   const handleProbeSubmit = () => {
@@ -119,6 +158,7 @@ export default function App() {
     setIdeaDot('');
     setProbeIndex(0);
     setAnswers({});
+    setSlopMetric(0);
   };
 
   return (
@@ -165,6 +205,14 @@ export default function App() {
             value={ideaDot}
             onChangeText={setIdeaDot}
           />
+          <TextInput
+             style={{backgroundColor: '#13131A', borderWidth: 1, borderColor: '#262633', color: '#A882FF', borderRadius: 8, padding: 15, marginBottom: 20, fontSize: 13}}
+             placeholder="[OPTIONAL] Enter Groq API Key to enable Llama 3.3..."
+             placeholderTextColor="#444"
+             secureTextEntry
+             value={groqKey}
+             onChangeText={setGroqKey}
+          />
           
           <View style={styles.actionRow}>
             <TouchableOpacity 
@@ -189,11 +237,17 @@ export default function App() {
       {phase === 'SLOP_CHECK' && (
         <View style={styles.contentCore}>
           <Text style={styles.moduleTitle}>GROQ INFERENCE...</Text>
-          <Text style={styles.moduleSub}>Processing via Llama 3.3 for extreme low-latency density check.</Text>
-          <View style={styles.progressTrack}>
-            <View style={[styles.progressFill, { width: `${slopMetric}%` }]} />
-          </View>
-          <Text style={styles.metricText}>FILTERING SLOP: {slopMetric}%</Text>
+          <Text style={styles.moduleSub}>{groqKey ? "Calling Llama 3.3 API..." : "Processing locally for extreme low-latency density check."}</Text>
+          {isLlmLoading ? (
+            <Text style={{color: '#A882FF', marginTop: 10}}>Awaiting API JSON Response...</Text>
+          ) : (
+            <>
+              <View style={styles.progressTrack}>
+                <View style={[styles.progressFill, { width: `${slopMetric}%` }]} />
+              </View>
+              <Text style={styles.metricText}>FILTERING SLOP: {slopMetric}%</Text>
+            </>
+          )}
         </View>
       )}
 
