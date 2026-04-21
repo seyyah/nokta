@@ -46,7 +46,7 @@ Uygulamanın en güncel test sürümünü (APK) teslimat klasöründe bulabilirs
 
 ## 📺 Tanıtım Videosu
 Uygulamanın özelliklerini ve kullanımını gösteren kısa tanıtım videomuz (YouTube): 
-🎥 [YouTube Tanıtım Videosu](https://youtu.be/dummy-link)
+🎥 [YouTube Tanıtım Videosu](https://youtube.com/shorts/PbXz4dpBAcI)
 
 ## 💼 Karar Defteri (Decision Log)
 
