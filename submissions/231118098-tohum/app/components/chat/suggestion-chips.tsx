@@ -44,13 +44,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: radius.pill,
     paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
+    paddingVertical: spacing.sm + 2,
     maxWidth: 260,
   },
   chipPressed: { opacity: 0.7 },
   chipText: {
     fontFamily: typography.bodyMedium,
-    fontSize: fontSize.sm,
-    color: colors.suggestionChip,
+    fontSize: fontSize.base,
+    color: colors.text,
   },
 });
