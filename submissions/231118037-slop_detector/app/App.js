@@ -363,7 +363,7 @@ export default function App() {
             {loading ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.analyzeBtnText}>🔬 Analiz Et</Text>
+              <Text style={styles.analyzeBtnText}>🔬 Pazar Testini Başlat</Text>
             )}
           </TouchableOpacity>
 
