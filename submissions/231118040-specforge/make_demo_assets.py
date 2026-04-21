@@ -15,9 +15,9 @@ OUTPUT_POSTER = ROOT / "demo-poster.png"
 FPS = 6
 CANVAS_SIZE = (720, 1280)
 CARD_RECT = (76, 280, 644, 1138)
-BRANCH = "implement/231118040-track1-specforge"
+BRANCH = "implement/231118040-track1-specforge-v2"
 APK_LINK = (
-    "https://github.com/mehmetalisahingm/nokta/blob/"
+    "https://github.com/mehmetalisahingm/nokta-seyyah/blob/"
     f"{BRANCH}/submissions/231118040-specforge/app-release.apk?raw=1"
 )
 

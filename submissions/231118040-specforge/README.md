@@ -9,9 +9,9 @@ Raw idea intake from text or voice transcript, AI-guided interview with 5 engine
 ## Links
 
 - Expo QR / APK install link: [app-release.apk](./app-release.apk)
-- Direct GitHub APK link: [SpecForge APK](https://github.com/mehmetalisahingm/nokta/blob/implement/231118040-track1-specforge/submissions/231118040-specforge/app-release.apk?raw=1)
+- Direct GitHub APK link: [SpecForge APK](https://github.com/mehmetalisahingm/nokta-seyyah/blob/implement/231118040-track1-specforge-v2/submissions/231118040-specforge/app-release.apk?raw=1)
 - 60-second demo video: [demo.mp4](./demo.mp4)
-- Direct GitHub demo link: [SpecForge demo](https://github.com/mehmetalisahingm/nokta/blob/implement/231118040-track1-specforge/submissions/231118040-specforge/demo.mp4?raw=1)
+- Direct GitHub demo link: [SpecForge demo](https://github.com/mehmetalisahingm/nokta-seyyah/blob/implement/231118040-track1-specforge-v2/submissions/231118040-specforge/demo.mp4?raw=1)
 - Demo poster: [demo-poster.png](./demo-poster.png)
 
 ## QR Code
@@ -47,4 +47,3 @@ The experience has three stages:
 - [app-release.apk](./app-release.apk)
 - [demo.mp4](./demo.mp4)
 - [expo-qr.png](./expo-qr.png)
-
