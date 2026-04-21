@@ -18,8 +18,8 @@
 - **Güvenlik:** `.env` (EXPO_PUBLIC_GEMINI_API_KEY) ile API anahtarı yönetimi.
 
 ### 🔗 Linkler
-- **Expo Go (Link/QR):** [Buraya Expo Publish Linkini Koy veya "Expo Go üzerinden yerel ağda test edildi" yaz]
-- **60 Sn Demo Videosu:** [YouTube/Drive Video Linkini Buraya Yapıştır]
+- **Expo Go (Link/QR):** https://expo.dev/accounts/cubukcu/projects/expo-template-blank/builds/2eab6f1a-7642-4d09-ad2c-6c5a62e6d97c
+- **60 Sn Demo Videosu:** https://www.youtube.com/watch?v=cuMZs3rzhbs
 - **APK Dosyası:** `./app-release.apk` (Klasör içerisinde mevcuttur).
 
 ---
@@ -40,7 +40,3 @@ Proje boyunca anlamlı commitlerle ilerlenmiştir:
 - `feat: full application build for Track C`
 
 ---
-
-## 🎁 Bonuslar
-- **[+10 Çılgınlık]:** Gelişmiş Regex-based JSON extraction sistemi sayesinde AI'nın ürettiği "gevezelikler" filtrelenerek sadece saf veri kartlara dökülür.
-- **[+3 APK]:** APK dosyası oluşturuldu ve klasöre eklendi.
