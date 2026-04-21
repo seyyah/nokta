@@ -16,6 +16,7 @@ export interface AnalysisResult {
 export type RootStackParamList = {
   Home: undefined;
   Result: { result: AnalysisResult; pitch: string };
+  Settings: undefined;
 };
 
 export type NavigationProp = NativeStackNavigationProp<RootStackParamList>;

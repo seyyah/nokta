@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, TextInput, Text, StyleSheet, TextInputProps } from 'react-native';
-import { colors } from '../../theme/colors';
+import { useTheme } from '../../context/ThemeContext';
+import { getColors } from '../../theme/colors';
 
 interface InputFieldProps extends TextInputProps {
   label?: string;
@@ -15,18 +16,21 @@ export function InputField({
   style,
   ...props
 }: InputFieldProps) {
+  const { themeMode, accentColor } = useTheme();
+  const colors = getColors(themeMode, accentColor);
+
   return (
     <View style={styles.container}>
-      {label && <Text style={styles.label}>{label}</Text>}
-      <View style={styles.inputWrapper}>
+      {label && <Text style={[styles.label, { color: colors.textMuted }]}>{label}</Text>}
+      <View style={[styles.inputWrapper, { backgroundColor: colors.bgCard, borderColor: colors.bgCardBorder }]}>
         <TextInput
-          style={[styles.input, style]}
+          style={[styles.input, { color: colors.textPrimary }, style]}
           placeholderTextColor={colors.textDim}
           textAlignVertical="top"
           {...props}
         />
         {maxCharCount !== undefined && charCount !== undefined && (
-          <Text style={styles.charCount}>
+          <Text style={[styles.charCount, { color: colors.textDim }]}>
             {charCount}/{maxCharCount}
           </Text>
         )}
@@ -41,20 +45,16 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 12,
-    color: colors.textMuted,
     fontWeight: '600',
     letterSpacing: 0.5,
     marginBottom: 8,
   },
   inputWrapper: {
-    backgroundColor: colors.bgCard,
     borderWidth: 1,
-    borderColor: colors.bgCardBorder,
     borderRadius: 20,
     padding: 16,
   },
   input: {
-    color: colors.textPrimary,
     fontSize: 15,
     minHeight: 140,
     lineHeight: 22,
@@ -62,7 +62,6 @@ const styles = StyleSheet.create({
   charCount: {
     textAlign: 'right',
     fontSize: 11,
-    color: colors.textDim,
     marginTop: 8,
   },
 });

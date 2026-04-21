@@ -8,20 +8,23 @@ import {
   Share,
   Animated,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
-import { colors } from '../theme/colors';
+import { useTheme } from '../context/ThemeContext';
+import { getColors } from '../theme/colors';
 import { SlopGauge } from '../components/features/SlopGauge';
 import { ClaimCard } from '../components/features/ClaimCard';
 import { Button } from '../components/common/Button';
 import { Card } from '../components/common/Card';
 import { useResultAnimation } from '../hooks/useResultAnimation';
 import type { RootStackParamList, NavigationProp } from '../types';
+import { Ionicons } from '@expo/vector-icons';
 
 type ResultRoute = RouteProp<RootStackParamList, 'Result'>;
 
 export default function ResultScreen() {
+  const { themeMode, accentColor } = useTheme();
+  const colors = getColors(themeMode, accentColor);
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<ResultRoute>();
   const { result, pitch } = route.params;
@@ -38,25 +41,23 @@ export default function ResultScreen() {
   };
 
   const scoreColor =
-    result.slopScore < 35 ? colors.green :
-    result.slopScore < 65 ? colors.amber : colors.red;
+    result.slopScore < 35 ? colors.success :
+    result.slopScore < 65 ? colors.warning : colors.error;
 
   const scoreBg =
     result.slopScore < 35 ? 'rgba(34,197,94,0.1)' :
     result.slopScore < 65 ? 'rgba(245,158,11,0.1)' : 'rgba(239,68,68,0.1)';
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <LinearGradient colors={['#0F1117', '#1A1025']} style={StyleSheet.absoluteFill} />
-
+    <SafeAreaView style={[styles.safe, { backgroundColor: colors.bg }]}>
       {/* Header */}
       <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Text style={styles.backIcon}>←</Text>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={[styles.iconBtn, { backgroundColor: colors.bgCard, borderColor: colors.bgCardBorder }]}>
+          <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
         </TouchableOpacity>
-        <Text style={styles.topTitle}>Analiz Raporu</Text>
-        <TouchableOpacity onPress={handleShare} style={styles.shareBtn}>
-          <Text style={styles.shareIcon}>↑</Text>
+        <Text style={[styles.topTitle, { color: colors.textPrimary }]}>Analiz Raporu</Text>
+        <TouchableOpacity onPress={handleShare} style={[styles.iconBtn, { backgroundColor: colors.bgCard, borderColor: colors.bgCardBorder }]}>
+          <Ionicons name="share-outline" size={20} color={colors.textPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -79,15 +80,15 @@ export default function ResultScreen() {
 
           {/* AI Summary */}
           <View style={styles.section}>
-            <Text style={styles.sectionLabel}>AI ÖZETİ</Text>
+            <Text style={[styles.sectionLabel, { color: colors.primary }]}>AI ÖZETİ</Text>
             <Card>
-              <Text style={styles.summaryText}>{result.summary}</Text>
+              <Text style={[styles.summaryText, { color: colors.textPrimary }]}>{result.summary}</Text>
             </Card>
           </View>
 
           {/* Claims Analysis */}
           <View style={styles.section}>
-            <Text style={styles.sectionLabel}>İDDİA ANALİZİ · {result.claims.length} BULGU</Text>
+            <Text style={[styles.sectionLabel, { color: colors.primary }]}>İDDİA ANALİZİ · {result.claims.length} BULGU</Text>
             {result.claims.map((claim, i) => (
               <ClaimCard key={i} claim={claim} index={i} />
             ))}
@@ -95,20 +96,17 @@ export default function ResultScreen() {
 
           {/* Investor Recommendation */}
           <View style={styles.section}>
-            <Text style={styles.sectionLabel}>YATIRIMCI ÖNERİSİ</Text>
-            <LinearGradient
-              colors={['rgba(124,58,237,0.15)', 'rgba(236,72,153,0.10)']}
-              style={styles.recommendCard}
-            >
-              <Text style={styles.recommendText}>{result.recommendation}</Text>
-            </LinearGradient>
+            <Text style={[styles.sectionLabel, { color: colors.primary }]}>YATIRIMCI ÖNERİSİ</Text>
+            <View style={[styles.recommendCard, { backgroundColor: colors.bgCard, borderColor: `${colors.primary}33` }]}>
+              <Text style={[styles.recommendText, { color: colors.textPrimary }]}>{result.recommendation}</Text>
+            </View>
           </View>
 
           {/* Analyzed Pitch Snippet */}
           <View style={styles.section}>
-            <Text style={styles.sectionLabel}>ANALİZ EDİLEN PİTCH</Text>
+            <Text style={[styles.sectionLabel, { color: colors.primary }]}>ANALİZ EDİLEN PİTCH</Text>
             <Card style={styles.pitchSnippet}>
-              <Text style={styles.pitchText} numberOfLines={5}>{pitch}</Text>
+              <Text style={[styles.pitchText, { color: colors.textMuted }]} numberOfLines={5}>{pitch}</Text>
             </Card>
           </View>
 
@@ -134,7 +132,7 @@ export default function ResultScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg },
+  safe: { flex: 1 },
 
   topBar: {
     flexDirection: 'row',
@@ -143,21 +141,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
-  backBtn: {
-    width: 36, height: 36,
-    backgroundColor: colors.bgCard,
-    borderRadius: 10,
+  iconBtn: {
+    width: 40, height: 40,
+    borderRadius: 12,
     alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1,
   },
-  backIcon: { fontSize: 18, color: colors.textPrimary },
-  topTitle: { fontSize: 16, fontWeight: '700', color: colors.textPrimary },
-  shareBtn: {
-    width: 36, height: 36,
-    backgroundColor: colors.bgCard,
-    borderRadius: 10,
-    alignItems: 'center', justifyContent: 'center',
-  },
-  shareIcon: { fontSize: 18, color: colors.textPrimary },
+  topTitle: { fontSize: 16, fontWeight: '700' },
 
   scroll: { paddingHorizontal: 20, paddingBottom: 40 },
 
@@ -180,26 +170,24 @@ const styles = StyleSheet.create({
   section: { marginBottom: 20 },
   sectionLabel: {
     fontSize: 10,
-    fontWeight: '700',
-    color: colors.purple,
+    fontWeight: '800',
     letterSpacing: 1.5,
     marginBottom: 10,
   },
 
-  summaryText: { color: colors.textPrimary, fontSize: 14, lineHeight: 21 },
+  summaryText: { fontSize: 14, lineHeight: 21 },
 
   recommendCard: {
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: 'rgba(124,58,237,0.25)',
   },
-  recommendText: { color: colors.textPrimary, fontSize: 14, lineHeight: 21, fontStyle: 'italic' },
+  recommendText: { fontSize: 14, lineHeight: 21, fontStyle: 'italic' },
 
   pitchSnippet: {
     padding: 14,
   },
-  pitchText: { color: colors.textMuted, fontSize: 13, lineHeight: 19 },
+  pitchText: { fontSize: 13, lineHeight: 19 },
 
   actions: { flexDirection: 'row', gap: 10, marginTop: 4 },
 });

@@ -1,14 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { colors } from '../../theme/colors';
+import { useTheme } from '../../context/ThemeContext';
+import { getColors } from '../../theme/colors';
 import { Card } from '../common/Card';
 import type { Claim } from '../../types';
-
-const VERDICT_CONFIG = {
-  GÜÇLÜ: { bg: 'rgba(34,197,94,0.15)', border: colors.green, text: colors.green, icon: '✓' },
-  ABARTILI: { bg: 'rgba(249,115,22,0.15)', border: colors.orange, text: colors.orange, icon: '⚠' },
-  DOĞRULANAMAZ: { bg: 'rgba(239,68,68,0.15)', border: colors.red, text: colors.red, icon: '✗' },
-};
 
 interface Props {
   claim: Claim;
@@ -16,6 +11,15 @@ interface Props {
 }
 
 export const ClaimCard: React.FC<Props> = ({ claim, index }) => {
+  const { themeMode, accentColor } = useTheme();
+  const colors = getColors(themeMode, accentColor);
+
+  const VERDICT_CONFIG = {
+    GÜÇLÜ: { bg: 'rgba(34,197,94,0.15)', border: colors.success, text: colors.success, icon: '✓' },
+    ABARTILI: { bg: 'rgba(249,115,22,0.15)', border: colors.warning, text: colors.warning, icon: '⚠' },
+    DOĞRULANAMAZ: { bg: 'rgba(239,68,68,0.15)', border: colors.error, text: colors.error, icon: '✗' },
+  };
+
   const cfg = VERDICT_CONFIG[claim.verdict];
 
   return (
@@ -25,7 +29,7 @@ export const ClaimCard: React.FC<Props> = ({ claim, index }) => {
         <View style={[styles.indexBadge, { backgroundColor: cfg.bg }]}>
           <Text style={[styles.icon, { color: cfg.text }]}>{cfg.icon}</Text>
         </View>
-        <Text style={styles.claimText} numberOfLines={2}>
+        <Text style={[styles.claimText, { color: colors.textPrimary }]} numberOfLines={2}>
           {claim.text}
         </Text>
         <View style={[styles.verdictChip, { backgroundColor: cfg.bg, borderColor: cfg.border }]}>
@@ -34,7 +38,7 @@ export const ClaimCard: React.FC<Props> = ({ claim, index }) => {
       </View>
 
       {/* Reasoning */}
-      <Text style={styles.reasoning}>{claim.reasoning}</Text>
+      <Text style={[styles.reasoning, { color: colors.textMuted }]}>{claim.reasoning}</Text>
     </Card>
   );
 };
@@ -65,7 +69,6 @@ const styles = StyleSheet.create({
   claimText: {
     flex: 1,
     fontSize: 13,
-    color: colors.textPrimary,
     fontWeight: '500',
     lineHeight: 18,
   },
@@ -83,7 +86,6 @@ const styles = StyleSheet.create({
   },
   reasoning: {
     fontSize: 12,
-    color: colors.textMuted,
     lineHeight: 17,
   },
 });
