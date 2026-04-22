@@ -12,23 +12,18 @@
 
 ## Expo QR Kodu
 
-Uygulamayı Expo Go ile çalıştırmak için:
+Uygulamayı Expo Go ile açmak için aşağıdaki linki kullanın:
 
+**Expo Go Linki:**
 ```
-npx expo start
+exp://c9d668b5-ea05-4971-82d6-0f7596e7e5ad-00-2nhfj5d97k6mo.expo.riker.replit.dev
 ```
 
-veya aşağıdaki QR kodu Expo Go uygulamasıyla taratın:
-
-> **QR Kod:** Expo Go uygulamasını açın → "Scan QR Code" → Dev sunucunuzdaki QR kodu taratın.
-
-Expo Go linki (geliştirme ortamında): `exp://<LOCAL_IP>:8081`
+Expo Go uygulamasını açın → "Enter URL manually" → Yukarıdaki linki yapıştırın.
 
 ## 60 Saniye Demo Video
 
-Demo videosu çekimi tamamlandıktan sonra buraya eklenecektir.
-
-> **Demo Video:** [YouTube / Google Drive linki buraya eklenecek]
+▶️ **[Demo Videoyu İzle — YouTube Shorts](https://youtube.com/shorts/W9lv3M3yO0s)**
 
 Videoda gösterilecekler:
 1. Uygulama açılış ekranı
