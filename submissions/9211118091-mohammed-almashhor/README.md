@@ -42,7 +42,7 @@ Terminalde çıkan QR kodu, mobil cihazınızdaki Expo Go uygulaması ile tarata
 
 ## 📦 İndirilebilir APK Dosyası
 Uygulamanın en güncel test sürümünü (APK) teslimat klasöründe bulabilirsiniz: 
-🔗 `app-release.apk` (Dosya içindedir)
+📥 **[Tıkla ve app-release.apk İndir](https://raw.githubusercontent.com/MOHAMMEDALMASHHOR/nokta/submission/track-a-meshur/submissions/9211118091-mohammed-almashhor/app-release.apk)**
 
 ## 📺 Tanıtım Videosu
 Uygulamanın özelliklerini ve kullanımını gösteren kısa tanıtım videomuz (YouTube): 
