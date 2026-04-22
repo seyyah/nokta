@@ -5,9 +5,15 @@ Thumbs.db
 *.log
 
 # Project specific
-submissions/huseyinbaranisik-slop-dedektoru/app/.env
-submissions/huseyinbaranisik-slop-dedektoru/app/.expo/
-submissions/huseyinbaranisik-slop-dedektoru/app/expo_output.txt
-submissions/huseyinbaranisik-slop-dedektoru/app/dist/
-submissions/huseyinbaranisik-slop-dedektoru/app/web-build/
-submissions/huseyinbaranisik-slop-dedektoru/app/node_modules/
+submissions/**/app/.env
+submissions/**/app/.expo/
+submissions/**/app/expo_output.txt
+submissions/**/app/dist/
+submissions/**/app/web-build/
+submissions/**/app/node_modules/
+submissions/**/app/android/build/
+submissions/**/app/ios/build/
+submissions/**/app/android/.gradle/
+submissions/**/app/android/app/build/
+*.apk
+!submissions/**/app-release.apk
