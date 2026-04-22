@@ -1,26 +1,40 @@
-# Nokta Capture — Track A (Dot Capture & Enrich)
+Nokta Capture — Track A (Dot Capture & Enrich)
+Öğrenci No: 241478009
 
-**Öğrenci No:** 241478009
-**Slug:** nokta-capture
-**Track Seçimi:** Track A
+Slug: nokta-capture
 
-## 🚀 Teslim Linkleri
-- **Expo QR Linki:** [Geliştirme tamamlandığında eklenecek]
-- **Demo Video (60 sn):** [Geliştirme tamamlandığında eklenecek]
-- **APK Dosyası:** `app-release.apk` teslim klasöründe mevcuttur.
+Track Seçimi: Track A
 
-## 📋 Teslim Kontrol Listesi
-- [x] Yalnızca kendi klasörümde (`submissions/241478009-nokta-capture/`) çalıştım, ana dizine dokunmadım.
-- [x] Track seçimimi net bir şekilde belirttim ve akışı eksiksiz uyguladım.
-- [x] Geliştirme sürecini anlamlı commit'lerle (Engineering Trace) logladım.
-- [x] `idea.md` dosyasını Track A konseptine özel olarak, "slop-free" felsefesine uygun hazırladım.
+🚀 Teslim Linkleri
+Expo QR Linki: [https://expo.dev/accounts/habibeahshl/projects/app](https://expo.dev/accounts/habibeahshl/projects/app)
 
-## 🧠 Decision Log (Mühendislik Kararları)
-- **Mimari Seçim:** Uygulama iskeleti React Native ve Expo Router kullanılarak oluşturuldu.
-- **Anti-Slop Algoritması:** Gelen fikrin yüzeysel kalmasını önlemek için kelime ve teknik terim yoğunluğunu ölçen bir yapı kurgulandı. Yetersiz cevaplar reddedilerek, kullanıcının fikrini mühendislik kısıtlarıyla (constraints) temellendirmesi sağlandı.
-- **Adaptif Arayüz (A2UI):** Girilen fikrin yazılım veya donanım (domain) ağırlıklı olmasına bağlı olarak, ekranın temasını otonom olarak değiştiren dinamik bir arayüz mantığı entegre edildi.
-- **Nihai Çıktı (Artifact):** Sürecin sonunda standart bir paragraf yerine, zorluk derecesi de içeren yapılandırılmış bir "Teknik Spesifikasyon (Spec)" üretilmesi kararlaştırıldı.
+Demo Video (60 sn): [https://youtube.com/shorts/TUsC3d6WKio?si=mK59BmrPbSQNyaaE]
 
-## 🤖 AI Tool Log
-- **Gemini:** Projenin kavramsal mimarisinin kurulması, rubric (puanlama) analizinin yapılması ve `idea.md` dosyasının mühendislik prensiplerine göre oluşturulmasında kullanıldı.
-- **AI Kod Asistanı:** React Native tarafındaki UI bileşenlerinin tasarımı, dinamik state yönetimi kodlarının yazılması ve TypeScript/Expo kaynaklı hataların çözümü (debugging) süreçlerinde pair-programmer olarak kullanıldı.
+APK Dosyası: app-release.apk teslim klasöründe mevcuttur.
+
+📋 Teslim Kontrol Listesi
+[x] Yalnızca kendi klasörümde (submissions/241478009-nokta-capture/) çalıştım.
+
+[x] Track seçimimi (Track A) net bir şekilde belirttim.
+
+[x] Geliştirme sürecini anlamlı commit'lerle (Engineering Trace) logladım.
+
+[x] idea.md dosyasını "slop-free" felsefesine uygun, donanım-yazılım senteziyle hazırladım.
+
+🧠 Decision Log (Mühendislik Kararları)
+Mimari Seçim: Uygulama, yüksek hızda çıkarım (inference) yapabilmek amacıyla Groq Llama 3.1 8B Instant modeli üzerine kurgulandı. UI tarafında Expo'nun stabilite avantajlarından faydalanıldı.
+
+Anti-Slop Mekanizması: Kullanıcının sunduğu fikirlerdeki "maliyet, veri darboğazı ve fiziksel kısıtlar" gibi zayıf noktaları tespit eden Red-Teaming tabanlı bir diyalektik süreç entegre edildi. Sistemin 3 aşamalı savunma mekanizması, yüzeysel fikirlerin (slop) elenmesini sağlar.
+
+Veri Kalıcılığı (Data Persistence): Üretilen "Spec Raporları"nın cihazda saklanması ve geçmişe dönük ulaşılabilmesi için @react-native-async-storage/async-storage kütüphanesi kullanılarak bir yerel veritabanı yapısı kuruldu.
+
+Modern UI/UX Yaklaşımı: Kullanıcıyı mühendislik tartışması sırasında odaklanmış tutmak için "Deniz Mavisi" tonlarında (Okyanus Teması) ferah bir arayüz tasarlandı. Klavye yönetimi (KeyboardAvoidingView) ve otomatik aşağı kaydırma (Auto-scroll) özellikleri ile akıcı bir mesajlaşma deneyimi sağlandı.
+
+Nihai Çıktı (Spec Artifact): Sürecin sonunda üretilen çıktı, ham bir metin değil; Risk Radar Grafiği (react-native-chart-kit) ve MVP İş Paketlerini içeren yapılandırılmış bir mühendislik spesifikasyonudur.
+
+🤖 AI Tool Log
+Gemini 3 Flash: Projenin kavramsal mimarisinin (System Architect Persona) kurulması, karmaşık donanım senaryolarındaki (Edge AI, PoE, Lidar haritalama) rasyonelliğin test edilmesi ve dökümantasyon süreçlerinde baş danışman olarak kullanıldı.
+
+Antigravity (AI Kod Asistanı): React Native tarafındaki asenkron API çağrılarının (fetch) yapılandırılması, JSON parsing hatalarının ayıklanması (debugging) ve deniz mavisi temanın StyleSheet optimizasyonlarında pair-programmer olarak görev aldı.
+
+Groq Llama 3.1: Uygulamanın "beyni" olarak, kullanıcıyı teknik olarak köşeye sıkıştıran acımasız mühendislik sorularının üretilmesinde ve nihai teknik raporların sentezlenmesinde kullanıldı.

@@ -1,11 +1,20 @@
-# Nokta Forge — Track A: The Anti-Slop Crucible
+# NOKTA: Fikir Tasfiye ve Mühendislik Sentez Standartı
 
-Nokta Forge, ham fikirlerin (noktaların) konfor alanından çıkarılıp mühendislik kısıtlarıyla yüzleştirildiği adaptif bir kuluçka modülüdür. 
+## 1. Vizyon
+Nokta, ham ve işlenmemiş fikirlerin (slop), rasyonel mühendislik spesifikasyonlarına dönüştürüldüğü otonom bir kuluçka motorudur. Amacı, fikir kirliliğini önlemek ve kaynakların sadece teknik olarak savunulabilir projelere aktarılmasını sağlamaktır.
 
-## 1. Thesis (Tez)
-Standart LLM arayüzleri, kullanıcıyı onaylamak ve jenerik metinler (slop) üretmek üzere eğitilmiştir. Nokta Forge ise "Red-Teaming" mantığıyla çalışır. Kullanıcının fikrini onaylamak yerine, o fikrin en zayıf donanımsal veya yazılımsal halkasına saldırır. Fikir ancak bu teknik sorgudan (Interrogation) sağ çıkarsa bir "Artifact" (Spesifikasyon) halini alır.
+## 2. Operasyonel Konsept (CONOPS)
+Nokta, üç aşamalı bir diyalektik süreç işletir:
+1. **Provokasyon (Red Teaming):** Sistem Mimarı, kullanıcı fikrindeki darboğazları (maliyet, enerji, veri, fiziksel kısıtlar) bulur ve saldırır.
+2. **Savunma:** Kullanıcı, bu saldırılara karşı teknik argümanlar geliştirir.
+3. **Sentez:** Tartışma sonunda sistem, tüm teknik detayları "Anti-Slop" süzgecinden geçirerek bir "Spec Card" üretir.
 
-## 2. A2UI & Recursive Interrogation (Nasıl Çalışır?)
-1. **Dynamic Context:** Fikir girildiğinde sistem alan taraması yapar (Örn: Aviyonik, Mobil, Tarım). Arayüz (A2UI) bu domaine göre renk ve terminoloji değiştirir.
-2. **Slop Meter (Çöp-Fikir Radarı):** Kullanıcının cevaplarındaki teknik terim yoğunluğu (entropy) ölçülür. Yüzeysel cevaplar reddedilir ve kullanıcı daha spesifik kısıtlar (Scope/Constraint) vermeye zorlanır.
-3. **The Blueprint:** 3-5 turluk iterasyonun sonunda, yatırımcıya veya mühendise doğrudan verilebilecek, "Complexity Score" (Zorluk Derecesi) hesaplanmış tek sayfalık bir "Technical Spec Card" üretilir.
+## 3. Başarı Metrikleri
+- **Anti-Slop Skoru:** Fikrin ne kadar "uydurma" veya "gerçekçi" olduğunun matematiksel oranı.
+- **Risk Radar:** Teknik, Pazar, Operasyonel ve Veri risklerinin görselleştirilmesi.
+- **Tradeable Artifact:** Başka bir mühendislik ekibine doğrudan devredilebilecek kadar net MVP dokümanı.
+
+## 4. Uygulama Alanları
+- Havacılık ve Uzay (UKB yedekleme sistemleri)
+- Arama Kurtarma Robotikleri (Edge AI ve 5G entegrasyonu)
+- Sağlık ve Görüntü İşleme (İstatistiksel varyasyon analizleri)
