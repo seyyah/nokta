@@ -1,0 +1,19 @@
+# Common
+node_modules/
+.DS_Store
+Thumbs.db
+*.log
+
+# Project specific
+submissions/**/app/.env
+submissions/**/app/.expo/
+submissions/**/app/expo_output.txt
+submissions/**/app/dist/
+submissions/**/app/web-build/
+submissions/**/app/node_modules/
+submissions/**/app/android/build/
+submissions/**/app/ios/build/
+submissions/**/app/android/.gradle/
+submissions/**/app/android/app/build/
+*.apk
+!submissions/**/app-release.apk
