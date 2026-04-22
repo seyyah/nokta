@@ -26,7 +26,9 @@
       },
       "package": "com.specarchitect.app",
       "permissions": [
-        "RECORD_AUDIO"
+        "RECORD_AUDIO",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
       ]
     },
     "web": {
@@ -39,6 +41,11 @@
           "microphonePermission": "Spec Architect needs microphone access to let you describe your ideas using voice input."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "6e0909e0-79f0-4ab5-991e-380ab6f854b1"
+      }
+    }
   }
 }

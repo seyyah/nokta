@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
     View, Text, TouchableOpacity, StyleSheet,
-    SafeAreaView, ScrollView, Animated, Share, Alert, Platform,
+    ScrollView, Animated, Share, Alert, Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Markdown from 'react-native-markdown-display';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, RADIUS, SHADOWS } from '../theme';

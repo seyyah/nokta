@@ -7,6 +7,9 @@ export const CONFIG = {
     GEMINI_MODEL: 'gemini-2.0-flash',
     OPENAI_BASE_URL: 'https://api.openai.com/v1',
     OPENAI_MODEL: 'gpt-4o-mini',
+    GROQ_API_KEY: process.env.EXPO_PUBLIC_GROQ_API_KEY || '',
+    GROQ_BASE_URL: 'https://api.groq.com/openai/v1',
+    GROQ_MODEL: 'llama-3.3-70b-versatile',
     APP_NAME: 'Spec Architect',
     MAX_QUESTIONS: 5,
 };

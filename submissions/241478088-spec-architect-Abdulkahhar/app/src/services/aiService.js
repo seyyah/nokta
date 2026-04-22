@@ -54,15 +54,20 @@ async function callGemini(systemPrompt, userMessage) {
     return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
 }
 
-async function callOpenAI(systemPrompt, userMessage) {
-    const response = await fetch(`${CONFIG.OPENAI_BASE_URL}/chat/completions`, {
+async function callOpenAICompatible(systemPrompt, userMessage, provider) {
+    const isGroq = provider === 'groq';
+    const baseUrl = isGroq ? CONFIG.GROQ_BASE_URL : CONFIG.OPENAI_BASE_URL;
+    const apiKey = isGroq ? CONFIG.GROQ_API_KEY : CONFIG.OPENAI_API_KEY;
+    const model = isGroq ? CONFIG.GROQ_MODEL : CONFIG.OPENAI_MODEL;
+
+    const response = await fetch(`${baseUrl}/chat/completions`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${CONFIG.OPENAI_API_KEY}`,
+            Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-            model: CONFIG.OPENAI_MODEL,
+            model: model,
             messages: [
                 { role: 'system', content: systemPrompt },
                 { role: 'user', content: userMessage },
@@ -73,20 +78,24 @@ async function callOpenAI(systemPrompt, userMessage) {
     });
     if (!response.ok) {
         const err = await response.json().catch(() => ({}));
-        throw new Error(err?.error?.message || `OpenAI API hatası: ${response.status}`);
+        throw new Error(err?.error?.message || `${isGroq ? 'Groq' : 'OpenAI'} API hatası: ${response.status}`);
     }
     const data = await response.json();
     return data.choices?.[0]?.message?.content || '';
 }
 
 function callAI(systemPrompt, userMessage) {
-    if (CONFIG.AI_PROVIDER === 'openai') return callOpenAI(systemPrompt, userMessage);
+    if (CONFIG.AI_PROVIDER === 'openai' || CONFIG.AI_PROVIDER === 'groq') {
+        return callOpenAICompatible(systemPrompt, userMessage, CONFIG.AI_PROVIDER);
+    }
     return callGemini(systemPrompt, userMessage);
 }
 
 function isDemoMode() {
-    const key = CONFIG.AI_PROVIDER === 'openai' ? CONFIG.OPENAI_API_KEY : CONFIG.GEMINI_API_KEY;
-    return !key || key.startsWith('your_');
+    let key = CONFIG.GEMINI_API_KEY;
+    if (CONFIG.AI_PROVIDER === 'openai') key = CONFIG.OPENAI_API_KEY;
+    if (CONFIG.AI_PROVIDER === 'groq') key = CONFIG.GROQ_API_KEY;
+    return !key || key.startsWith('your_') || key.length < 10;
 }
 
 export async function generateQuestions(idea) {

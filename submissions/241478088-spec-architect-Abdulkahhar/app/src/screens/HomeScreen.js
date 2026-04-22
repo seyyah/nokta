@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
     View, Text, TextInput, TouchableOpacity, StyleSheet,
-    SafeAreaView, ScrollView, Animated, Alert,
+    ScrollView, Animated, Alert,
     KeyboardAvoidingView, Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, RADIUS, SHADOWS } from '../theme';
 import { generateQuestions } from '../services/aiService';

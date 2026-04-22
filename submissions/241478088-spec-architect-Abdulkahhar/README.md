@@ -18,13 +18,31 @@ Uygulama ham fikri metin veya ses yoluyla alır, Problem/Kullanıcı/Kapsam/Kıs
 
 `app/` klasöründe `npx expo start` çalıştır → terminaldeki QR kodu Expo Go ile tara.
 
-**Public Link:** _(publish sonrası eklenecek)_
+**QR Kod:**
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+█ ▄▄▄▄▄ █ ██▀▀▀ ▄▄█▄▀▀█ ▄▄▄▄▄ █
+█ █   █ █  ▀█ ▀  ▀▄  ▄█ █   █ █
+█ █▄▄▄█ █▀  █▄▄▀▄▄█▄▀██ █▄▄▄█ █
+█▄▄▄▄▄▄▄█▄█ ▀▄█▄█▄▀▄█▄█▄▄▄▄▄▄▄█
+█▄▄▀█▄ ▄▀▀█▄█▄▀▀ █▄▄█▄▀▀ ▀ ▄  █
+█▀██ ▄█▄▄▄ ▄█▀█    ▀█▄▄▀███▄  █
+█  ▀█▄▀▄▄ ▀▀▄▀▀▀▀   ▄▄█▀▀▀▄█▀▀█
+█▀▄ █▀█▄▀▀ ▀ ▄▄▀    ███▀█▀▄▄▀ █
+█▀█▄▀ ▀▄ ▀█▀█▄▀█   ▄█▄▀▀█▀▄█▀ █
+███ ▀▄▄▄█ ▄ █▀█▄ █ █▀▄▄  █ ▄█ █
+█▄▄████▄█ █ ▄▀▄ ▀▀▄▄  ▄▄▄  █▄▀█
+█ ▄▄▄▄▄ █▀█  ▄ ▄▄▄ █  █▄█ █▄█ █
+█ █   █ █▄█▄█▄ ▀ █ ▄ ▄ ▄ ▄▄██ █
+█ █▄▄▄█ █▀▄▄█▀█▀ ▀ █▄ █▀ █ █  █
+█▄▄▄▄▄▄▄█▄▄▄▄█▄▄█▄▄▄█▄▄█▄█▄█▄██
+
+**Public Link:** exp://j-l0-ey-1unchained1-8081.exp.direct
 
 ---
 
 ## Demo Video
 
-**Link:** _(60 sn video kaydedilecek)_
+**Link:** [YouTube Demo Video](https://youtu.be/Qb20Qi34pT4)
 
 ---
 
@@ -33,7 +51,7 @@ Uygulama ham fikri metin veya ses yoluyla alır, Problem/Kullanıcı/Kapsam/Kıs
 | Tarih | Karar | Gerekçe |
 |-------|-------|---------|
 | 2026-04-20 | Track A seçildi | Nokta tezinin özü: fikir → spec dönüşümü |
-| 2026-04-20 | Gemini 2.0 Flash | Hızlı, ücretsiz kota, prototip için ideal |
+| 2026-04-22 | Groq API'ye Geçildi | Gemini API kota limiti sorunu nedeniyle, LLaMA-3 destekli yüksek hızlı ve ücretsiz Groq API entegre edildi. Ses işleme için Whisper-Large kullanıldı. |
 | 2026-04-20 | Demo modu eklendi | API key olmadan tüm akış test edilebilir |
 | 2026-04-20 | react-native-markdown-display | Tablo desteği olan en güvenilir MD renderer |
 | 2026-04-20 | Stack navigator | Doğrusal akış (Fikir→Soru→Spec) stack'e uygun |
@@ -74,3 +92,5 @@ npx expo start
 ```
 
 > API anahtarı olmadan uygulama **Demo Modunda** çalışır.
+
+
