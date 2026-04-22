@@ -6,7 +6,7 @@ Bu proje, Nokta projesi kapsamında Track B (Slop Detector / Due Diligence) gör
 **Track B — Slop Detector / Due Diligence**: Pitch paragrafı yapıştırılır, AI pazar iddialarını test eder, "slop score" + gerekçe üretir.
 
 ## Proje Bağlantıları
-- **Expo QR Kodu / Linki:** `exp://192.168.1.37:8081`
+- **Expo QR Kodu / Linki:** `https://expo.dev/accounts/yurthann/projects/app/builds/0024560b-5df8-4d10-a889-6c3c63fc9a28`
 - **Demo Video (60 sn):** [https://youtube.com/shorts/LAuCFmUByM8](https://youtube.com/shorts/LAuCFmUByM8)
 
 ## Decision Log (Karar Günlüğü)
