@@ -74,7 +74,7 @@ ResultScreen
 ## AI Tool Log
 
 - **Antigravity (Google DeepMind)** — kod scaffold, bileşen mimarisi, Gemini prompt tasarımı
-- Model: Claude Sonnet 4.6 (Thinking)
+- Model: Gemini 3 Flash
 
 ---
 
@@ -87,7 +87,10 @@ cd app
 eas build -p android --profile preview
 ```
 
-Build bittikten sonra inen APK'yı `submissions/huseyinbaranisik-slop-dedektoru/app-release.apk` olarak kaydedin.
+Build bittikten sonra inen APK'yı `submissions/huseyinbaranisik-slop-dedektoru/app-release.zip` olarak (GitHub limitleri nedeniyle ZIP'lenmiş şekilde) kaydedin.
+
+> [!NOTE]
+> GitHub dosya boyutu limitleri nedeniyle APK dosyası `app-release.zip` içerisindedir. Test için lütfen ZIP'den çıkarın.
 
 
 ---
