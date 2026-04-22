@@ -15,11 +15,11 @@ Bu uygulama, kullanıcıdan alınan ham notları veya mesaj dökümlerini analiz
 
 ## Expo QR Linki
 
-- BURAYA EXPO LINKİNİ KOY
+- https://expo.dev/accounts/myank/projects/app/builds/a46d24d7-0914-4933-aedd-8ece449497e2
 
 ## 60 Saniyelik Demo Video
 
-- BURAYA VIDEO LINKİNİ KOY
+- https://youtube.com/shorts/ZMdY9RW8Ewg
 
 ## Decision Log
 
