@@ -84,3 +84,29 @@ Nokta, sadece "fikir üretenler" için değil; değerlendiriciler ve **melek yat
 ## 7. Özet (Summary)
 Nokta; saf fikri (ideation) yalnızlık zincirlerinden çıkaran, test eden, fonlayan (yatırım alan) ve onu satılabilir bir varlığa dönüştüren adaptif kuluçka ortamıdır. 
 Sadece kullanıcı hayallerini içeri aktarmakla kalmaz; otonom internet ajanlarıyla Reddit trendlerini tarar, saniyeler içinde "due-diligence" (yatırım değerlendirme pazar araştırması) sunarak riskleri eler. Taslak, profesyonel danışmanlara NDA şemsiyesi ile açılarak zenginleştirilir. Günün sonunda bir 'fikir kırıntısı' (nokta); solo girişimcinin elinde piyasayı sallayacak bir ürüne, şirketlerin Enterprise-wiki platformunda hatasız bir pazar spekine, veya zeki bir melek yatırımcının "slop projelerden kurtulup anında fonlamayı seçtiği" analitik bir başyapıta dönüşür.
+
+---
+
+## Track B: Slop Detector / Due Diligence
+
+### Amaç
+Pitch paragrafı yapıştırılır, AI pazar iddialarını test eder, "slop score" + gerekçe üretir. Bu, Nokta'nın due diligence içgörüsüne dayanır.
+
+### Nasıl Çalışır
+1. Kullanıcı pitch paragrafını girer (örneğin: "Bu app, AI ile yemek tarifleri önerir ve aylık 1M kullanıcı hedefler.").
+2. AI, pitch'i analiz eder:
+   - Pazar iddialarını kontrol eder (gerçekçi mi? Veri var mı?).
+   - Slop unsurları arar (abartılı ifadeler, eksik detaylar, halüsinasyon riski).
+   - Score hesaplar: 0-100 arası, düşük slop riski yüksek skor.
+3. Sonuç: Score ve detaylı gerekçe döner.
+
+### AI Prompt Örneği
+"Siz Nokta'nın Slop Detector ajanı olarak, aşağıdaki pitch paragrafını analiz edin. Pazar iddialarını test edin: Gerçekçi mi? Veri destekli mi? Slop riski nedir? 0-100 arası slop score verin ve gerekçenizi açıklayın.
+
+Pitch: [kullanıcı girişi]"
+
+### Örnek Çıktı
+- Score: 65
+- Gerekçe: "Pazar büyüklüğü iddiası gerçekçi, ancak kullanıcı edinme stratejisi eksik. Slop riski orta, çünkü somut metrikler yok."
+
+Bu track, yatırımcıların pitch'leri hızlıca filtrelemesine yardımcı olur, Nokta'nın due diligence tezini hayata geçirir.

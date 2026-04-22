@@ -1,0 +1,11 @@
+# env
+.env
+.env.local
+
+# dependencies
+node_modules/
+
+# expo
+.expo/
+dist/
+web-build/
