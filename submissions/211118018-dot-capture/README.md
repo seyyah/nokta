@@ -11,7 +11,8 @@
 Expo calisma oturumundan alinan link:
 
 - **Expo Go linki**: `exp://10.229.111.249:8081`
-- **QR**: Expo CLI / Expo Go ekraninda otomatik uretilir (yukaridaki link ile ayni oturum)
+- **QR kodu**: `npx expo start` calisirken terminalde uretilen QR kodu ile Expo Go uzerinden acilir (QR, link ile ayni Metro oturumuna baglanir).
+- **Not (LAN)**: `exp://10.x...` adresi bilgisayarinizin yerel agina baglidir; ag degisirse yeniden uretmeniz gerekebilir. Okul aglarinda sorun olursa `npx expo start --tunnel` ile daha stabil bir oturum alin.
 
 Calistirma:
 
