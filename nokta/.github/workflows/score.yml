@@ -1,0 +1,44 @@
+name: Score Submissions
+
+on:
+  workflow_dispatch:  # manuel tetikleme — sen lab bitince çalıştırırsın
+  push:
+    branches: [main]
+    paths:
+      - 'submissions/**'
+
+jobs:
+  score:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: pip install scikit-learn numpy
+
+      - name: Run similarity check
+        run: python .github/scripts/similarity_check.py
+
+      - name: Run scoring
+        run: python .github/scripts/score.py
+
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: scoring-results
+          path: scoring/
+
+      - name: Commit scoring results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add scoring/
+          git diff --cached --quiet || git commit -m "Auto: update scoring [skip ci]"
+          git push
+        continue-on-error: true
