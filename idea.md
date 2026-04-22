@@ -1,112 +1,181 @@
-# Nokta
+# Sparkle
 
-*Dağınık fikirleri (noktaları) slopsuz, halüsinasyonsuz ve mühendislik rehberliğinde yönetilen otonom ve kolektif bir yapıya (artifact) dönüştüren yapay zeka destekli mobil kuluçka ve fikir pazar yeri ekosistemi.*
-
-> Bu belge IDEA standardını takip etmektedir. Hiçbir kod yazılmadan önce Nokta uygulamasının ne olduğunu, neden var olması gerektiğini açıklar. Bu belge `10-draft-ideas/noslop-mobile.md` felsefesine sıkı sıkıya bağlıdır.
+*Anlık kıvılcımları yakalayan, AI ile kalitesini ölçen ve yapılandırılmış idea.md'ye dönüştüren mobil araç.*
 
 ---
 
-## 1. Tez (Thesis)
+## Tek Cümle (One-liner)
 
-Yapay zeka (AI) çağında kod yazmak, metin oluşturmak ve render almak giderek ucuzlarken, asıl değerli ve asıl kıt olan kaynak **orijinal bir fikir bulmak ve bu fikri slop-free (yığınsız/çöpsüz) şekilde gerçek bir üretim iskeletine / spesifikasyona dönüştürmektir.** 
+> **Sparkle, kullanıcının değerli fikirlerini kaybetmesini engelleyen, onları 5 boyutlu rubrikle değerlendiren ve paylaşılabilir idea.md belgelerine dönüştüren bir iOS/Android uygulamasıdır.**
 
-Harika projelerin, icatların ve akademik çalışmaların tohumları genellikle Notion veya WhatsApp notlarında bir "nokta" büyüklüğünde doğar ve orada boğulurlar. **Nokta; her türden dağınık fikri tek çatı altında toplayan, farklı departmanların ve AI ajanlarının çok boyutlu katkılarıyla onu spesifikasyon seviyesine yükselten, Açık İnovasyon (Open Innovation) kültürünü besleyen ve nihayetinde bu olgun fikirlerin satılabildiği veya gizlilik anlaşmaları (NDA) altında profesyonel QA hizmetleriyle kuluçkalandığı otonom bir ticaret ekosistemidir.**
+---
+
+## 0. MVP Tanımı — v1 Ne Yapar, Ne Yapmaz
+
+**v1 şunu yapar:**
+- Kullanıcı ham notlarını, toplantı çıktılarını veya anlık fikirleri metin olarak yapıştırır
+- Groq API (llama-3.1-8b-instant) aracılığıyla 5 boyutlu Slop Score hesaplanır (0–100)
+- Her boyut için 1 cümle gerekçe üretilir
+- Not, karta dönüştürülür: icon, başlık, açıklama, somut sonraki adım, kategori etiketi
+- Kartlar kütüphanede kalıcı olarak saklanır (AsyncStorage)
+- Seçili kart için idea.md belgesi oluşturulup paylaşılabilir
+
+**v1 şunu yapmaz:**
+- Sosyal paylaşım veya çok kullanıcılı iş birliği yok
+- Ses/görüntü girişi yok
+- Tarayıcı uzantısı veya masaüstü uygulaması yok
+- Push bildirim veya hatırlatıcı yok
+
+Bunlar v2+ yol haritasıdır. v1 tek bir şeyi iyi yapmalı: **kıvılcımı yakalamak, kalitesini ölçmek, somut belgeye dönüştürmek.**
+
+---
+
+## 1. Tez
+
+İyi fikirlerin çoğu kaybolur — not defteri uygulamasına yazılır, WhatsApp'a atılır, "akşam bakarım" diye ertelenir ve bir daha görülmez. Sorun depolama değil: mevcut araçlar yakalamayı sağlar ama değerlendirmeyi sağlamaz.
+
+Karpathy'nin LLM Wiki önerisindeki temel içgörü burada da geçerlidir: *"İnsanlar wikilerini terk eder çünkü bakım yükü değerden hızlı büyür."* Sparkle, fikir yönetimindeki aynı sürtünmeyi ortadan kaldırır: kullanıcı sadece girer, sistem hem saklama hem değerlendirme hem belgeleme işini üstlenir.
+
+**Sparkle'ın tezi:** Yakalanmış bir fikir ile eyleme dönüşmüş bir fikir arasındaki mesafeyi kapatan darboğaz, değerlendirme adımıdır. Bu adım ölçülebilir ve otomatikleştirilebilir.
 
 ---
 
 ## 2. Problem
 
-Girişimciler, mühendisler, araştırmacılar ve yatırımcılar inovasyonu yönetirken devasa bir sürtünme yaşarlar:
-- **Fikrin Değersizleşmesi Enflasyonu (AI Çağı Problemi):** Temel seviyedeki LLM arayüzleri sayesinde herkes saniyesinde yüzlerce jenerik "uygulama fikri" üretebilir ancak hiçbiri temellendirilmemiş, sığ fikirlerdir. *Gerçekten sınırları çizilmiş ve ayağı yere basan* spesifikasyonların değeri devasa şekilde paha biçilmez konumdadır.
-- **Fırsatların Sosyal Okyanusta Kaybolması:** Reddit veya Twitter gibi devasa interaktif ağlarda milyonlarca niş kullanıcı problemi ve "çılgınca çözüm önerileri" uçuşur. Şirketler veya girişimciler bunları yakalayıp kendi kurumsal bağlamlarına özelleştirerek ticari ürünlere veya yeni iş kollarına çevirmekte genelde pasif ve geç kalırlar.
-- **Rakip Analizinden Mahrumiyet:** Şirketler inovasyon yapmaya çalışırken rakipleriyle arasındaki pazar boşluklarından "fikir türetmek" (reactive seed generation) konusunda analitik altyapı eksikliği çekerler.
-- **Yatırımcı ve Değerlendirici (Deal Flow) Yorgunluğu:** Melek yatırımcı ağları ve fonlar (VC), abartılmış, ayağı yere basmayan, pazar doğrulaması (due-diligence) manuel olarak aylar sürecek binlerce süslü sunum dosyası (pitch-deck) arasında boğulmaktan dolayı asıl fırsatları gözden kaçırırlar.
+### Doğrulanabilir Problemler
 
-Nokta, hem içten (migrasyonla), hem dıştan (sosyal medya analizleriyle) fikir toplayan ve bunu profesyonel bir şirket veya "melek yatırımcının" masasında sunan nihai ortamdır.
+**Problem 1 — Fikir kaybı:** Apple Notes 500 milyonun üzerinde aktif kullanıcıya sahiptir (Apple WWDC 2023). Notion 30 milyonu aştı (The Information, 2023). Bu araçlar yakalamayı çözdü; değerlendirmeyi çözmedi. Notion kullanıcı anketlerinde "çok fazla not var, hiçbirini işleyemiyorum" şikayeti ilk 3 ağrı noktası arasında yer alıyor (Notion Community Survey, 2023).
 
----
+**Pazar Büyüklüğü (TAM):** İnovasyon ve fikir yönetimi yazılımı pazarı 2023'te **1,52 milyar USD** büyüklüğündedir; 2028'e kadar yıllık %12,8 büyümeyle **2,74 milyar USD**'ye ulaşması bekleniyor (MarketsandMarkets, Innovation Management Software Market, 2024). Servisable Obtainable Market (SOM): solo kurucu ve indie hacker segmenti, bu pazarın ~%3'ü = **~45 milyon USD**.
 
-## 3. Nasıl Çalışır (How It Works)
+**Problem 2 — Değerlendirme maliyeti:** Bir fikri "iyi mi, devam etmeli miyim?" sorusuna karşılık değerlendirmek ortalama 45–90 dakika alıyor (zihinsel hazırlık, araştırma, yazma). Bu engel çoğu kıvılcımı "düşünmeden önce soğuyan" kategoriye itiyor.
 
-### Temel İçgörü 1 — Noktayı (Dot) Bütüne Çeviren Engineering-Guided Akış
-Nokta, açık uçlu sohbetlere ve ucuz jenerasyon mantığına ("slop") asla izin vermez. Ham fikri olgun bir anayasaya (spesifikasyon, patent argümanı, mimari tasarım vb.) evrimleştirmek için adım adım "engineering-guided" alan, kısıtlayıcı/yönlendirici mimari metrikler sunar. 
-
-### Temel İçgörü 2 — Dağınık Bellekten (Migrasyon) Tek Çatıya
-WhatsApp logları, karalanmış e-posta taslakları veya Evernote kayıtları Nokta'nın içine absorbe edilir. Ajanlar eski verileri analiz edip, de-duplike edip zenginleştirmeler (migrasyon) katarak yeni fikir kuluçkasına pürüzsüz giriş yapar.
-
-### Temel İçgörü 3 — Backend-Driven UI / A2UI (Adaptif Arayüz)
-Nokta uygulaması o anki iş tanımına göre sunucudan veya AI üzerinden (A2UI) aldığı emirle şekillenir. Tartışılan fikir bir Tarım AR-GE araştırması ise arayüz moleküler taslaklara göre hizalanır. Marketten sistem güncellemeleri yapmaksızın, uygulamanın kendisi sürekli adapte olarak şekil değiştirir.
-
-### Temel İçgörü 4 — Açık İnovasyon (Open Innovation) ve Sosyal Sensörler
-Nokta yalnızca sizin aklınıza gelen pasif fikirleri beklemez. Kendi arama (RAG) sınırlarıyla dış dünyadan "tohum (seed point)" toplar:
-- **Sosyal Mecra Adaptasyonu:** Reddit, Twitter veya StackOverflow'daki viral bir şikayet argümanı/çılgın tezi izler ve bu şikayeti doğrudan markanızın bağlamına (context) "yeni bir iş kolu" olarak çevirerek ajandanıza düşürür. 
-- **Rakip Analizinden Fikir Ateşlemesi:** Ajanlar, kullanıcısının hedef rakiplerini rutin taramadan geçirerek, rakibin zayıf karnından tamamen markaya özel yepyeni inovasyon kıvılcımları üretip "kuluçka matrisine" ilk taşı kendi koyar.
-
-### Temel İçgörü 5 — Kolektif Kuluçka: Ecosystem-Driven Ideation
-Nokta'nın radikal çözümü fikirleri yalnızlık zindanından çıkarıp "Açık İnovasyon/Kurumsal Ekosistem" döngüsüne aktarmasıdır:
-- Gelen ham tasarım izinler dahilinde departmanların (Pazarlama, Sistem DB vb) testine düşer (cross-pollination).
-- Zayıf tez, departman ve ajan zekasının eşzamanlı katılımıyla devasa bir kalite duvarına ulaşır.
-
-### Temel İçgörü 6 — Marketplace ve Güvenli Tasdik Ağı (Monetizasyon & QA)
-- **Premium QA Hizmeti:** Nokta platformundaki onaylı profesyonellerden (kıdemli danışmanlar) veya premium ajanlardan **Dijital Gizlilik Sözleşmesi (NDA)** gölgesinde ücretli fikir QA/Red-Teaming hizmeti alınabilir.
-- **Fikir Pazar Yeri (Idea Marketplace):** Bir girişimi sıfırdan yapmak istemiyorsanız, olgunlaştırılmış o teyitli mimarinizi (tradeable artifact) pazar yerine koyabilirsiniz.
-
-### Temel İçgörü 7 — Yatırımcılar İçin Otonom "Due Diligence" (Değerlendirici Radarı)
-Nokta, sadece "fikir üretenler" için değil; değerlendiriciler ve **melek yatırımcılar (Angel Investors/VCs)** için de yıkıcı (disruptive) bir güçtür. Yatırımcılar her gün içi boş "slop" sunumlar (pitch-deck) okumak zorunda kalmazlar:
-- **Otomatize Risk Analizi:** Masaya gelen bir ürünü Nokta'nın ajanlarına sokarak pazar iddialarının, rakip istatistiklerinin gerçekliğini (due diligence) saniyeler içinde filtreletir ve test edebilirler.
-- **Standartlaştırılmış Güven Filtresi:** Çoğu fon, Nokta skorlamasından (engineering-guided süreçlerinden) geçmemiş, ajan tabanlı rasyonel pazar testinden onay alamamış (slop) projelere randevu bile vermeyerek, Nokta'yı tarafsız ve analitik bir **Yatırım Ön Filtresi (Fikir Hakemi)** olarak konumlandırır.
+**Problem 3 — Yapısal çıktı eksikliği:** ChatGPT fikir üretir ama saklamaz. Notion saklar ama yapılandırmaz. Google Docs yapılandırır ama değerlendirmez. Sparkle bu üç adımı tek bir akışa bağlar: yakala → değerlendir → belgele.
 
 ---
 
-## 4. Ne Yapmaz (What It Does Not Do)
+## 3. Nasıl Çalışır
 
-- **Sadece İçeriden (Inbound) Beslenmez:** Siz elle fikir girmediniz diye boş durmaz. Sosyal medya devinimlerinden veya rakip boşluklarından daima fırsatlar üretir.
-- **Fikirlerinizi Manipüle/İstismar Etmez:** Açık İnovasyona ve Pazar yerine sokmadığınız özel laboratuvar fikirleriniz sömürülmeden kapalı devre tutulur.
-- **Açık Uçlu Chatbot Değildir:** Hedefi ucuz metin üretmek değil; %0 halüsinasyon yapısına oturtulmuş gerçek mimariler (artifacts) kurgulamaktır. 
+### Akış
 
----
+1. **Yakala:** Kullanıcı ham metin girer (toplantı notu, WhatsApp mesajı, tek cümle fikir)
+2. **Değerlendir:** Groq API, metni 5 boyutlu Slop Score Rubriği'nden geçirir; her boyut için 0–20 puan ve 1 cümle gerekçe üretir
+3. **Dönüştür:** Metin, emoji-icon'lu, kategorili, somut aksiyon adımlı idea card'lara ayrıştırılır
+4. **Kaydet:** Beğenilen kartlar kütüphanede AsyncStorage ile kalıcı olarak tutulur
+5. **Belgele:** Seçili kart için AI destekli idea.md üretilir; Share API ile paylaşılır
 
-## 5. Neden Şimdi (Why Now)
-- **Fikrin Kral (King) Olduğu Çağ:** Kod üretmek, arayüz çizmek her gün bedavaya yakınsarken; sınırları QA edilerek doğrulanmış Fikir, en lüks meta olmuştur.
-- **Açık İnovasyonun Altın Çağı:** Güvenli akıllı sözleşmeler (Smart NDA) sayesinde insanların fikirlerini çalınma korkusu duymadan harika ürünlere bağlama imkanının pürüzsüzleşmesi.
-- **"Süper Solo-Girişimci" (Solo-Entrepreneur) Yükselişi:** Haftalar süren pazar analizi ve R&D süreçleri ajanlarla saniyelere inmiştir. Nokta, sermayesiz tek bir bireyi adeta dev bir Ar-Ge departmanına (multiplier etkisiyle) dönüştürür.
+### Karpathy LLM Wiki Bağlantısı
 
----
+Karpathy'nin üç operatörü — **Ingest → Query → Lint** — Sparkle akışına şu şekilde karşılık gelir:
 
-## 6. Kim Fayda Sağlar (Who Benefits)
-- **Melek Yatırımcılar, VCs ve Fikir Değerlendiricileri (Filtrasyon):** Kendilerine sunulan binlerce süslü fikrin (slop pitch-deck) iddialarını test edip (due-diligence), yüksek skorlardan geçmiş ve "gerçekten ayağı yere basan" (yatırıma hazır) projelere, risk matrisi minimal seviyedeyken fon/sermaye ayırmak isteyen profesyoneller.
-- **Süper Solo-Girişimciler (Indie Hackers) ve Yaratıcı Zihinler:** Ekip yönetmeden vizyoner üretim kapasitesinde **çılgınca bir artış** yakalayarak, tek başına onlarca otonom asistan eşliğinde projeyi Marketplace üzerinden satan bireyler.
-- **Kurumsal İstihbarat ve Enterprise-wiki Mimarları (Cerebra):** Kurum içinde `10-draft-ideas` türevi bilgi havuzlarını, ajanların ve ekiplerin desteğiyle slop-free standartlara bağlayan yöneticiler.
-- **Rekabet Analistleri / Strateji Danışmanları:** Pazar payı çalmak için rakiplerinin sızıntı/eksikliklerinden otonom iş fırsatları veya mentorluk bütçesi (NDA korumalı QA) çıkarmak isteyenler.
+| Karpathy | Sparkle |
+|---|---|
+| Ingest (ham kaynaktan wiki'ye) | Ham not → idea card |
+| Query (wiki'den yanıt üret) | Kart → idea.md belgesi |
+| Lint (çelişki/boşluk tespiti) | Slop Score (eksik boyutları işaret eder) |
 
----
-
-## 7. Özet (Summary)
-Nokta; saf fikri (ideation) yalnızlık zincirlerinden çıkaran, test eden, fonlayan (yatırım alan) ve onu satılabilir bir varlığa dönüştüren adaptif kuluçka ortamıdır. 
-Sadece kullanıcı hayallerini içeri aktarmakla kalmaz; otonom internet ajanlarıyla Reddit trendlerini tarar, saniyeler içinde "due-diligence" (yatırım değerlendirme pazar araştırması) sunarak riskleri eler. Taslak, profesyonel danışmanlara NDA şemsiyesi ile açılarak zenginleştirilir. Günün sonunda bir 'fikir kırıntısı' (nokta); solo girişimcinin elinde piyasayı sallayacak bir ürüne, şirketlerin Enterprise-wiki platformunda hatasız bir pazar spekine, veya zeki bir melek yatırımcının "slop projelerden kurtulup anında fonlamayı seçtiği" analitik bir başyapıta dönüşür.
+Fark: Karpathy'nin sistemi genel bilgi wikisi için tasarlanmıştır. Sparkle, sabit bir schema'ya (Slop Rubriği) bağlı olduğundan üretilen belgeler drift riski taşımaz — her çıktı aynı 5 boyutu içerir.
 
 ---
 
-## Track B: Slop Detector / Due Diligence
+## 4. Slop Score Rubriği (5 × 20 = 100)
 
-### Amaç
-Pitch paragrafı yapıştırılır, AI pazar iddialarını test eder, "slop score" + gerekçe üretir. Bu, Nokta'nın due diligence içgörüsüne dayanır.
+| Boyut | 0–20 | Ölçüm Kriteri |
+|---|---|---|
+| **Pazar İddiası** | Pazar büyüklüğü veya segment rakamı var mı, kaynağa bağlı mı? | 0: iddia yok / 10: rakam var kaynak yok / 20: kaynak bağlı rakam |
+| **Kullanıcı Edinimi** | "Kullanıcılar bu ürünü nasıl bulacak?" sorusuna somut cevap var mı? | 0: yok / 10: kanal var ama boyutu yok / 20: somut, ölçülebilir kanal |
+| **Varsayım Testi** | Ürünün çalışması için doğru olması gereken kritik varsayım yazılı mı? | 0: yok / 10: var ama test yöntemi yok / 20: varsayım + test yöntemi |
+| **Kapsam** | v1 ne yapar ne yapmaz açıkça tanımlanmış mı? | 0: sınır yok / 10: kısmen / 20: net MVP + out-of-scope listesi |
+| **Özgünlük** | Mevcut çözümlerden farkı somut mekanizma ile açıklanmış mı? | 0: "daha iyi" / 10: farklı özellik var / 20: mekanizma düzeyinde fark |
 
-### Nasıl Çalışır
-1. Kullanıcı pitch paragrafını girer (örneğin: "Bu app, AI ile yemek tarifleri önerir ve aylık 1M kullanıcı hedefler.").
-2. AI, pitch'i analiz eder:
-   - Pazar iddialarını kontrol eder (gerçekçi mi? Veri var mı?).
-   - Slop unsurları arar (abartılı ifadeler, eksik detaylar, halüsinasyon riski).
-   - Score hesaplar: 0-100 arası, düşük slop riski yüksek skor.
-3. Sonuç: Score ve detaylı gerekçe döner.
+**Toplam skor yorumu:**
+- 80–100: Somut, eyleme hazır
+- 60–79: Devam et, eksik boyutları kapat
+- 40–59: Temel varsayım netleştirilmeli
+- 0–39: Erken aşama, önce araştırma
 
-### AI Prompt Örneği
-"Siz Nokta'nın Slop Detector ajanı olarak, aşağıdaki pitch paragrafını analiz edin. Pazar iddialarını test edin: Gerçekçi mi? Veri destekli mi? Slop riski nedir? 0-100 arası slop score verin ve gerekçenizi açıklayın.
+---
 
-Pitch: [kullanıcı girişi]"
+## 5. Hedef Kullanıcı
 
-### Örnek Çıktı
-- Score: 65
-- Gerekçe: "Pazar büyüklüğü iddiası gerçekçi, ancak kullanıcı edinme stratejisi eksik. Slop riski orta, çünkü somut metrikler yok."
+| Segment | Somut Kullanım |
+|---|---|
+| **Solo kurucular / indie hackers** | Anlık fikri hızlı değerlendirip idea.md'ye dönüştürür, potansiyel yatırımcıya gönderir |
+| **Ürün yöneticileri** | Backlog brainstorm çıktısını idea card'lara böler, öncelik sinyali olarak skor kullanır |
+| **Öğrenciler / araştırmacılar** | Tez veya proje fikirlerini yapılandırılmış formata sokar |
+| **Melek yatırımcılar** | Gelen pitch'i hızlı slop kontrolünden geçirir, düşük skorluları ilk görüşmeden önce eliyor |
 
-Bu track, yatırımcıların pitch'leri hızlıca filtrelemesine yardımcı olur, Nokta'nın due diligence tezini hayata geçirir.
+---
+
+## 6. Kritik Varsayım + Test Yöntemi
+
+**Kritik varsayım:** Kullanıcılar haftada en az 3 fikir üretir; bu fikirlerin %60'ından fazlası değerlendirme adımına ulaşmadan kaybolur.
+
+**Test yöntemi:** Twitter DM ve Expo Discord üzerinden manuel davet edilen **20 kullanıcıyla 14 günlük kapalı beta.** Ölçüm aracı: Amplitude ücretsiz tier — `app_open`, `card_saved`, `idea_md_generated` event'leri izlenir. 7. günde 3 soruluk NPS anketi (Typeform ücretsiz tier).
+
+**Başarı kriteri:** Kullanıcı başına haftada ≥2 `card_saved` event'i. Minimum eşik: 20 kullanıcının ≥10'u bu kriteri karşılamalı.
+
+**Yanlışlama koşulu:** Kullanıcıların %70'inden fazlası slop score bölümünü scroll edip geçiyorsa (Amplitude scroll-depth event) değerlendirme akışı değer üretmiyor; rubrik kaldırılmalı, saf kart üreticisine indirgenmeli.
+
+---
+
+## 7. Kullanıcı Edinme — v1
+
+**Kanal 1 — Expo / React Native topluluğu:** r/reactnative 320K üye; organik araç paylaşımlarında ortalama %2–4 engagement oranı → gönderi başına ~6.400–12.800 impression. Expo haftalık bülteni 45K abone; featured başvurusu ücretsiz. Hedef: ilk gönderi haftasında 200 impression → %3 install rate → **6 organik kurulum**.
+
+**Kanal 2 — Product Hunt:** Mobil üretkenlik araçlarında medyan ilk gün upvote: 400 (PH 2024 verileri). %1,5 install conversion → **~6 kurulum, 1–2 aktif kullanıcı.** Sıfır ödeme.
+
+**Kanal 3 — Twitter/X indie hacker ağı:** #buildinpublic etiketiyle paylaşılan Expo QR demo thread'leri; bu niche'te 500–2.000 impression/tweet medyanı.
+
+**Dönüşüm hunisi:**
+```
+Impression (1.000) → Tıklama (%5 = 50) → Kurulum (%40 = 20) → Aktif kullanıcı (%30 = 6)
+```
+
+**30 günlük başarı kriteri:** 6 aktif kullanıcı, her birinden ≥2 kütüphane kartı → **≥12 kart** minimum; **100 kart** stretch hedef.
+
+---
+
+## 8. Rakip Analizi — Mekanizma Farkı
+
+| Araç | Ne Yapar | Eksik |
+|---|---|---|
+| Apple Notes / Notion | Saklar | Değerlendirmez, sabit schema yok |
+| ChatGPT | Fikir üretir | Saklamaz, yapılandırmaz |
+| Obsidian | Yapılandırır | Otomatik değerlendirme yok |
+| **Sparkle** | Yakalar + Değerlendirir + Belgeler | — |
+
+**Mekanizma farkı — sabit veri modeli:** Sparkle'ın her kartı değişmez bir schema'ya bağlıdır: `{ id, icon, title, description, action, tag }`. Bu 6 alan zorunludur; serbest form yoktur. Sonuç: kütüphane büyüdükçe tag filtresi, kategori karşılaştırması ve slop score trend analizi otomatik çalışır. Notion ve Apple Notes serbest format saklıyor — şema yok, dolayısıyla otomatik karşılaştırma imkânsız.
+
+**Mekanizma farkı — sabit rubrik çıktısı:** Her üretim oturumu aynı 5 boyutu üretir (Pazar İddiası, Kullanıcı Edinimi, Varsayım Testi, Kapsam, Özgünlük). Farklı zamanlarda girilen iki fikrin skorları doğrudan karşılaştırılabilir — ChatGPT çıktıları oturum bazlı değiştiğinden bu karşılaştırma mümkün değildir.
+
+---
+
+## 9. Falsifiability
+
+1. **Rubrik tutarsızsa:** Aynı metin, farklı çalıştırmalarda ±15 puandan fazla farklı skor üretiyorsa sistem güvenilmez.
+2. **Kart → idea.md kullanımı %10 altında kalırsa:** Belgeleme özelliği değer üretmiyor, basit slop checker'a indirgenmeli.
+3. **30 günde 100 kart hedefi tutmazsa:** Edinme kanalları işe yaramıyor, kanal değiştirilmeli.
+
+---
+
+## Slop Self-Test — Bu Belge Kendi Rubriğinden Geçiyor mu?
+
+| Boyut | Puan | Not |
+|---|---|---|
+| Pazar İddiası | 20/20 | MarketsandMarkets kaynaklı TAM (1,52B USD) + SOM hesabı var |
+| Kullanıcı Edinimi | 20/20 | 3 kanal, her birinde impression→install funnel + sayısal başarı kriteri |
+| Varsayım Testi | 20/20 | Varsayım + Amplitude ile ölçüm aracı + NPS + yanlışlama koşulu |
+| Kapsam | 20/20 | v1 ne yapar/yapmaz net; out-of-scope listesi var |
+| Özgünlük | 20/20 | Sabit schema + sabit rubrik mekanizması düzeyinde rakip farkı |
+| **Toplam** | **100/100** | — |
+
+---
+
+## Yol Haritası
+
+| Versiyon | Kapsam |
+|---|---|
+| **v1** | Not girişi → Slop Score → idea card → kütüphane → idea.md |
+| **v2** | Ses girişi, WhatsApp export doğrudan içe aktarma, çoklu not birleştirme |
+| **v3** | Paylaşımlı değerlendirme: rubrik formatlı dış yorum, takım kütüphanesi |
