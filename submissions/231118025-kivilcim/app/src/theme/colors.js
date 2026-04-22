@@ -1,0 +1,41 @@
+export const Colors = {
+  background: '#0A0E27',
+  backgroundLight: '#0F1336',
+  primary: '#6C63FF',
+  primaryLight: '#8B83FF',
+  secondary: '#00D9FF',
+  secondaryLight: '#33E1FF',
+  surface: 'rgba(255, 255, 255, 0.05)',
+  surfaceLight: 'rgba(255, 255, 255, 0.08)',
+  surfaceBorder: 'rgba(255, 255, 255, 0.1)',
+  text: '#E8E8FF',
+  textSecondary: '#9B9BC0',
+  textMuted: '#5A5A7A',
+  success: '#00E676',
+  successDark: '#00C853',
+  warning: '#FFB74D',
+  warningDark: '#FF9800',
+  danger: '#FF5252',
+  dangerDark: '#D50000',
+  // Flame gradient colors
+  flameSpark: '#FFE082',
+  flameEmber: '#FF9800',
+  flameBlaze: '#FF6D00',
+  flameFire: '#F44336',
+  flameVolcano: '#D50000',
+  flameDead: '#78909C',
+  // Chat bubble colors
+  aiBubble: 'rgba(108, 99, 255, 0.15)',
+  aiBubbleBorder: 'rgba(108, 99, 255, 0.3)',
+  userBubble: 'rgba(0, 217, 255, 0.1)',
+  userBubbleBorder: 'rgba(0, 217, 255, 0.25)',
+};
+
+export const Fonts = {
+  regular: { fontSize: 16, color: Colors.text },
+  small: { fontSize: 14, color: Colors.textSecondary },
+  tiny: { fontSize: 12, color: Colors.textMuted },
+  heading: { fontSize: 24, fontWeight: 'bold', color: Colors.text },
+  subheading: { fontSize: 18, fontWeight: '600', color: Colors.text },
+  label: { fontSize: 14, fontWeight: '600', color: Colors.textSecondary, textTransform: 'uppercase', letterSpacing: 1 },
+};
