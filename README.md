@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Idea Tracker — 231118056
 Öğrenci Bilgileri
 Öğrenci Numarası: 231118056
@@ -39,3 +40,16 @@ submissions/231118056-idea-tracker/
 ├── idea.md            # Track A fikir belgesi ve spec
 └── app/               # Expo projesi referansı
                        # (Gerçek kod: artifacts/idea-tracker/)
+=======
+# NOKTA — NAIM's Orchestrated Knowledge-To-Artifact
+
+![NOKTA](assets/nokta.jpeg)
+
+> The spec layer of the NAIM loop. NAIM builds. NOKTA thinks first.
+
+**1 file. 0 human review. CI decides.**
+
+Nokta is part of the [NAIM](https://github.com/seyyah/naim) ecosystem — Naim Agentic Iterative Mobile. NAIM iterates on apps; NOKTA defines what to build before the first line of code.
+
+A single idea spark — a dot — enters the system. Guided LLM questioning expands it into a structured product spec. Dot. Line. Paragraph. Page.
+>>>>>>> fe7526c3680653f13c73ae914badf09b84be5147
