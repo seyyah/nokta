@@ -12,8 +12,8 @@
 ## Bağlantılar
 
 - **Demo Video (60 sn):** https://youtube.com/shorts/64Rp4xf4PcQ?feature=share
-- **Expo QR / Link:** *(APK ile test edildi, Expo Go linki eklenmedi)*
-- **APK:** `app-release.apk` *(build tamamlanınca eklenecek)*
+- **Expo QR / Link:** *https://expo.dev/accounts/ravzanur/projects/211118085-RavzanurErdogan/builds/7e41f812-c819-4661-9c09-5874ca079a9e*
+- **APK:** `app-release.apk` *https://drive.google.com/file/d/1B3iejZYeyNfP9FpI1bKkp3NDrnF9AhFu/view?usp=sharing*
 
 ---
 
