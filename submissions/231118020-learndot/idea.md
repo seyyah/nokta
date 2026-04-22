@@ -2,7 +2,7 @@
 
 
 
-\*Ham öğrenme isteğini (noktayı) engineering-guided sorularla zenginleştirip kişisel öğrenme spesifikasyonuna dönüştüren mobil uygulama.\*
+\*Ham ogrenme istegini (noktayi) engineering-guided sorularla zenginlestirip kisisel ogrenme spesifikasyonuna donusturen mobil uygulama.\*
 
 
 
@@ -12,7 +12,7 @@
 
 \## Track
 
-\*\*Track A — Dot Capture \& Enrich\*\*
+\*\*Track A - Dot Capture \& Enrich\*\*
 
 
 
@@ -24,11 +24,11 @@
 
 
 
-"Bir şey öğrenmek istiyorum" cümlesi, dünyanın en yaygın ama en boşa giden niyetidir. İnsanlar YouTube'da kaybolur, onlarca kaynak arasında bunalır ve sırayı bilmedikleri için vazgeçerler. Ham istek var, yapılandırılmış yol haritası yok.
+"Bir sey ogrenmek istiyorum" cumlesi, dunyanin en yaygin ama en bosa giden niyetidir. Insanlar YouTube'da kaybolur, onlarca kaynak arasinda bunalir ve sirayi bilmedikleri icin vazgecerler. Ham istek var, yapilandirilmis yol haritasi yok.
 
 
 
-LearnDot; o ham "nokta"yı — \*gitar öğrenmek istiyorum\* — 5 mühendislik sorusuyla zenginleştirerek kişiye özel, somut ve uygulanabilir bir öğrenme spesifikasyonuna dönüştürür.
+LearnDot; o ham "nokta"yi - \*gitar ogrenmek istiyorum\* - 5 muhendislik sorusuyla zenginlestirerek kisiye ozel, somut ve uygulanabilir bir ogrenme spesifikasyonuna donusturur.
 
 
 
@@ -40,11 +40,11 @@ LearnDot; o ham "nokta"yı — \*gitar öğrenmek istiyorum\* — 5 mühendislik
 
 
 
-\- \*\*Başlangıç felci:\*\* İnsan nereden başlayacağını bilmediği için hiç başlamıyor.
+\- \*\*Baslangic felci:\*\* Insan nereden baslayacagini bilmedigi icin hic baslamiyor.
 
-\- \*\*Kaynak enflasyonu:\*\* Binlerce kurs, video, kitap var ama hangisinin doğru sırayla geleceğini kimse söylemiyor.
+\- \*\*Kaynak enflasyonu:\*\* Binlerce kurs, video, kitap var ama hangisinin dogru sirayla gelecegini kimse soylemiyor.
 
-\- \*\*Kişiselleştirme eksikliği:\*\* Jenerik "gitar öğrenme rehberleri" herkese hitap ettiği için kimseye hitap etmiyor. Haftada 2 saati olan biriyle 10 saati olan birinin planı aynı olamaz.
+\- \*\*Kisisellestime eksikligi:\*\* Jenerik rehberler herkese hitap ettigi icin kimseye hitap etmiyor. Haftada 2 saati olan biriyle 10 saati olan birinin plani ayni olamaz.
 
 
 
@@ -52,43 +52,43 @@ LearnDot; o ham "nokta"yı — \*gitar öğrenmek istiyorum\* — 5 mühendislik
 
 
 
-\## 3. Nasıl Çalışır (How It Works)
+\## 3. Nasil Calisir (How It Works)
 
 
 
-\### Akış
+\### Akis
 
-1\. Kullanıcı ham fikrini yazar: \*"İspanyolca öğrenmek istiyorum"\*
+1\. Kullanici ham fikrini yazar: \*"Ispanyolca ogrenmek istiyorum"\*
 
 2\. Uygulama 5 engineering sorusu sorar:
 
-&#x20;  - Mevcut seviyen nedir? (sıfır / biraz biliyorum)
+&#x20;  - Mevcut seviyen nedir? (sifir / biraz biliyorum)
 
-&#x20;  - Haftada kaç saat ayırabilirsin?
+&#x20;  - Haftada kac saat ayirabilirsin?
 
 &#x20;  - Hedefin ne? (hobi / profesyonel / merak)
 
-&#x20;  - Nasıl öğrenirsin? (video / okuma / pratik)
+&#x20;  - Nasil ogrenirsin? (video / okuma / pratik)
 
-&#x20;  - Kaç ayda ilerleme görmek istersin?
+&#x20;  - Kac ayda ilerleme gormek istersin?
 
-3\. Cevaplara göre kişisel tek sayfalık öğrenme spec'i üretilir
+3\. Cevaplara gore kisisel tek sayfali ogrenme spec'i uretilir
 
 
 
-\### Spec İçeriği
+\### Spec Icerigi
 
-\- 🎯 Net hedef
+\- Hedef
 
-\- 📋 Başlangıç noktası
+\- Baslangic noktasi
 
-\- 🗓️ Haftalık plan
+\- Haftalik plan
 
-\- 🛠️ Araçlar \& kaynaklar
+\- Araclar \& kaynaklar
 
-\- ✅ İlk 3 adım (bu hafta)
+\- Ilk 3 adim (bu hafta)
 
-\- ⚠️ Yaygın tuzaklar
+\- Yaygin tuzaklar
 
 
 
@@ -100,11 +100,11 @@ LearnDot; o ham "nokta"yı — \*gitar öğrenmek istiyorum\* — 5 mühendislik
 
 
 
-\- \*\*Açık uçlu sohbet değildir:\*\* 5 sorudan sonra spec üretilir, sohbet uzamaz.
+\- \*\*Acik uclu sohbet degildir:\*\* 5 sorudan sonra spec uretilir, sohbet uzamaz.
 
-\- \*\*Jenerik içerik üretmez:\*\* Her kullanıcının cevabı farklı → her spec farklı.
+\- \*\*Jenerik icerik uretmez:\*\* Her kullanicinin cevabi farkli, her spec farkli.
 
-\- \*\*Kaynak satmaz:\*\* Ücretsiz ve erişilebilir kaynaklar önerilir.
+\- \*\*Kaynak satmaz:\*\* Ucretsiz ve erisilebilir kaynaklar onerilir.
 
 
 
@@ -112,25 +112,25 @@ LearnDot; o ham "nokta"yı — \*gitar öğrenmek istiyorum\* — 5 mühendislik
 
 
 
-\## 5. Nokta Tezi ile Bağlantı
+\## 5. Nokta Tezi ile Baglanti
 
 
 
-LearnDot, Nokta'nın \*\*"engineering-guided akış"\*\* felsefesinin doğrudan bir uygulamasıdır:
+LearnDot, Nokta'nin \*\*"engineering-guided akis"\*\* felsefesinin dogrudan bir uygulamasidir:
 
 
 
-| Nokta Tezi | LearnDot Karşılığı |
+| Nokta Tezi | LearnDot Karsiligi |
 
 |-----------|-------------------|
 
-| Ham nokta (raw dot) | "Gitar öğrenmek istiyorum" |
+| Ham nokta (raw dot) | "Gitar ogrenmek istiyorum" |
 
-| Engineering-guided sorular | Seviye, süre, hedef, yöntem, zaman |
+| Engineering-guided sorular | Seviye, sure, hedef, yontem, zaman |
 
-| Olgun spec (artifact) | Kişisel öğrenme yol haritası |
+| Olgun spec (artifact) | Kisisel ogrenme yol haritasi |
 
-| Anti-slop | Jenerik cevap yok, cevaplara göre kişiselleşir |
+| Anti-slop | Jenerik cevap yok, cevaplara gore kisisellesir |
 
 
 
@@ -138,15 +138,15 @@ LearnDot, Nokta'nın \*\*"engineering-guided akış"\*\* felsefesinin doğrudan 
 
 
 
-\## 6. Kim Fayda Sağlar (Who Benefits)
+\## 6. Kim Fayda Saglar (Who Benefits)
 
 
 
-\- \*\*Yeni hobi edinmek isteyenler:\*\* Müzik, dil, spor, sanat
+\- \*\*Yeni hobi edinmek isteyenler:\*\* Muzik, dil, spor, sanat
 
-\- \*\*Kariyer değiştirmek isteyenler:\*\* Yeni beceri kazanmak isteyip nereden başlayacağını bilmeyenler
+\- \*\*Kariyer degistirmek isteyenler:\*\* Yeni beceri kazanmak isteyip nereden baslayacagini bilmeyenler
 
-\- \*\*"Başladım ama devam edemedim" diyenler:\*\* Sırasız öğrenme yüzünden vazgeçenler
+\- \*\*"Basladim ama devam edemedim" diyenler:\*\* Sirasiz ogrenme yuzunden vazgecenler
 
 
 
@@ -160,13 +160,13 @@ LearnDot, Nokta'nın \*\*"engineering-guided akış"\*\* felsefesinin doğrudan 
 
 \- \*\*Framework:\*\* React Native + Expo (blank template)
 
-\- \*\*AI Katmanı:\*\* Engineering-guided mock AI (cevaplara göre kişiselleştirilmiş spec şablonu)
+\- \*\*AI Katmani:\*\* Engineering-guided mock AI (cevaplara gore kisisellestirilmis spec sablonu)
 
 \- \*\*State:\*\* React useState hooks
 
 \- \*\*Animasyon:\*\* React Native Animated API
 
-\- \*\*Build:\*\* EAS Build → APK
+\- \*\*Build:\*\* EAS Build -> APK
 
 
 
@@ -174,9 +174,11 @@ LearnDot, Nokta'nın \*\*"engineering-guided akış"\*\* felsefesinin doğrudan 
 
 
 
-\## 8. Özet (Summary)
+\## 8. Ozet (Summary)
 
 
 
-LearnDot; "öğrenmek istiyorum" dürtüsünü — o belirsiz, hareketsiz noktayı — 5 mühendislik sorusuyla sorgulayıp kişiye özel, somut ve bu hafta uygulanabilir bir öğrenme spesifikasyonuna dönüştürür. Slop yok, jenerik tavsiye yok: sadece senin cevaplarından doğan, senin için üretilmiş bir yol haritası.
+LearnDot; "ogrenmek istiyorum" durtusunu - o belirsiz, hareketsiz noktayi - 5 muhendislik sorusuyla sorgulayip kisiye ozel, somut ve bu hafta uygulanabilir bir ogrenme spesifikasyonuna donusturur. Slop yok, jenerik tavsiye yok: sadece senin cevaplarından dogan, senin icin uretilmis bir yol haritasi.
+
+
 
