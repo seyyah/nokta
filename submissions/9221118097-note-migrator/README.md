@@ -8,11 +8,11 @@ Supports **English**, **Malay**, and **Turkish** input (or any mix).
 
 ## Expo Link
 
-_Scan QR after running `npx expo start` in the `app/` folder_
+[expo.dev/accounts/nadilr/projects/app/builds/82770e4e-6214-4b23-8bc7-04b2c0c3372a](https://expo.dev/accounts/nadilr/projects/app/builds/82770e4e-6214-4b23-8bc7-04b2c0c3372a)
 
 ## Demo Video
 
-_To be added — 60-second screen recording of the full flow_
+[Watch on YouTube Shorts](https://youtube.com/shorts/uiLDrmdMbVc?feature=share)
 
 ## Screenshots
 
