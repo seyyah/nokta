@@ -10,16 +10,16 @@
 
 A React Native (Expo) app that takes any raw idea as input and transforms it into a structured one-page engineering spec through a guided AI conversation.
 
-**Flow:**
-1. User enters a raw idea (the "dot")
-2. Claude Haiku asks 5 focused engineering questions: Problem → User → Scope → Constraint → Success Metric
-3. App generates a one-page spec with structured sections: Problem, Target Users, Scope (MVP), Constraints, Success Metrics, First Feature to Build
+**Akış:**
+1. Kullanıcı ham fikrini girer (the "dot")
+2. Gemini 2.5 Flash 5 mühendislik sorusu sorar: Sorun → Kullanıcı → Kapsam → Kısıt → Başarı Ölçütü
+3. Uygulama tek sayfalık spec üretir: Sorun, Hedef Kullanıcılar, Kapsam (MVP), Kısıtlar, Başarı Ölçütleri, İlk Yapılacak Özellik
 
 ---
 
 ## Demo
 
-**60-second demo video:** https://www.loom.com/share/nokta-dot-capture-demo
+**60-second demo video:** https://youtube.com/shorts/Go5Sug4MkNo?feature=share
 
 **Expo Go QR:** Scan with Expo Go app → `exp://exp.host/@231118043/nokta-dot-capture`
 
@@ -30,7 +30,8 @@ A React Native (Expo) app that takes any raw idea as input and transforms it int
 ```bash
 cd app
 cp .env.example .env.local
-# Add your EXPO_PUBLIC_ANTHROPIC_API_KEY to .env.local
+# EXPO_PUBLIC_GEMINI_API_KEY değerini .env.local dosyasına ekle
+# Ücretsiz key: https://aistudio.google.com/apikey
 npm install
 npx expo start
 ```
@@ -42,8 +43,8 @@ npx expo start
 **Decision 1 — Track A over B or C**  
 Track A aligns most directly with the core NOKTA thesis: turning a raw dot into a structured artifact. It demonstrates the full pipeline (capture → enrich → spec) in one cohesive flow.
 
-**Decision 2 — Claude Haiku model**  
-Used `claude-haiku-4-5-20251001` for API calls. Haiku is fast enough for interactive Q&A (< 2s response) and cheap enough to not require rate-limit workarounds during demos. Sonnet would add latency with no user-visible quality gain for 1-sentence questions.
+**Decision 2 — Gemini 2.5 Flash model**  
+Başlangıçta Anthropic Claude Haiku planlanmıştı ancak ücretsiz kota gerektiği için Google Gemini 2.5 Flash'a geçildi. Gemini AI Studio üzerinden ücretsiz API key sağlıyor; 2.5 Flash hızlı (< 2s) ve etkileşimli Q&A için yeterince güçlü.
 
 **Decision 3 — 5 fixed questions instead of dynamic termination**  
 An initial design let Claude decide when to stop asking questions. This created variable UX — sometimes 3 questions, sometimes 7. Fixed at 5 (one per engineering category: problem, user, scope, constraint, success metric) for consistent, predictable flow and rubric alignment.
@@ -66,7 +67,7 @@ app/
 ├── App.tsx                        # Navigation root
 ├── app.json                       # Expo config (slug: nokta-dot-capture)
 └── src/
-    ├── services/claude.ts         # Anthropic API calls
+    ├── services/claude.ts         # Gemini 2.5 Flash API calls
     └── screens/
         ├── HomeScreen.tsx         # Idea input
         ├── QuestionFlowScreen.tsx # 5-step Q&A
