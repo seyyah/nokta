@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "PitchSieve",
+    "slug": "pitchsieve",
+    "owner": "emre23232",
+    "sdkVersion": "54.0.0",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#f4ede1"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mikuerm.pitchsieve"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#f4ede1"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "package": "com.mikuerm.pitchsieve"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "49c3ee55-a91f-48c8-b348-086bc5be1ac3"
+      }
+    }
+  }
+}
