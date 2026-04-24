@@ -1,0 +1,27 @@
+export const sampleInput = `Nokta Draft rough notes
+- mobile app where the user pastes a messy project dump from chats, copied AI notes, and bullet lists
+- paste rough project notes from chats and bullet lists into one mobile app
+- should deduplicate repeated ideas and produce a structured concept draft
+- deduplicate overlap and turn repeated notes into one cleaner concept draft
+- not just a summarizer, stronger than that, more like concept distillation
+- maybe keep it simple first
+- but maybe advanced workspace ideas later for teams
+- should feel serious and polished, not like chat
+- should not look like chat
+- users should paste once and get a result quickly
+- maybe it asks lots of follow-up questions first? not sure
+- surface contradictions and undefined areas clearly
+- output could be idea cards
+- output should mainly be a decision-ready draft
+- primary output should be a decision-ready draft, not only cards
+- no live AI in v1, keep it offline and deterministic
+- keep v1 offline and deterministic
+- remove repeated bullets / deduplicate repeated bullets / collapse overlap
+- collapse overlap and remove repeated bullets before building the draft
+- help separate core product direction from future nice-to-haves
+- target user could be solo founders
+- or small product teams, not fully decided yet
+- avoid turning this into project management
+- avoid a generic productivity suite
+- maybe export later, not now
+- lightweight refine actions inside the result screen would help`;
