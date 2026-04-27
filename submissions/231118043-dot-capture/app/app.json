@@ -1,0 +1,37 @@
+{
+  "expo": {
+    "name": "Nokta Dot Capture",
+    "slug": "nokta-dot-capture",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0a0a0a"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nokta.dotcapture"
+    },
+    "android": {
+      "package": "com.nokta.dotcapture",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0a0a0a"
+      },
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "dc91e780-3048-4cad-8c94-982070f57b66"
+      }
+    },
+    "owner": "erenn.altay1"
+  }
+}
