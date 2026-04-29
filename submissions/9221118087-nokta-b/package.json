@@ -1,0 +1,11 @@
+{
+  "name": "9221118087-nokta-b-submission",
+  "private": true,
+  "scripts": {
+    "install:app": "npm --prefix app install",
+    "start": "npm --prefix app run start",
+    "android": "npm --prefix app run android",
+    "ios": "npm --prefix app run ios",
+    "web": "npm --prefix app run web"
+  }
+}
