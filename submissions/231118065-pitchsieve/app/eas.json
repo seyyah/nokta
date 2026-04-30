@@ -1,0 +1,28 @@
+{
+  "cli": {
+    "version": ">= 18.0.6",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "submission-apk": {
+      "withoutCredentials": true,
+      "android": {
+        "buildType": "apk",
+        "image": "sdk-54"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk",
+        "image": "sdk-54"
+      }
+    },
+    "production": {
+      "android": {
+        "buildType": "app-bundle",
+        "image": "sdk-54"
+      }
+    }
+  }
+}

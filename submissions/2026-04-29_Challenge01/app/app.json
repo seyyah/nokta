@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "Nokta Reference",
+    "slug": "nokta-reference-hacker",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "noktaref",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "backgroundColor": "#0a0a0a",
+      "resizeMode": "contain"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.istabot.noktaref",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Sesli not için mikrofon erişimi gerekli.",
+        "NSSpeechRecognitionUsageDescription": "Sesi metne çevirmek için."
+      }
+    },
+    "android": {
+      "package": "com.istabot.noktaref",
+      "permissions": ["RECORD_AUDIO"]
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Sesli not için mikrofona erişim.",
+          "speechRecognitionPermission": "Konuşmayı metne çevirmek için."
+        }
+      ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      }
+    }
+  }
+}
