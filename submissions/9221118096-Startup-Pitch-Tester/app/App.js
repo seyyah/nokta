@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   ActivityIndicator,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -10,7 +11,7 @@ import {
 } from "react-native";
 
 const API_URL =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=";
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=";
 
 export default function App() {
   const [pitchInput, setPitchInput] = useState("");
@@ -49,20 +50,25 @@ export default function App() {
         }),
       });
 
-      if (!response.ok) {
-        throw new Error("Request failed with status " + response.status);
-      }
-
       const data = await response.json();
+      if (!response.ok) {
+        const apiMessage = data?.error?.message;
+        const statusInfo = `Request failed (${response.status})`;
+        throw new Error(
+          apiMessage ? `${statusInfo}: ${apiMessage}` : statusInfo,
+        );
+      }
       const text =
         data?.candidates?.[0]?.content?.parts?.[0]?.text ||
         "No response returned.";
 
       setAiResponse(text);
     } catch (error) {
-      setAiResponse(
-        "Something went wrong while analyzing the pitch. Please try again.",
-      );
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Something went wrong while analyzing the pitch.";
+      setAiResponse(message);
     } finally {
       setLoading(false);
     }
@@ -70,24 +76,34 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <Text style={styles.title}>Startup Pitch Tester</Text>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.header}>
+          <Text style={styles.title}>Startup Pitch Tester</Text>
+          <Text style={styles.subtitle}>
+            Paste your pitch and get a brutally honest slop score.
+          </Text>
+        </View>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Paste your startup pitch here..."
-          placeholderTextColor="#8C8C8C"
-          multiline
-          value={pitchInput}
-          onChangeText={setPitchInput}
-          editable={!loading}
-        />
+        <View style={styles.inputCard}>
+          <TextInput
+            style={styles.input}
+            placeholder="Paste your startup pitch here..."
+            placeholderTextColor="#9CA3AF"
+            multiline
+            value={pitchInput}
+            onChangeText={setPitchInput}
+            editable={!loading}
+          />
+        </View>
 
         <TouchableOpacity
           style={[styles.button, loading && styles.buttonDisabled]}
           onPress={analyzePitch}
           disabled={loading}
-          activeOpacity={0.8}
+          activeOpacity={0.85}
         >
           {loading ? (
             <ActivityIndicator color="#FFFFFF" />
@@ -102,7 +118,7 @@ export default function App() {
             <Text style={styles.resultText}>{aiResponse}</Text>
           </View>
         ) : null}
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -110,63 +126,87 @@ export default function App() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#F4F4F2",
+    backgroundColor: "#F9FAFB",
   },
-  container: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 24,
+  scrollContent: {
+    paddingHorizontal: 24,
+    paddingTop: 28,
+    paddingBottom: 40,
+  },
+  header: {
+    marginBottom: 20,
   },
   title: {
-    fontSize: 26,
-    fontWeight: "700",
-    color: "#111111",
-    textAlign: "center",
-    marginBottom: 18,
+    fontSize: 28,
+    fontWeight: "800",
+    color: "#111827",
+    textAlign: "left",
+    marginBottom: 6,
+  },
+  subtitle: {
+    fontSize: 15,
+    color: "#6B7280",
+    lineHeight: 20,
+  },
+  inputCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    shadowColor: "#0F172A",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    elevation: 4,
   },
   input: {
-    minHeight: 150,
-    borderWidth: 1,
-    borderColor: "#D0D0D0",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    padding: 14,
+    minHeight: 160,
     textAlignVertical: "top",
     fontSize: 16,
-    color: "#1A1A1A",
+    color: "#111827",
+    lineHeight: 22,
   },
   button: {
-    marginTop: 16,
-    backgroundColor: "#1B5E57",
-    paddingVertical: 14,
-    borderRadius: 12,
+    marginTop: 20,
+    backgroundColor: "#4F46E5",
+    paddingVertical: 16,
+    borderRadius: 16,
     alignItems: "center",
+    shadowColor: "#312E81",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    elevation: 5,
   },
   buttonDisabled: {
-    opacity: 0.6,
+    opacity: 0.7,
   },
   buttonText: {
     color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "700",
+    letterSpacing: 0.2,
   },
   resultCard: {
-    marginTop: 20,
+    marginTop: 24,
     backgroundColor: "#FFFFFF",
-    borderRadius: 14,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: "#E4E4E4",
+    borderRadius: 18,
+    padding: 18,
+    shadowColor: "#0F172A",
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.1,
+    shadowRadius: 18,
+    elevation: 6,
   },
   resultTitle: {
     fontSize: 16,
     fontWeight: "700",
-    marginBottom: 8,
-    color: "#111111",
+    marginBottom: 10,
+    color: "#111827",
   },
   resultText: {
     fontSize: 15,
-    color: "#333333",
-    lineHeight: 21,
+    color: "#374151",
+    lineHeight: 22,
   },
 });
