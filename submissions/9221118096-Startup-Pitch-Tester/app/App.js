@@ -10,7 +10,7 @@ import {
 } from "react-native";
 
 const API_URL =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyDikCSXm7vU6esMug21-4NMg5PcW4UJClo";
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=";
 
 export default function App() {
   const [pitchInput, setPitchInput] = useState("");
