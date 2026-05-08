@@ -11,7 +11,7 @@ Links (replace later)
 
 - Expo QR Code / Preview Link: exp://192.168.100.32:8081
 - 60s Demo Video: https://youtu.be/4BN5iT95QJo
-- PR Link: TODO
+- PR Link: https://github.com/seyyah/nokta/pull/88
 - APK (app-release.apk): https://expo.dev/accounts/ibrahimalicode/projects/app/builds/426245d1-1a81-4d73-ad5c-d7b9058e196f
 
 Decision Log
