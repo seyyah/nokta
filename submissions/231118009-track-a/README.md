@@ -5,21 +5,23 @@ Avox AI, ham proje fikirlerinizi kapsamlı teknik dökümanlara dönüştüren, 
 ## 🚀 Özellikler
 
 - **AI Destekli Analiz:** Fikrinizi girdiğiniz an, projeye özel 3 kritik soru üretilir ve cevaplarınıza göre teknik mimari oluşturulur.
+- **Gerçek Human-in-the-Loop (İnsan Döngüsü):** AI'ın ürettiği döküman sadece okunabilir değildir; kullanıcı metne doğrudan müdahale edip düzenleyebilir ve sistemde "İnsan Onayı" vererek sürece dahil olur.
+- **Uzman Desteği (Escalation):** Gerekli durumlarda döküman, "Gerçek Uzmana İlet" butonu ile cihazın varsayılan e-posta uygulaması üzerinden doğrudan bir kıdemli mühendise/hocaya aktarılabilir.
 - **Dinamik Fikir Karnesi:** Projenizin uygulanabilirliği animasyonlu ve renkli barlarla (Scorecard) puanlanır.
-- **Export ve Paylaşım:** Oluşturulan "Mühendislik Şartnamesi"ni tek tıkla cihazınızdaki diğer uygulamalarla paylaşabilirsiniz.
 - **Modern UI/UX:** Karanlık mod (Dark Mode) esintili, kullanıcı dostu ve akıcı bir mobil deneyim.
 
 ## 🛠️ Teknik Yığın (Tech Stack)
 
 - **Frontend:** React Native (Expo/CLI)
-- **AI Engine:** Google Gemini 2.5 flash) API
+- **AI Engine:** Google Gemini 2.5 Pro API
+- **Native Entegrasyonlar:** React Native Linking API (Mail Yönlendirmesi)
 - **State Management:** React Hooks
 - **Tasarım:** Custom StyleSheet & Animated API
 
 ## 🎥 Demo Videosu
 
 Uygulamanın çalışır halini, arayüzünü ve analiz sürecini aşağıdaki videodan izleyebilirsiniz:
-**[▶️ Avox AI - YouTube Demo Videosu](https://youtube.com/shorts/BruHjEGAeVc?si=6jaoD0HMJrRwjJRp)**
+**[▶️ Avox AI - YouTube Demo Videosu](https://youtube.com/shorts/rTaDQio32CY?si=jphCj3wZLwC2828L)**
 
 ## 📲 Kurulum ve Test
 
@@ -32,7 +34,7 @@ Proje klasöründe bulunan **`app-release.apk`** dosyasını doğrudan Android c
 ### 2. Bulut Üzerinden İndirme
 
 Uygulamanın derlenmiş en güncel APK sürümünü telefonunuza indirmek için aşağıdaki bağlantıya tıklayabilirsiniz:
-**[📦 Avox AI - Expo Build İndirme Sayfası](https://expo.dev/accounts/huseyinyagmur/projects/app/builds/48701982-a09f-48e4-b629-07213ea8a8c6)**
+**[📦 Avox AI - Expo Build İndirme Sayfası](https://expo.dev/accounts/huseyinyagmur/projects/app/builds/1b554aee-1136-4e27-9abe-63b28fc09538)**
 
 _(Not: Sayfadaki "Download" butonunu kullanarak APK dosyasını indirebilirsiniz.)_
 

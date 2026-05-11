@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, SafeAreaView, KeyboardAvoidingView, Platform, Animated } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, SafeAreaView, KeyboardAvoidingView, Platform, Animated, Linking } from 'react-native';
 
-const API_KEY = "BURAYA_API_KEY_GELECEK";
+const API_KEY = "";
 
 interface Scores {
   Feasibility: number;
@@ -162,30 +162,7 @@ export default function HomeScreen() {
     setAnswers(newAnswers);
   };
 
-  // Basit bir Markdown Parser
-  const renderMarkdown = (text: string) => {
-    const lines = text.split('\n');
-    return lines.map((line, index) => {
-      line = line.trimEnd(); // Satır sonundaki boşlukları temizle
-      
-      if (line.startsWith('## ')) {
-        return <Text key={index} style={styles.markdownH2}>{line.replace('## ', '')}</Text>;
-      } else if (line.startsWith('# ')) {
-        return <Text key={index} style={styles.markdownH1}>{line.replace('# ', '')}</Text>;
-      } else if (line.startsWith('* ') || line.startsWith('- ')) {
-        return (
-          <View key={index} style={styles.markdownListItem}>
-            <Text style={styles.markdownBullet}>•</Text>
-            <Text style={styles.markdownListText}>{line.replace(/^[-*]\s/, '')}</Text>
-          </View>
-        );
-      } else if (line === '') {
-        return <View key={index} style={styles.markdownSpacer} />;
-      } else {
-        return <Text key={index} style={styles.markdownP}>{line}</Text>;
-      }
-    });
-  };
+
 
   const Header = ({ title }: { title: string }) => (
     <View style={styles.headerContainer}>
@@ -268,8 +245,29 @@ export default function HomeScreen() {
       )}
 
       <View style={styles.cardContainer}>
-        {renderMarkdown(spec)}
+        <TextInput
+          style={styles.specInput}
+          multiline
+          value={spec}
+          onChangeText={setSpec}
+          placeholder="AI çıktısı burada..."
+          placeholderTextColor="#636E72"
+        />
       </View>
+
+      <TouchableOpacity 
+        style={styles.approveButton} 
+        onPress={() => console.log('Metin insan tarafından incelendi ve onaylandı')}
+      >
+        <Text style={styles.buttonText}>İnsan Onayı Ver (Approve)</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity 
+        style={styles.emailButton} 
+        onPress={() => Linking.openURL(`mailto:?body=${encodeURIComponent(spec)}`)}
+      >
+        <Text style={styles.buttonText}>Gerçek Uzmana İlet</Text>
+      </TouchableOpacity>
 
       <TouchableOpacity 
         style={styles.button} 
@@ -479,49 +477,40 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
 
-  // Özelleştirilmiş Markdown Renderer Stilleri
-  markdownH1: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#6200EE',
-    marginBottom: 16,
-    marginTop: 8
-  },
-  markdownH2: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#6200EE',
-    marginBottom: 12,
-    marginTop: 18
-  },
-  markdownP: {
+  specInput: {
+    backgroundColor: '#F8F9FA',
+    padding: 16,
+    borderRadius: 10,
+    minHeight: 250,
+    textAlignVertical: 'top',
     fontSize: 15,
     fontWeight: '400',
     color: '#2D3436',
-    lineHeight: 24,
-    marginBottom: 10
+    borderWidth: 1,
+    borderColor: '#E9ECEF'
   },
-  markdownListItem: {
-    flexDirection: 'row',
-    marginBottom: 8,
-    alignItems: 'flex-start',
-    paddingLeft: 4
+  approveButton: {
+    backgroundColor: '#4CAF50',
+    padding: 18,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 8,
+    elevation: 3,
+    shadowColor: '#4CAF50',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8
   },
-  markdownBullet: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#6200EE',
-    marginRight: 10,
-    lineHeight: 22
-  },
-  markdownListText: {
-    flex: 1,
-    fontSize: 15,
-    fontWeight: '400',
-    color: '#2D3436',
-    lineHeight: 22
-  },
-  markdownSpacer: {
-    height: 8
+  emailButton: {
+    backgroundColor: '#03A9F4',
+    padding: 18,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 8,
+    elevation: 3,
+    shadowColor: '#03A9F4',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8
   }
 });
