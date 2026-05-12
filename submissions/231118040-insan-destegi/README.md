@@ -13,6 +13,8 @@ Bu submission, eski Nokta Mascot fikrini Expo / React Native mobil akışa taş�
 - Demo poster: [demo-poster.png](./demo-poster.png)
 - APK: [app-release.apk](./app-release.apk)
 - Expo app source: [app/](./app)
+- Direct APK link: [branch APK](https://github.com/mehmetalisahingm/seyyah-nokta/blob/submission/231118040-insan-destegi/submissions/231118040-insan-destegi/app-release.apk?raw=1)
+- Direct demo link: [branch demo](https://github.com/mehmetalisahingm/seyyah-nokta/blob/submission/231118040-insan-destegi/submissions/231118040-insan-destegi/demo.mp4?raw=1)
 
 ## What I Built
 
@@ -48,4 +50,3 @@ Repo içinde QR görseli bulunmaktadır. QR, bu branch üzerindeki release APK b
 - `npx tsc --noEmit`
 - `npx expo export --platform web --output-dir dist-web`
 - `./gradlew.bat assembleRelease`
-
