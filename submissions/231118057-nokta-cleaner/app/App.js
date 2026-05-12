@@ -2,19 +2,26 @@ import './global.css';
 
 import React, { useState } from 'react';
 import { View, Text, ScrollView, SafeAreaView, StatusBar, Alert, KeyboardAvoidingView, Platform, TouchableOpacity, TextInput } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
 import InputSection from './src/components/InputSection';
 import IdeaCard from './src/components/IdeaCard';
 import { processNotes } from './src/services/GeminiService';
 
 const CATEGORIES = ['Technical', 'Business', 'Design', 'Other'];
-
-const EMPTY_CARD = { title: '', desc: '', category: 'Other' };
+const EMPTY_CARD  = { title: '', desc: '', category: 'Other' };
 
 export default function App() {
-  const [ideas, setIdeas]           = useState([]);
-  const [isLoading, setIsLoading]   = useState(false);
+  const [ideas, setIdeas]             = useState([]);
+  const [isLoading, setIsLoading]     = useState(false);
+  const [isReanalyzing, setIsReanalyzing] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [newCard, setNewCard]       = useState(EMPTY_CARD);
+  const [newCard, setNewCard]         = useState(EMPTY_CARD);
+
+  const stats = {
+    pending:  ideas.filter(i => (i.status || 'pending') === 'pending').length,
+    approved: ideas.filter(i => i.status === 'approved').length,
+    rejected: ideas.filter(i => i.status === 'rejected').length,
+  };
 
   const handleProcessNotes = async (text) => {
     setIsLoading(true);
@@ -29,25 +36,59 @@ export default function App() {
     }
   };
 
-  const handleUpdateIdea = (id, changes) => {
+  const handleUpdateIdea = (id, changes) =>
     setIdeas(prev => prev.map(idea => idea.id === id ? { ...idea, ...changes } : idea));
-  };
 
-  const handleDeleteIdea = (id) => {
+  const handleDeleteIdea = (id) =>
     setIdeas(prev => prev.filter(idea => idea.id !== id));
-  };
 
   const handleAddCard = () => {
     if (!newCard.title.trim()) return;
-    const id = Date.now();
-    setIdeas(prev => [...prev, { ...newCard, id, status: 'pending', comment: '' }]);
+    setIdeas(prev => [...prev, { ...newCard, id: Date.now(), status: 'pending', comment: '' }]);
     setNewCard(EMPTY_CARD);
     setShowAddForm(false);
   };
 
-  const handleClear = () => {
-    setIdeas([]);
-    setShowAddForm(false);
+  const handleClear = () => { setIdeas([]); setShowAddForm(false); };
+
+  const handleBulkApprove = () =>
+    setIdeas(prev => prev.map(i => ({ ...i, status: 'approved' })));
+
+  const handleBulkReject = () =>
+    setIdeas(prev => prev.map(i => ({ ...i, status: 'rejected' })));
+
+  const handleExportApproved = async () => {
+    const approved = ideas.filter(i => i.status === 'approved');
+    if (approved.length === 0) {
+      Alert.alert('No approved cards', 'Approve at least one card first.');
+      return;
+    }
+    const text = approved
+      .map(i => `[${i.category}] ${i.title}\n${i.desc}${i.comment ? `\nNote: ${i.comment}` : ''}`)
+      .join('\n\n');
+    await Clipboard.setStringAsync(text);
+    Alert.alert('Copied', `${approved.length} approved card(s) copied to clipboard.`);
+  };
+
+  const handleReanalyzeRejected = async () => {
+    const rejected = ideas.filter(i => i.status === 'rejected');
+    if (rejected.length === 0) return;
+    setIsReanalyzing(true);
+    const rawText = rejected.map(i => `${i.title}: ${i.desc}`).join('\n');
+    try {
+      const result = await processNotes(rawText);
+      const newIdeas = result.map(idea => ({
+        ...idea,
+        id: Date.now() + Math.random(),
+        status: 'pending',
+        comment: '',
+      }));
+      setIdeas(prev => [...prev.filter(i => i.status !== 'rejected'), ...newIdeas]);
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    } finally {
+      setIsReanalyzing(false);
+    }
   };
 
   const isWeb = Platform.OS === 'web';
@@ -78,24 +119,61 @@ export default function App() {
         <View className="flex-1 w-full">
           {ideas.length > 0 ? (
             <View className="w-full">
+
               {/* Section header */}
-              <View className="flex-row justify-between items-center mb-6 border-b-[2px] border-black pb-3 w-full">
-                <Text className="text-black font-extrabold uppercase tracking-widest text-sm shrink">Extracted</Text>
-                <View className="flex-row items-center gap-3 shrink-0">
-                  <Text className="text-black font-bold text-xs">{ideas.length}</Text>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderBottomWidth: 2, borderColor: '#000', paddingBottom: 12, marginBottom: 12 }}>
+                <Text style={{ fontSize: 12, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 2, color: '#000' }}>Extracted</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                  <Text style={{ fontSize: 12, fontWeight: '700', color: '#000' }}>{ideas.length}</Text>
                   <TouchableOpacity onPress={() => setShowAddForm(v => !v)} activeOpacity={0.7}>
-                    <Text className="text-black font-bold text-xs uppercase tracking-widest">+ Add</Text>
+                    <Text style={{ fontSize: 11, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1.5, color: '#000' }}>+ Add</Text>
                   </TouchableOpacity>
                   <TouchableOpacity onPress={handleClear} activeOpacity={0.7}>
-                    <Text className="text-gray-400 font-bold text-xs uppercase tracking-widest">Clear</Text>
+                    <Text style={{ fontSize: 11, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1.5, color: '#9ca3af' }}>Clear</Text>
                   </TouchableOpacity>
                 </View>
+              </View>
+
+              {/* Stats bar */}
+              <View style={{ flexDirection: 'row', gap: 16, marginBottom: 14 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+                  <View style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: '#9ca3af' }} />
+                  <Text style={{ fontSize: 11, fontWeight: '700', color: '#6b7280' }}>Pending {stats.pending}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+                  <View style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: '#16a34a' }} />
+                  <Text style={{ fontSize: 11, fontWeight: '700', color: '#16a34a' }}>Approved {stats.approved}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+                  <View style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: '#dc2626' }} />
+                  <Text style={{ fontSize: 11, fontWeight: '700', color: '#dc2626' }}>Rejected {stats.rejected}</Text>
+                </View>
+              </View>
+
+              {/* Action bar */}
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 20 }}>
+                <TouchableOpacity onPress={handleBulkApprove} style={{ paddingHorizontal: 12, paddingVertical: 7, borderRadius: 8, borderWidth: 1.5, borderColor: '#16a34a', backgroundColor: '#f0fdf4' }}>
+                  <Text style={{ fontSize: 10, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1, color: '#16a34a' }}>Approve All</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleBulkReject} style={{ paddingHorizontal: 12, paddingVertical: 7, borderRadius: 8, borderWidth: 1.5, borderColor: '#dc2626', backgroundColor: '#fef2f2' }}>
+                  <Text style={{ fontSize: 10, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1, color: '#dc2626' }}>Reject All</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleExportApproved} style={{ paddingHorizontal: 12, paddingVertical: 7, borderRadius: 8, borderWidth: 1.5, borderColor: '#000', backgroundColor: '#000' }}>
+                  <Text style={{ fontSize: 10, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1, color: '#fff' }}>Export Approved</Text>
+                </TouchableOpacity>
+                {stats.rejected > 0 && (
+                  <TouchableOpacity onPress={handleReanalyzeRejected} disabled={isReanalyzing} style={{ paddingHorizontal: 12, paddingVertical: 7, borderRadius: 8, borderWidth: 1.5, borderColor: '#6b7280', backgroundColor: isReanalyzing ? '#f3f4f6' : 'transparent' }}>
+                    <Text style={{ fontSize: 10, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1, color: '#6b7280' }}>
+                      {isReanalyzing ? 'Analyzing...' : `Re-analyze ${stats.rejected}`}
+                    </Text>
+                  </TouchableOpacity>
+                )}
               </View>
 
               {/* Manual add form */}
               {showAddForm && (
                 <View style={{ borderWidth: 1.5, borderColor: '#000', borderRadius: 16, padding: 20, marginBottom: 20, backgroundColor: '#fff', gap: 12 }}>
-                  <Text style={{ fontSize: 10, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1.5, color: '#000', marginBottom: 4 }}>New Card</Text>
+                  <Text style={{ fontSize: 10, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1.5, color: '#000' }}>New Card</Text>
                   <TextInput
                     value={newCard.title}
                     onChangeText={t => setNewCard(p => ({ ...p, title: t }))}
@@ -142,6 +220,7 @@ export default function App() {
                   onDelete={() => handleDeleteIdea(idea.id)}
                 />
               ))}
+
             </View>
           ) : (
             <View className={`items-center justify-center py-16 px-6 border-[2px] border-black w-full rounded-xl ${isLoading ? 'opacity-50' : 'opacity-100'}`}>
