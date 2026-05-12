@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput, Platform, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, Platform } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 
 const CATEGORIES = ['Technical', 'Business', 'Design', 'Other'];

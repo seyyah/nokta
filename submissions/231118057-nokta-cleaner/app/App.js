@@ -177,7 +177,7 @@ export default function App() {
   const isWeb = Platform.OS === 'web';
 
   const pill = (label, active, onPress) => (
-    <TouchableOpacity key={label} onPress={onPress}
+    <TouchableOpacity onPress={onPress}
       style={{ paddingHorizontal: 12, paddingVertical: 6, borderRadius: 99, borderWidth: 1.5, borderColor: active ? theme.borderStrong : theme.border, backgroundColor: active ? theme.borderStrong : 'transparent' }}>
       <Text style={{ fontSize: 10, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1, color: active ? theme.bg : theme.textMuted }}>{label}</Text>
     </TouchableOpacity>
@@ -347,8 +347,8 @@ export default function App() {
 
             {/* Category filter */}
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
-              {pill('All', !activeCategory, () => setActiveCategory(null))}
-              {CATEGORIES.map(cat => pill(cat, activeCategory === cat, () => setActiveCategory(activeCategory === cat ? null : cat)))}
+              <React.Fragment key="all">{pill('All', !activeCategory, () => setActiveCategory(null))}</React.Fragment>
+              {CATEGORIES.map(cat => <React.Fragment key={cat}>{pill(cat, activeCategory === cat, () => setActiveCategory(activeCategory === cat ? null : cat))}</React.Fragment>)}
             </View>
 
             {/* Action bar */}
