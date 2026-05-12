@@ -1,0 +1,144 @@
+{
+    "app": {
+        "name": "NonSlop",
+        "tagline": "Build your practice app in 2 minutes.",
+        "subtitle": "Choose your specialty. Swipe to build. Publish to patients."
+    },
+    "buttons": {
+        "getStarted": "Get Started",
+        "newApp": "New App",
+        "next": "Next",
+        "back": "Back",
+        "continue": "Continue",
+        "openApp": "Open App",
+        "publish": "Publish My App",
+        "backToDesign": "Back to Design",
+        "save": "Save without publishing",
+        "preview": "Preview",
+        "fork": "Fork to My Apps",
+        "forked": "Forked",
+        "delete": "Delete",
+        "cancel": "Cancel",
+        "confirm": "Confirm Booking"
+    },
+    "home": {
+        "provenPatterns": "Proven patterns across specialties",
+        "includeThis": "include this",
+        "lastBuilt": "Last built",
+        "myApps": "My Apps",
+        "longPressHint": "Long press to manage"
+    },
+    "specialty": {
+        "title": "What is your specialty?",
+        "subtitle": "We'll load proven patterns from your field.",
+        "provenComponents": "proven components",
+        "previewTitle": "Preview what you'll build",
+        "ofPractices": "of practices include this"
+    },
+    "styleConcepts": {
+        "title": "Which style feels right?",
+        "subtitle": "Swipe through real app designs from your specialty.",
+        "swipeHint": "Swipe right if you like it, left to skip"
+    },
+    "components": {
+        "title": "Include this feature?",
+        "progressLabel": "of",
+        "selected": "selected",
+        "highSignal": "High peer signal",
+        "unverified": "UNVERIFIED",
+        "swipeRight": "Include",
+        "swipeLeft": "Skip"
+    },
+    "prototype": {
+        "title": "Your app is ready",
+        "subtitle": "Review and open your prototype",
+        "patternScore": "Pattern Score",
+        "features": "features",
+        "avgPeerSignal": "avg peer signal",
+        "previewMode": "PREVIEW MODE"
+    },
+    "expert": {
+        "askTitle": "Ask an Expert",
+        "askSub": "An expert in your specialty will review your configuration.",
+        "currentConfig": "YOUR CURRENT CONFIGURATION",
+        "questionLabel": "WHAT DO YOU WANT TO ASK?",
+        "noteLabel": "ADDITIONAL NOTE (optional)",
+        "notePlaceholder": "Add any specific context or concerns...",
+        "askBtn": "Get Expert Opinion",
+        "analyzing": "is analyzing your configuration...",
+        "strengths": "STRENGTHS",
+        "gaps": "AREAS FOR IMPROVEMENT",
+        "recommendation": "EXPERT RECOMMENDATION",
+        "suggested": "SUGGESTED COMPONENTS",
+        "saveBadge": "Save Expert Badge",
+        "backToApp": "Back to App",
+        "verified": "Verified",
+        "expertApproved": "Expert Approved",
+        "askExpert": "Ask Expert",
+        "peerSignalNote": "of peers use this"
+    },
+    "launch": {
+        "title": "Name your app",
+        "subtitle": "This appears to your patients",
+        "placeholder": "e.g., Dr. Smith Cardiology",
+        "characterLimit": "characters",
+        "themeLabel": "Choose a theme",
+        "themes": {
+            "clinical": "Clinical",
+            "warm": "Warm",
+            "nature": "Nature"
+        }
+    },
+    "deployment": {
+        "title": "How will you use this?",
+        "subtitle": "Choose your deployment format",
+        "patientApp": {
+            "title": "Patient App",
+            "description": "Mobile app for your patients to book, message, and access care."
+        },
+        "agentConfig": {
+            "title": "Agent Config",
+            "description": "Export as AI agent behavior specification for agent platforms."
+        },
+        "saveNote": "Your configuration is saved to My Apps"
+    },
+    "community": {
+        "title": "Community",
+        "filterBy": "Filter by specialty",
+        "all": "All Specialties",
+        "patternScore": "Pattern Score",
+        "patients": "patients",
+        "emptyState": "No apps found for this specialty yet.",
+        "modalTitle": "App Preview",
+        "bookAppointment": "Book Appointment"
+    },
+    "clinician": {
+        "dashboard": "Dashboard",
+        "upcomingAppointments": "Upcoming Appointments",
+        "selectTimeSlot": "Select a time slot",
+        "available": "Available",
+        "unavailable": "Unavailable",
+        "patientName": "Patient Name",
+        "bookingConfirmed": "Booking Confirmed!",
+        "appointmentScheduled": "Appointment scheduled for"
+    },
+    "specialties": {
+        "cardiology": "Cardiology",
+        "dentistry": "Dentistry",
+        "nursing": "Nursing"
+    },
+    "trustSignals": {
+        "dentist": {
+            "component": "Appointment Booking",
+            "impact": "Reduces no-shows by ~30%"
+        },
+        "cardiologist": {
+            "component": "Follow-Up Checklist",
+            "impact": "Cuts post-procedure ER visits"
+        },
+        "nurse": {
+            "component": "Shift Handoff Notes",
+            "impact": "Reduces handoff errors"
+        }
+    }
+}

@@ -1,0 +1,145 @@
+{
+    "app": {
+        "name": "NonSlop",
+        "tagline": "Pratik uygulamanızı 2 dakikada oluşturun.",
+        "subtitle": "Uzmanlığınızı seçin. Kaydırarak oluşturun. Hastalarınıza yayınlayın."
+    },
+    "buttons": {
+        "getStarted": "Başlayın",
+        "newApp": "Yeni Uygulama",
+        "next": "İleri",
+        "back": "Geri",
+        "continue": "Devam Et",
+        "openApp": "Uygulamayı Aç",
+        "publish": "Uygulamayı Yayınla",
+        "backToDesign": "Tasarıma Dön",
+        "save": "Yayınlamadan kaydet",
+        "preview": "Önizle",
+        "fork": "Uygulamalarıma Ekle",
+        "forked": "Eklendi",
+        "delete": "Sil",
+        "cancel": "İptal",
+        "confirm": "Randevuyu Onayla"
+    },
+    "home": {
+        "provenPatterns": "Uzmanlıklar arası kanıtlanmış desenler",
+        "includeThis": "bunu içerir",
+        "lastBuilt": "Son oluşturulan",
+        "myApps": "Uygulamalarım",
+        "longPressHint": "Yönetmek için uzun basın",
+    "expertReviewSaved": "Uzman rozeti kaydedildi"
+    },
+    "specialty": {
+        "title": "Uzmanlığınız nedir?",
+        "subtitle": "Alanınızdan kanıtlanmış desenleri yükleyeceğiz.",
+        "provenComponents": "kanıtlanmış bileşen",
+        "previewTitle": "Ne oluşturacağınızı önizleyin",
+        "ofPractices": "pratiklerin bunu içerir"
+    },
+    "styleConcepts": {
+        "title": "Hangi stil size uygun?",
+        "subtitle": "Uzmanlığınızdan gerçek uygulama tasarımlarını kaydırın.",
+        "swipeHint": "Beğendiyseniz sağa, atlamak için sola kaydırın"
+    },
+    "components": {
+        "title": "Bu özelliği dahil et?",
+        "progressLabel": "/",
+        "selected": "seçildi",
+        "highSignal": "Yüksek meslektaş sinyali",
+        "unverified": "DOĞRULANMAMIŞ",
+        "swipeRight": "Dahil Et",
+        "swipeLeft": "Atla"
+    },
+    "prototype": {
+        "title": "Uygulamanız hazır",
+        "subtitle": "Prototipinizi inceleyin ve açın",
+        "patternScore": "Desen Puanı",
+        "features": "özellik",
+        "avgPeerSignal": "ort. meslektaş sinyali",
+        "previewMode": "ÖNİZLEME MODU"
+    },
+    "expert": {
+        "askTitle": "Uzmana Sor",
+        "askSub": "Alanınızdaki bir uzman konfigürasyonunuzu değerlendirecek.",
+        "currentConfig": "MEVCUT KONFİGÜRASYONUNUZ",
+        "questionLabel": "NEYI SORMAK İSTİYORSUNUZ?",
+        "noteLabel": "EK NOT (opsiyonel)",
+        "notePlaceholder": "Özel bir bağlam veya endişeniz varsa ekleyin...",
+        "askBtn": "Uzman Görüşü Al",
+        "analyzing": "konfigürasyonunuzu analiz ediyor...",
+        "strengths": "GÜÇLÜ YÖNLER",
+        "gaps": "GELİŞTİRİLEBİLECEK ALANLAR",
+        "recommendation": "UZMAN ÖNERİSİ",
+        "suggested": "ÖNERİLEN BİLEŞENLER",
+        "saveBadge": "Uzman Rozeti Kaydet",
+        "backToApp": "Uygulamaya Dön",
+        "verified": "Doğrulanmış",
+        "expertApproved": "Uzman Onaylı",
+        "askExpert": "Uzmana Sor",
+        "peerSignalNote": "meslektaş bunu kullanıyor"
+    },
+    "launch": {
+        "title": "Uygulamanıza isim verin",
+        "subtitle": "Bu hastalarınıza görünecek",
+        "placeholder": "örn., Dr. Yılmaz Kardiyoloji",
+        "characterLimit": "karakter",
+        "themeLabel": "Bir tema seçin",
+        "themes": {
+            "clinical": "Klinik",
+            "warm": "Sıcak",
+            "nature": "Doğal"
+        }
+    },
+    "deployment": {
+        "title": "Bunu nasıl kullanacaksınız?",
+        "subtitle": "Dağıtım formatınızı seçin",
+        "patientApp": {
+            "title": "Hasta Uygulaması",
+            "description": "Hastalarınızın randevu alması, mesaj göndermesi ve bakıma erişmesi için mobil uygulama."
+        },
+        "agentConfig": {
+            "title": "Ajan Yapılandırması",
+            "description": "Ajan platformları için AI ajan davranış spesifikasyonu olarak dışa aktarın."
+        },
+        "saveNote": "Yapılandırmanız Uygulamalarım'a kaydedildi"
+    },
+    "community": {
+        "title": "Topluluk",
+        "filterBy": "Uzmanlığa göre filtrele",
+        "all": "Tüm Uzmanlıklar",
+        "patternScore": "Desen Puanı",
+        "patients": "hasta",
+        "emptyState": "Bu uzmanlık için henüz uygulama bulunamadı.",
+        "modalTitle": "Uygulama Önizlemesi",
+        "bookAppointment": "Randevu Al"
+    },
+    "clinician": {
+        "dashboard": "Kontrol Paneli",
+        "upcomingAppointments": "Yaklaşan Randevular",
+        "selectTimeSlot": "Bir zaman dilimi seçin",
+        "available": "Müsait",
+        "unavailable": "Dolu",
+        "patientName": "Hasta Adı",
+        "bookingConfirmed": "Randevu Onaylandı!",
+        "appointmentScheduled": "Randevu planlandı:"
+    },
+    "specialties": {
+        "cardiology": "Kardiyoloji",
+        "dentistry": "Diş Hekimliği",
+        "nursing": "Hemşirelik"
+    },
+    "trustSignals": {
+        "dentist": {
+            "component": "Randevu Alma",
+            "impact": "Gelmeyenleri ~%30 azaltır"
+        },
+        "cardiologist": {
+            "component": "Takip Kontrol Listesi",
+            "impact": "İşlem sonrası acil başvurularını azaltır"
+        },
+        "nurse": {
+            "component": "Vardiya Devir Notları",
+            "impact": "Devir hatalarını azaltır"
+        }
+    }
+}
