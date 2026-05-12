@@ -140,6 +140,11 @@ export default function App() {
   const [pitch, setPitch] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState(null);
+  
+  // Human-in-the-loop states
+  const [appStatus, setAppStatus] = useState('IDLE'); // IDLE, AI_ANALYZED, PENDING_HUMAN, HUMAN_REVIEWED
+  const [expertNotes, setExpertNotes] = useState('');
+  const [isReviewerMode, setIsReviewerMode] = useState(false);
 
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const resultFadeAnim = useRef(new Animated.Value(0)).current;
@@ -153,6 +158,7 @@ export default function App() {
 
     const analysisResult = await analyzePitch(pitch);
     setResult(analysisResult);
+    setAppStatus('AI_ANALYZED');
     setIsAnalyzing(false);
 
     Animated.timing(resultFadeAnim, { toValue: 1, duration: 600, useNativeDriver: true }).start();
@@ -162,8 +168,19 @@ export default function App() {
     Animated.timing(resultFadeAnim, { toValue: 0, duration: 300, useNativeDriver: true }).start(() => {
       setResult(null);
       setPitch('');
+      setAppStatus('IDLE');
+      setExpertNotes('');
       Animated.timing(fadeAnim, { toValue: 1, duration: 300, useNativeDriver: true }).start();
     });
+  };
+
+  const requestHumanReview = () => {
+    setAppStatus('PENDING_HUMAN');
+  };
+
+  const submitExpertReview = (decision) => {
+    setAppStatus('HUMAN_REVIEWED');
+    setExpertNotes(`[UZMAN KARARI: ${decision}]\n\n${expertNotes || 'Uzman ek not bırakmadı.'}`);
   };
 
   const ProgressBar = ({ label, desc, color, value }) => (
@@ -191,7 +208,10 @@ export default function App() {
           <MaterialIcons name="analytics" size={24} color={COLORS.primary} />
           <Text style={styles.appBarTitle}>ANALYSIS_HUD_v1.0</Text>
         </View>
-        <MaterialIcons name="settings-ethernet" size={24} color={COLORS.primary} />
+        <TouchableOpacity onPress={() => setIsReviewerMode(!isReviewerMode)} activeOpacity={0.7} style={{ flexDirection: 'row', alignItems: 'center' }}>
+          {isReviewerMode && <Text style={{ color: COLORS.tertiary, fontSize: 10, marginRight: 8, fontWeight: 'bold' }}>DENETMEN MODU</Text>}
+          <MaterialIcons name="settings-ethernet" size={24} color={isReviewerMode ? COLORS.tertiary : COLORS.primary} />
+        </TouchableOpacity>
       </View>
 
       <View style={{ flex: 1 }}>
@@ -199,8 +219,8 @@ export default function App() {
           <Animated.View style={[styles.content, { opacity: fadeAnim, flex: 1, justifyContent: 'center' }]}>
             <View style={{ marginBottom: 40, alignItems: 'center' }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
-                <View style={[styles.statusDot, { backgroundColor: COLORS.secondary }]} />
-                <Text style={styles.statusLabel}>SİSTEM HAZIR</Text>
+                <View style={[styles.statusDot, { backgroundColor: isReviewerMode ? COLORS.tertiary : COLORS.secondary }]} />
+                <Text style={styles.statusLabel}>{isReviewerMode ? "SİSTEM HAZIR (DENETMEN)" : "SİSTEM HAZIR"}</Text>
               </View>
               <Text style={styles.heroText}>Özel Olarak Tasarlandı:</Text>
               <Text style={[styles.heroText, { color: COLORS.primary }]}>Slop Tespiti İçin.</Text>
@@ -304,6 +324,55 @@ export default function App() {
                 </TouchableOpacity>
               </View>
             </View>
+
+            {/* HUMAN-IN-THE-LOOP ACTIONS */}
+            {!isReviewerMode && appStatus === 'AI_ANALYZED' && (
+              <TouchableOpacity style={styles.humanReviewButton} onPress={requestHumanReview}>
+                <MaterialIcons name="how-to-reg" size={20} color={COLORS.surfaceContainerLowest} style={{ marginRight: 8 }} />
+                <Text style={styles.humanReviewButtonText}>UZMAN İNCELEMESİ İSTE</Text>
+              </TouchableOpacity>
+            )}
+
+            {!isReviewerMode && appStatus === 'PENDING_HUMAN' && (
+              <View style={styles.pendingCard}>
+                <ActivityIndicator color={COLORS.tertiary} size="small" style={{ marginRight: 12 }} />
+                <Text style={styles.pendingText}>İnsan Onayı Bekleniyor...</Text>
+              </View>
+            )}
+
+            {appStatus === 'HUMAN_REVIEWED' && (
+              <View style={styles.expertNotesCard}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
+                  <MaterialIcons name="verified-user" size={20} color={COLORS.secondary} style={{ marginRight: 8 }} />
+                  <Text style={[styles.bentoHeader, { color: COLORS.secondary, marginLeft: 0 }]}>Uzman Kararı (Human Consensus)</Text>
+                </View>
+                <Text style={styles.bentoText}>{expertNotes}</Text>
+              </View>
+            )}
+
+            {/* REVIEWER DASHBOARD (MOCK) */}
+            {isReviewerMode && appStatus === 'PENDING_HUMAN' && (
+              <View style={styles.reviewerDashboardCard}>
+                <Text style={styles.sectionHeader}>DENETMEN KONSOLU</Text>
+                <TextInput
+                  style={[styles.textInput, { height: 100, marginBottom: 16, fontSize: 13 }]}
+                  multiline
+                  placeholder="Uzman notlarınızı buraya girin..."
+                  placeholderTextColor={COLORS.onSurfaceVariant}
+                  value={expertNotes}
+                  onChangeText={setExpertNotes}
+                  textAlignVertical="top"
+                />
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <TouchableOpacity style={[styles.expertActionBtn, { backgroundColor: 'rgba(0, 253, 147, 0.2)' }]} onPress={() => submitExpertReview('ONAYLANDI')}>
+                    <Text style={[styles.expertActionBtnText, { color: COLORS.secondary }]}>ONAYLA</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.expertActionBtn, { backgroundColor: 'rgba(255, 129, 153, 0.2)' }]} onPress={() => submitExpertReview('REDDEDİLDİ')}>
+                    <Text style={[styles.expertActionBtnText, { color: COLORS.tertiary }]}>REDDET</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
 
             <View style={{ height: 40 }} />
           </Animated.ScrollView>
@@ -545,5 +614,70 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '800',
     letterSpacing: 2,
+  },
+  humanReviewButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLORS.tertiary,
+    paddingVertical: 18,
+    borderRadius: 12,
+    marginTop: 16,
+    shadowColor: COLORS.tertiary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 4,
+  },
+  humanReviewButtonText: {
+    color: COLORS.surfaceContainerLowest,
+    fontSize: 14,
+    fontWeight: '800',
+    letterSpacing: 1,
+  },
+  pendingCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255, 129, 153, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 129, 153, 0.3)',
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 16,
+  },
+  pendingText: {
+    color: COLORS.tertiary,
+    fontSize: 14,
+    fontWeight: '700',
+    letterSpacing: 1,
+  },
+  expertNotesCard: {
+    backgroundColor: 'rgba(0, 253, 147, 0.1)',
+    borderRadius: 16,
+    padding: 24,
+    marginTop: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 253, 147, 0.3)',
+  },
+  reviewerDashboardCard: {
+    backgroundColor: COLORS.surfaceContainerHighest,
+    borderRadius: 16,
+    padding: 24,
+    marginTop: 16,
+    borderWidth: 1,
+    borderColor: COLORS.tertiary,
+  },
+  expertActionBtn: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginHorizontal: 4,
+  },
+  expertActionBtnText: {
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: 1,
   }
 });
