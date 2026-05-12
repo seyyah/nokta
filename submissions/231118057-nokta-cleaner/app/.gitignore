@@ -32,6 +32,11 @@ yarn-error.*
 
 # local env files
 .env*.local
+.env
+
+# Expo temp/cache files
+*.nGcrA4*
+app.json.*
 
 # typescript
 *.tsbuildinfo
@@ -39,5 +44,3 @@ yarn-error.*
 # generated native folders
 /ios
 /android
-
-.env

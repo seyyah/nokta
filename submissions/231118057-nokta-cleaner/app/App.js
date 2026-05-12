@@ -1,7 +1,7 @@
 import './global.css';
 
 import React, { useState } from 'react';
-import { View, Text, ScrollView, SafeAreaView, StatusBar, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, ScrollView, SafeAreaView, StatusBar, Alert, KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native';
 import InputSection from './src/components/InputSection';
 import IdeaCard from './src/components/IdeaCard';
 import { processNotes } from './src/services/GeminiService';
@@ -12,6 +12,7 @@ export default function App() {
 
   const handleProcessNotes = async (text) => {
     setIsLoading(true);
+    setIdeas([]);
     try {
       const result = await processNotes(text);
       setIdeas(result);
@@ -22,17 +23,21 @@ export default function App() {
     }
   };
 
-  return (
-    <SafeAreaView className="flex-1 bg-gray-50 pt-10">
-      <StatusBar barStyle="dark-content" />
-        <ScrollView 
-          className="flex-1 w-full"
-          contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: 80, flexGrow: 1 }}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-          bounces={false}
-        >
-          <View className="flex-1 w-full flex-col">
+  const handleClear = () => {
+    setIdeas([]);
+  };
+
+  const isWeb = Platform.OS === 'web';
+
+  const content = (
+    <ScrollView
+      style={{ flex: 1, width: '100%' }}
+      contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: 80, flexGrow: 1, maxWidth: 680, alignSelf: 'center', width: '100%' }}
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+      bounces={false}
+    >
+      <View className="flex-1 w-full flex-col">
             <View className="flex-row justify-between items-center mb-6 w-full">
               <View className="shrink">
                 <Text className="text-black text-3xl font-black tracking-tighter mb-1">
@@ -55,16 +60,21 @@ export default function App() {
                      <Text className="text-black font-extrabold uppercase tracking-widest text-sm shrink">
                        Extracted
                      </Text>
-                     <Text className="text-black font-bold text-xs shrink-0">
-                       {ideas.length}
-                     </Text>
+                     <View className="flex-row items-center gap-4 shrink-0">
+                       <Text className="text-black font-bold text-xs">
+                         {ideas.length}
+                       </Text>
+                       <TouchableOpacity onPress={handleClear} activeOpacity={0.7}>
+                         <Text className="text-gray-400 font-bold text-xs uppercase tracking-widest">Clear</Text>
+                       </TouchableOpacity>
+                     </View>
                   </View>
                   {ideas.map((idea, index) => (
                     <IdeaCard key={idea.id || index} idea={idea} />
                   ))}
                 </View>
               ) : (
-                   <View className={`items-center justify-center py-16 px-6 border-[2px] border-black w-full rounded-sm ${isLoading ? 'opacity-50' : 'opacity-100'}`}>
+                   <View className={`items-center justify-center py-16 px-6 border-[2px] border-black w-full rounded-xl ${isLoading ? 'opacity-50' : 'opacity-100'}`}>
                      {isLoading ? (
                        <Text className="text-black mb-3 font-black text-xl uppercase tracking-widest text-center">Structuring...</Text>
                      ) : (
@@ -77,7 +87,21 @@ export default function App() {
               )}
             </View>
           </View>
-        </ScrollView>
+    </ScrollView>
+  );
+
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+      <StatusBar barStyle="dark-content" />
+      {isWeb ? content : (
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+        >
+          {content}
+        </KeyboardAvoidingView>
+      )}
     </SafeAreaView>
   );
 }

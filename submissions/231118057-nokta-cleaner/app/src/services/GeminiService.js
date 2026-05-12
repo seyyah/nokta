@@ -39,8 +39,6 @@ export const processNotes = async (notes) => {
     """
   `;
 
-  // Provide fallbacks in case of "Service Unavailable" (503) or Rate Limits (429)
-  // Prioritize flash-lite to avoid rate limit spans on 2.0/2.5.
   const modelsToTry = ["gemini-flash-lite-latest", "gemini-2.5-flash", "gemini-2.0-flash"];
   let finalError = null;
 
@@ -49,16 +47,14 @@ export const processNotes = async (notes) => {
       const model = genAI.getGenerativeModel({ model: modelName });
       const result = await model.generateContent(prompt);
       const responseText = result.response.text();
-      
+
       const match = responseText.match(/\[[\s\S]*\]/);
       if (!match) {
         throw new Error('Failed to parse AI response: No JSON array found.');
       }
-      
-      const parsedData = JSON.parse(match[0]);
-      return parsedData; // Success! No need to try other models.
+
+      return JSON.parse(match[0]);
     } catch (error) {
-      // Silently record error, it will throw finalError if all models fail.
       finalError = error;
     }
   }
