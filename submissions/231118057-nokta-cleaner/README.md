@@ -1,74 +1,107 @@
-# Nokta Cleaner — AI Note Migration & Deduplication
+# Nokta Cleaner — AI Destekli Not Temizleme ve Uzman Onay Sistemi
 
-**Student ID:** 231118057
-**Track:** C — Mobile App
-
----
-
-## APK (Android)
-
-[Download APK](https://expo.dev/accounts/cubukcu/projects/expo-template-blank/builds/e38dc81b-9786-439e-989f-dc36d8ab847b)
-
-Telefonda tarayıcıyla aç → İndir → Yükle (bilinmeyen kaynaklara izin ver).
+**Öğrenci No:** 231118057
+**Kategori:** C — Mobil Uygulama
 
 ---
 
-## What It Does
+## APK İndir (Android)
 
-Dağınık notları (WhatsApp export, bullet point karışıklığı, toplantı notları) yapıştır — Gemini AI temizler, tekrar edenleri birleştirir ve kategorize eder. Uzman, çıkan kartları inceleyip onaylar, reddeder, düzenler.
+[APK İndir](https://expo.dev/accounts/cubukcu/projects/expo-template-blank/builds/e38dc81b-9786-439e-989f-dc36d8ab847b)
+
+Telefonda tarayıcıyla aç → İndir → Yükle *(Bilinmeyen kaynaklara izin ver)*
 
 ---
 
-## Features
+## Ne Yapar?
 
-### AI Processing
-- Gemini AI ile not temizleme, tekrar giderme, kategorizasyon (Technical / Business / Design / Other)
+Dağınık notları (WhatsApp dışa aktarma, bullet point karışıklığı, toplantı notları) yapıştır. Gemini AI şunları yapar:
+
+1. Gereksiz metinleri temizler (timestamp, sohbet dolgu metni)
+2. Tekrarlayan fikirleri tek bir noktada birleştirir
+3. Her fikri kategorize eder: **Technical / Business / Design / Other**
+
+Çıkan kartları uzman inceleyip onaylar, reddeder, öncelik atar ve düzenler.
+
+---
+
+## Özellikler
+
+### AI İşleme
+- Gemini AI ile not temizleme, tekrar giderme ve otomatik kategorizasyon
 - Model fallback zinciri: `gemini-flash-lite-latest` → `gemini-2.5-flash` → `gemini-2.0-flash`
+- API limiti aşılırsa otomatik olarak bir sonraki modele geçer
 
 ### Human-in-the-Loop (Uzman Desteği)
-- **Approve / Reject** — her kart için onay/red, renkli border + badge
-- **Bulk Approve All / Reject All** — toplu işlem
-- **Inline Edit** — başlık, açıklama, kategori düzenleme
-- **Expert Note** — karta uzman notu ekleme
-- **Manual Card Addition** — AI'dan bağımsız kart ekleme
-- **Re-analyze Rejected** — reddedilen kartları AI'a yeniden gönder
-- **Export Approved** — onaylanan kartları kopyala (not + etiket + atanan kişi ile)
+| Özellik | Açıklama |
+|---|---|
+| **Onayla / Reddet** | Her kart için yeşil/kırmızı border + badge |
+| **Toplu Onayla / Reddet** | Tüm kartlara tek tıkla işlem |
+| **Inline Düzenleme** | Başlık, açıklama, kategori düzenleme |
+| **Uzman Notu** | Her karta özel not alanı |
+| **Manuel Kart Ekleme** | AI'dan bağımsız yeni kart oluşturma |
+| **Reddedilenleri Yeniden Analiz Et** | Reddedilen kartları AI'a tekrar gönder |
+| **Onaylananları Dışa Aktar** | Onaylı kartları notlar + etiketler + atanan kişiyle panoya kopyala |
 
-### Expert Workflow
-- **Priority** — High / Medium / Low badge, görsel öncelik göstergesi
-- **Assignee** — her karta `@isim` atama
-- **Tags** — serbest etiket ekleme/çıkarma, aramada taranır
-- **Card Linking** — ilişkili kartları birbirine bağlama
-- **Session Report** — canlı özet: durum, kategori, öncelik, atanan kişiler, etiketler + Export Full Report
+### Uzman İş Akışı
+| Özellik | Açıklama |
+|---|---|
+| **Öncelik** | High / Medium / Low — renkli badge ile görsel gösterim |
+| **Atanan Kişi** | Her karta `@isim` atama, başlık altında görünür |
+| **Etiketler** | Serbest etiket ekleme/çıkarma, aramada taranır |
+| **Kart Bağlantısı** | İlişkili kartları birbirine bağlama (checkbox seçici) |
+| **Oturum Raporu** | Canlı özet: durum, kategori, öncelik, atanan kişiler, etiketler + Tam Raporu Dışa Aktar |
 
 ### UX
-- **Dark Mode** — tam tema desteği
-- **Search** — başlık, açıklama, etiket, atanan kişiye göre arama
-- **Category Filter** — All / Technical / Business / Design / Other
-- **Session History** — son 5 analiz otomatik kaydedilir, tek tıkla geri yükle
-- **Card Reorder** — ↑ ↓ butonları ile sıralama
-- Web + Android desteği (Expo)
+| Özellik | Açıklama |
+|---|---|
+| **Dark Mode** | Tüm komponentlerde tam tema desteği |
+| **Arama** | Başlık, açıklama, etiket ve atanan kişiye göre anlık arama |
+| **Kategori Filtresi** | All / Technical / Business / Design / Other pill filtreleri |
+| **Oturum Geçmişi** | Son 5 analiz otomatik kaydedilir (localStorage), tek tıkla geri yükle |
+| **Kart Sıralama** | ↑ ↓ butonları ile öncelik sıralaması |
+| **Web + Android** | Expo ile hem web tarayıcıda hem telefonda çalışır |
 
 ---
 
-## Run Locally
+## Uygulama Akışı
+
+```
+Ham Notlar → AI Analizi → Kart Listesi
+                              ↓
+                    Uzman İncelemesi
+                    ├── Onayla / Reddet
+                    ├── Öncelik Ata
+                    ├── Kişi Ata
+                    ├── Etiket Ekle
+                    ├── Kart Bağla
+                    ├── Düzenle / Not Ekle
+                    └── Reddedilenleri Yeniden Analiz Et
+                              ↓
+                    Oturum Raporu → Dışa Aktar
+```
+
+---
+
+## Yerel Kurulum
 
 ```bash
 cd app
 cp .env.example .env
-# .env içine EXPO_PUBLIC_GEMINI_API_KEY değerini yaz
+# .env dosyasına EXPO_PUBLIC_GEMINI_API_KEY değerini yaz
 npm install
-npx expo start --web      # Web
-npx expo start --android  # Android (Expo Go)
+npx expo start --web        # Web tarayıcı
+npx expo start --android    # Android (Expo Go gerekli)
 ```
 
-Gemini API key: [aistudio.google.com/apikey](https://aistudio.google.com/apikey)
+Gemini API key ücretsiz al: [aistudio.google.com/apikey](https://aistudio.google.com/apikey)
 
 ---
 
-## Tech Stack
+## Teknoloji
 
-- React Native + Expo (SDK 54)
-- NativeWind (Tailwind CSS)
+- React Native + Expo SDK 54
+- NativeWind v4 (Tailwind CSS)
 - Google Gemini AI (`@google/generative-ai`)
 - expo-clipboard
+- localStorage (oturum geçmişi)
