@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   SafeAreaView,
@@ -9,22 +9,84 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import * as Speech from "expo-speech";
+import RoboJudge from "./components/RoboJudge";
+import ScoreMeter from "./components/ScoreMeter";
 
 const API_URL =
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=";
+
+function parseVerdict(text) {
+  if (!text) return { score: null, justification: "" };
+  const scoreMatch = text.match(/SLOP\s*SCORE\s*:\s*(\d{1,3})/i);
+  const justMatch = text.match(/JUSTIFICATION\s*:\s*([\s\S]+)/i);
+  const raw = scoreMatch ? parseInt(scoreMatch[1], 10) : null;
+  const score = raw == null || Number.isNaN(raw) ? null : Math.max(0, Math.min(100, raw));
+  const justification = justMatch ? justMatch[1].trim() : text.trim();
+  return { score, justification };
+}
+
+function moodFromScore(score) {
+  if (score == null) return "skeptical";
+  if (score >= 70) return "outraged";
+  if (score >= 40) return "skeptical";
+  return "grounded";
+}
 
 export default function App() {
   const [pitchInput, setPitchInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [aiResponse, setAiResponse] = useState("");
+  const [verdict, setVerdict] = useState({ score: null, justification: "" });
+  const [errorMsg, setErrorMsg] = useState("");
+  const [speaking, setSpeaking] = useState(false);
+
+  const mood = useMemo(() => {
+    if (loading) return "analyzing";
+    if (errorMsg) return "skeptical";
+    if (!aiResponse) return "idle";
+    return moodFromScore(verdict.score);
+  }, [loading, errorMsg, aiResponse, verdict.score]);
+
+  useEffect(
+    () => () => {
+      Speech.stop();
+    },
+    []
+  );
+
+  const stopSpeaking = () => {
+    Speech.stop();
+    setSpeaking(false);
+  };
+
+  const toggleSpeak = () => {
+    if (speaking) {
+      stopSpeaking();
+      return;
+    }
+    if (!verdict.justification) return;
+    setSpeaking(true);
+    Speech.speak(verdict.justification, {
+      language: "en-US",
+      rate: 1.0,
+      pitch: 0.95,
+      onDone: () => setSpeaking(false),
+      onStopped: () => setSpeaking(false),
+      onError: () => setSpeaking(false),
+    });
+  };
 
   const analyzePitch = async () => {
     if (!pitchInput.trim() || loading) {
       return;
     }
 
+    stopSpeaking();
     setLoading(true);
     setAiResponse("");
+    setVerdict({ score: null, justification: "" });
+    setErrorMsg("");
 
     try {
       const apiKey = process.env.EXPO_PUBLIC_API_KEY;
@@ -32,8 +94,8 @@ export default function App() {
         throw new Error("Missing EXPO_PUBLIC_API_KEY");
       }
 
-      const prompt = `You are a highly critical, no-nonsense startup investor and tech market analyst. Your job is to read startup pitch paragraphs and detect "slop"—which means unrealistic hype, overuse of tech buzzwords (like AI, blockchain, synergy), unverified market claims, and meaningless fluff. Analyze the following pitch and give it a "Slop Score". 
-      You must reply EXACTLY in this format, with no extra conversation: 
+      const prompt = `You are a highly critical, no-nonsense startup investor and tech market analyst. Your job is to read startup pitch paragraphs and detect "slop"—which means unrealistic hype, overuse of tech buzzwords (like AI, blockchain, synergy), unverified market claims, and meaningless fluff. Analyze the following pitch and give it a "Slop Score".
+      You must reply EXACTLY in this format, with no extra conversation:
       SLOP SCORE: [Enter a number from 1 to 100, where 100 is pure buzzword nonsense/scam, and 1 is a highly realistic, grounded, and honest business].
       JUSTIFICATION: [Write 2 to 3 short, punchy sentences explaining exactly why you gave this score. Call out the specific unrealistic claims or ridiculous buzzwords they used.]
       Here is the pitch to analyze: ${pitchInput}`;
@@ -63,12 +125,13 @@ export default function App() {
         "No response returned.";
 
       setAiResponse(text);
+      setVerdict(parseVerdict(text));
     } catch (error) {
       const message =
         error instanceof Error
           ? error.message
           : "Something went wrong while analyzing the pitch.";
-      setAiResponse(message);
+      setErrorMsg(message);
     } finally {
       setLoading(false);
     }
@@ -83,8 +146,12 @@ export default function App() {
         <View style={styles.header}>
           <Text style={styles.title}>Startup Pitch Tester</Text>
           <Text style={styles.subtitle}>
-            Paste your pitch and get a brutally honest slop score.
+            Paste your pitch. JUDGE-7 will read it and rule.
           </Text>
+        </View>
+
+        <View style={styles.judgeStage}>
+          <RoboJudge mood={mood} score={verdict.score} speaking={speaking} />
         </View>
 
         <View style={styles.inputCard}>
@@ -102,19 +169,49 @@ export default function App() {
         <TouchableOpacity
           style={[styles.button, loading && styles.buttonDisabled]}
           onPress={analyzePitch}
-          disabled={loading}
+          disabled={loading || !pitchInput.trim()}
           activeOpacity={0.85}
         >
           {loading ? (
             <ActivityIndicator color="#FFFFFF" />
           ) : (
-            <Text style={styles.buttonText}>Analyze Pitch</Text>
+            <Text style={styles.buttonText}>Submit to JUDGE-7</Text>
           )}
         </TouchableOpacity>
 
-        {aiResponse ? (
+        {errorMsg ? (
+          <View style={styles.errorCard}>
+            <Text style={styles.errorTitle}>Connection error</Text>
+            <Text style={styles.errorText}>{errorMsg}</Text>
+          </View>
+        ) : null}
+
+        {verdict.score != null && !errorMsg ? (
           <View style={styles.resultCard}>
-            <Text style={styles.resultTitle}>Result</Text>
+            <ScoreMeter score={verdict.score} />
+            <View style={styles.divider} />
+            <View style={styles.justifyHeader}>
+              <Text style={styles.resultTitle}>Justification</Text>
+              <TouchableOpacity
+                onPress={toggleSpeak}
+                style={[styles.speakBtn, speaking && styles.speakBtnActive]}
+                activeOpacity={0.85}
+              >
+                <Text
+                  style={[
+                    styles.speakBtnText,
+                    speaking && styles.speakBtnTextActive,
+                  ]}
+                >
+                  {speaking ? "■  Stop" : "▶  Hear verdict"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.resultText}>{verdict.justification}</Text>
+          </View>
+        ) : aiResponse && !errorMsg ? (
+          <View style={styles.resultCard}>
+            <Text style={styles.resultTitle}>Verdict</Text>
             <Text style={styles.resultText}>{aiResponse}</Text>
           </View>
         ) : null}
@@ -134,7 +231,7 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   header: {
-    marginBottom: 20,
+    marginBottom: 12,
   },
   title: {
     fontSize: 28,
@@ -148,6 +245,10 @@ const styles = StyleSheet.create({
     color: "#6B7280",
     lineHeight: 20,
   },
+  judgeStage: {
+    alignItems: "center",
+    marginBottom: 14,
+  },
   inputCard: {
     backgroundColor: "#FFFFFF",
     borderRadius: 16,
@@ -160,7 +261,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   input: {
-    minHeight: 160,
+    minHeight: 140,
     textAlignVertical: "top",
     fontSize: 16,
     color: "#111827",
@@ -185,7 +286,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "700",
-    letterSpacing: 0.2,
+    letterSpacing: 0.3,
   },
   resultCard: {
     marginTop: 24,
@@ -198,15 +299,68 @@ const styles = StyleSheet.create({
     shadowRadius: 18,
     elevation: 6,
   },
+  divider: {
+    height: 1,
+    backgroundColor: "#F3F4F6",
+    marginVertical: 14,
+  },
   resultTitle: {
-    fontSize: 16,
+    fontSize: 13,
+    fontWeight: "800",
+    color: "#6B7280",
+    letterSpacing: 1.2,
+    marginBottom: 8,
+  },
+  justifyHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 6,
+  },
+  speakBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: "#EEF2FF",
+    borderWidth: 1,
+    borderColor: "#C7D2FE",
+  },
+  speakBtnActive: {
+    backgroundColor: "#4F46E5",
+    borderColor: "#4338CA",
+  },
+  speakBtnText: {
+    fontSize: 12,
     fontWeight: "700",
-    marginBottom: 10,
-    color: "#111827",
+    color: "#4338CA",
+    letterSpacing: 0.4,
+  },
+  speakBtnTextActive: {
+    color: "#FFFFFF",
   },
   resultText: {
     fontSize: 15,
     color: "#374151",
     lineHeight: 22,
+  },
+  errorCard: {
+    marginTop: 20,
+    backgroundColor: "#FEF2F2",
+    borderRadius: 14,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: "#FECACA",
+  },
+  errorTitle: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: "#B91C1C",
+    letterSpacing: 1,
+    marginBottom: 4,
+  },
+  errorText: {
+    fontSize: 14,
+    color: "#7F1D1D",
+    lineHeight: 20,
   },
 });
