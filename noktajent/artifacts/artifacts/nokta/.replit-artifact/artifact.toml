@@ -1,0 +1,27 @@
+kind = "mobile"
+previewPath = "/"
+title = "Nokta"
+version = "1.0.0"
+id = "artifacts/nokta"
+router = "expo-domain"
+
+[[integratedSkills]]
+name = "expo"
+version = "1.0.0"
+
+[[services]]
+ensurePreviewReachable = "/status"
+name = "expo"
+paths = [ "/" ]
+localPort = 19653
+
+[services.development]
+run = "pnpm --filter @workspace/nokta run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/nokta", "run", "build" ]
+run = [ "pnpm", "--filter", "@workspace/nokta", "run", "serve" ]
+
+[services.env]
+PORT = "19653"
+BASE_PATH = "/"
