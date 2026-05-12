@@ -6,6 +6,8 @@
 - **Slug:** nokta-human-support
 - **Track:** C - AI + insan uzman destegi katmani
 
+Track: C
+
 ## Ozet
 
 Bu teslim, Nokta'nin yalnizca AI cevabi uretmesini degil, gerektiginde insan uzmana devretmesini saglar. Uygulama kullanici istegini once AI katmaninda analiz eder, guven puani ve risk bayraklari cikarir, sonra uygun uzman profilini secip destek bileti olusturur.
@@ -31,7 +33,8 @@ Expo Go ile terminalde uretilen QR kod okutularak mobilde acilabilir.
 
 ## Expo QR
 
-- Expo QR linki/gorseli: [expo-qr.png](expo-qr.png)
+- Expo Go / expo-go QR linki-gorseli: [expo-qr.png](expo-qr.png)
+- Expo project type: Expo Go local development (`expo-go`)
 - Not: Expo local development QR kodu cihaz IP adresine gore calisma aninda yeniden uretilir. En dogru QR icin `npm run start` komutunun terminalde verdigi QR okutulmalidir.
 
 ## APK
@@ -40,7 +43,8 @@ Expo Go ile terminalde uretilen QR kod okutularak mobilde acilabilir.
 
 ## 60 Sn Demo
 
-- Demo video: [demo.mp4](demo.mp4)
+- 60 saniyelik demo videosu: [demo.mp4](demo.mp4)
+- YouTube/Drive yuklemesine hazir repo ici demo videosu: [demo.mp4](demo.mp4)
 - Demo metni: [idea.md](idea.md) dosyasindaki "Demo Akisi" bolumunde yer alir.
 
 ## Uzman Destegi Akisi
