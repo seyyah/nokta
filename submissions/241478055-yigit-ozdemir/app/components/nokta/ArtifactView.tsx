@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useMemo } from 'react';
+import React, { useRef, useEffect, useMemo, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -8,9 +8,32 @@ import {
   ScrollView,
   Alert,
   Platform,
+  LayoutAnimation,
+  UIManager,
 } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { NoktaColors, FontSize, Spacing, Radius } from '@/constants/theme';
+
+// ─── Expert Flow Imports ─────────────────────────────────────
+import NDAModal from '@/components/nokta/NDAModal';
+import ExpertMarketplace from '@/components/nokta/ExpertMarketplace';
+import ExpertLoading from '@/components/nokta/ExpertLoading';
+import ExpertReviewPanel from '@/components/nokta/ExpertReviewPanel';
+
+import {
+  EXPERT_PROFILES,
+  requestExpertReview,
+  type Expert,
+  type ExpertFeedback,
+} from '@/services/expertService';
+
+// Enable LayoutAnimation on Android
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 export interface ArtifactData {
   thesis: string;
@@ -25,6 +48,15 @@ interface ArtifactViewProps {
   answeredCount: number;
   onReset: () => void;
 }
+
+// ─── Expert Flow State ───────────────────────────────────────
+
+type ExpertFlowState =
+  | { step: 'idle' }
+  | { step: 'nda-modal' }
+  | { step: 'marketplace' }
+  | { step: 'loading'; expert: Expert }
+  | { step: 'complete'; expert: Expert; feedback: ExpertFeedback };
 
 // ─── Slop Detection Engine ───────────────────────────────────
 
@@ -93,6 +125,9 @@ export default function ArtifactView({
 
   const generatedAt = new Date().toISOString().split('T')[0];
 
+  // ─── Expert Flow State ─────────────────────────────────────
+  const [expertFlow, setExpertFlow] = useState<ExpertFlowState>({ step: 'idle' });
+
   // ─── Calculate scores ─────────────────────────────────────
   const scores = useMemo(() => {
     const fullText = `${artifact.thesis} ${artifact.problem} ${artifact.techConstraints}`;
@@ -116,13 +151,70 @@ export default function ArtifactView({
     ]).start();
   }, [fadeAnim, slideAnim]);
 
+  // ─── Expert Flow Handlers ─────────────────────────────────
+
+  const handleOpenNDA = useCallback(() => {
+    setExpertFlow({ step: 'nda-modal' });
+  }, []);
+
+  const handleNDAAccept = useCallback(() => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setExpertFlow({ step: 'marketplace' });
+  }, []);
+
+  const handleNDACancel = useCallback(() => {
+    setExpertFlow({ step: 'idle' });
+  }, []);
+
+  const handleSelectExpert = useCallback(
+    async (expert: Expert) => {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      setExpertFlow({ step: 'loading', expert });
+
+      try {
+        const feedback = await requestExpertReview(expert.id, artifact);
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setExpertFlow({ step: 'complete', expert, feedback });
+      } catch {
+        Alert.alert(
+          'Hata',
+          'Uzman incelemesi sırasında bir hata oluştu. Lütfen tekrar deneyin.'
+        );
+        setExpertFlow({ step: 'marketplace' });
+      }
+    },
+    [artifact]
+  );
+
+  const handleCancelMarketplace = useCallback(() => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setExpertFlow({ step: 'idle' });
+  }, []);
+
+  // ─── Copy Handler ──────────────────────────────────────────
+
   const getFullText = () => {
     let text = `# NOKTA SPEC — Oluşturulma: ${generatedAt}\n\n`;
     text += `## Tez\n${artifact.thesis}\n\n`;
     text += `## Problem\n${artifact.problem}\n\n`;
     text += `## Teknik Kısıtlar\n${artifact.techConstraints}\n\n`;
+
+    // Include expert feedback if available
+    if (expertFlow.step === 'complete') {
+      text += `## Uzman Geri Bildirimi\n`;
+      text += `Uzman: ${expertFlow.feedback.expertTitle}\n`;
+      text += `Puan: ${expertFlow.feedback.score}/100\n`;
+      text += `Geri Bildirim: ${expertFlow.feedback.feedback}\n`;
+      text += `Durum: Human-Verified ✓\n\n`;
+    }
+
     text += `---\n`;
     text += `Spec Notu: ${scores.specGrade} | Slop Skoru: %${scores.slopScore} | Boyut: ${answeredCount}/${questionsCount}\n`;
+
+    if (expertFlow.step === 'complete') {
+      text += `Uzman Onay Puanı: ${expertFlow.feedback.score}/100\n`;
+    }
+
     text += `Nokta tarafından oluşturuldu · Track A · AI Destekli · Slop-Free\n`;
     return text;
   };
@@ -161,6 +253,13 @@ export default function ArtifactView({
         { opacity: fadeAnim, transform: [{ translateY: slideAnim }] },
       ]}
     >
+      {/* NDA Modal */}
+      <NDAModal
+        visible={expertFlow.step === 'nda-modal'}
+        onAccept={handleNDAAccept}
+        onCancel={handleNDACancel}
+      />
+
       <ScrollView
         style={styles.scrollArea}
         contentContainerStyle={styles.scrollContent}
@@ -221,10 +320,31 @@ export default function ArtifactView({
             <Text style={styles.sectionBody}>{artifact.techConstraints}</Text>
           </View>
 
+          {/* Expert Feedback Section (inline after doc content) */}
+          {expertFlow.step === 'complete' && (
+            <>
+              <View style={styles.docDivider} />
+              <View style={styles.docSection}>
+                <View style={styles.expertFeedbackInlineHeader}>
+                  <Text style={[styles.sectionTag, { color: '#f59e0b' }]}>
+                    UZMAN GERİ BİLDİRİMİ
+                  </Text>
+                  <View style={styles.humanVerifiedInlineBadge}>
+                    <Text style={styles.humanVerifiedInlineText}>✓ Human-Verified</Text>
+                  </View>
+                </View>
+                <Text style={styles.sectionBody}>
+                  {expertFlow.feedback.feedback}
+                </Text>
+              </View>
+            </>
+          )}
+
           {/* Alt bilgi */}
           <View style={styles.docFooter}>
             <Text style={styles.footerText}>
               Nokta tarafından oluşturuldu · Track A · AI Destekli · Slop-Free
+              {expertFlow.step === 'complete' ? ' · Human-Verified ✓' : ''}
             </Text>
           </View>
         </View>
@@ -253,18 +373,92 @@ export default function ArtifactView({
               </Text>
               <Text style={styles.scoreLabel}>Slop Skoru</Text>
             </View>
+            <View style={styles.scoreDivider} />
+            <View style={styles.scoreItem}>
+              {expertFlow.step === 'complete' ? (
+                <Text
+                  style={[
+                    styles.scoreValue,
+                    {
+                      color:
+                        expertFlow.feedback.score >= 80
+                          ? '#22c55e'
+                          : expertFlow.feedback.score >= 60
+                          ? '#eab308'
+                          : '#ef4444',
+                    },
+                  ]}
+                >
+                  {expertFlow.feedback.score}
+                </Text>
+              ) : (
+                <Text style={[styles.scoreValue, { color: NoktaColors.textDimmed }]}>
+                  —
+                </Text>
+              )}
+              <Text style={styles.scoreLabel}>Uzman Puanı</Text>
+            </View>
           </View>
 
           {/* Score explanations */}
           <View style={styles.scoreExplain}>
             <Text style={styles.scoreExplainText}>
-              Boyut: cevaplanmış soru sayısı · Spec Notu: içerik derinliği ve kapsam · Slop Skoru: pazarlama/dolgu kelime oranı (düşük = iyi)
+              Boyut: cevaplanmış soru sayısı · Spec Notu: içerik derinliği ve kapsam · Slop Skoru: dolgu kelime oranı (düşük = iyi) · Uzman Puanı: insan onay puanı
             </Text>
           </View>
         </View>
 
-        {/* Aksiyon butonları */}
+        {/* ─── Expert Flow Area ────────────────────────────── */}
+
+        {/* Expert Loading State */}
+        {expertFlow.step === 'loading' && (
+          <ExpertLoading
+            expertTitle={expertFlow.expert.title}
+            expertIcon={expertFlow.expert.icon}
+            accentColor={expertFlow.expert.accentColor}
+          />
+        )}
+
+        {/* Expert Marketplace */}
+        {expertFlow.step === 'marketplace' && (
+          <ExpertMarketplace
+            experts={EXPERT_PROFILES}
+            onSelectExpert={handleSelectExpert}
+            onCancel={handleCancelMarketplace}
+          />
+        )}
+
+        {/* Expert Review Result */}
+        {expertFlow.step === 'complete' && (
+          <ExpertReviewPanel feedback={expertFlow.feedback} />
+        )}
+
+        {/* ─── Action Buttons ─────────────────────────────── */}
         <View style={styles.buttonRow}>
+          {/* Enhance with Expert Button — only shown when idle */}
+          {expertFlow.step === 'idle' && (
+            <Pressable
+              style={({ pressed }) => [
+                styles.expertButton,
+                pressed && styles.buttonPressed,
+              ]}
+              onPress={handleOpenNDA}
+            >
+              <View style={styles.expertButtonContent}>
+                <Text style={styles.expertButtonIcon}>👤</Text>
+                <View style={styles.expertButtonTextWrap}>
+                  <Text style={styles.expertButtonTitle}>
+                    Enhance with Human Expert
+                  </Text>
+                  <Text style={styles.expertButtonSub}>
+                    Uzman Görüşü Al
+                  </Text>
+                </View>
+                <Text style={styles.expertButtonArrow}>→</Text>
+              </View>
+            </Pressable>
+          )}
+
           <Pressable
             style={({ pressed }) => [
               styles.primaryButton,
@@ -411,6 +605,25 @@ const styles = StyleSheet.create({
     backgroundColor: NoktaColors.borderSubtle,
     marginHorizontal: Spacing.lg,
   },
+  expertFeedbackInlineHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: Spacing.sm,
+  },
+  humanVerifiedInlineBadge: {
+    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 2,
+    borderRadius: Radius.sm,
+    borderWidth: 1,
+    borderColor: 'rgba(16, 185, 129, 0.2)',
+  },
+  humanVerifiedInlineText: {
+    fontSize: 9,
+    color: NoktaColors.accent,
+    fontWeight: '700',
+  },
   docFooter: {
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
@@ -475,6 +688,42 @@ const styles = StyleSheet.create({
     lineHeight: 16,
   },
   buttonRow: { gap: Spacing.md },
+  expertButton: {
+    backgroundColor: NoktaColors.bgCard,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    borderColor: '#f59e0b40',
+    overflow: 'hidden',
+  },
+  expertButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: Spacing.lg,
+    paddingHorizontal: Spacing.xl,
+    gap: Spacing.md,
+  },
+  expertButtonIcon: {
+    fontSize: 22,
+  },
+  expertButtonTextWrap: {
+    flex: 1,
+  },
+  expertButtonTitle: {
+    fontSize: FontSize.md,
+    fontWeight: '700',
+    color: '#f59e0b',
+    marginBottom: 2,
+  },
+  expertButtonSub: {
+    fontSize: FontSize.xs,
+    color: NoktaColors.textTertiary,
+    fontWeight: '500',
+  },
+  expertButtonArrow: {
+    fontSize: FontSize.xl,
+    color: '#f59e0b',
+    fontWeight: '600',
+  },
   primaryButton: {
     backgroundColor: NoktaColors.accent,
     paddingVertical: Spacing.lg,
