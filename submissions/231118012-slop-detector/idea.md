@@ -87,6 +87,12 @@ Nokta Slop Detector, ham fikri alır, 4 mühendislik boyutuyla skorlar, red-flag
 \[ \text{Slop Score} = 100 - (0.3 \cdot T + 0.3 \cdot M + 0.2 \cdot F + 0.2 \cdot O) \]  
 (T = Tech-Depth eksikliği, M = Market-Rationality eksikliği, F = Feasibility eksikliği, O = Originality eksikliği; her biri 0-100 arası)
 
+**Aşama 3 → Human-in-the-Loop (İnsan Onay Geçidi)**  
+Yapay zeka analizinin ardından kritik eşikte kalan veya itiraz edilen fikirler için devreye giren manuel denetim katmanı:
+- **Uzman İncelemesi Talebi:** Kullanıcı yapay zeka kararına karşı denetim isteyebilir (`PENDING_HUMAN` statüsü).
+- **Denetmen Konsolu (Review Dashboard):** Nokta mühendisleri veya yetkili yatırımcılar, sistemin ürettiği raporları okuyarak projeyi onaylar veya reddeder.
+- **Nihai Karar (Human Consensus):** Uzmanın kararı ve varsa yönlendirici notları kullanıcı paneline yansıtılır. Sistem asla tek başına nihai karar verici konumuna geçmez.
+
 ---
 
 ## 9. Risk Matrisi ve Mitigasyon Stratejileri
