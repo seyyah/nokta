@@ -1,42 +1,107 @@
-# Nokta Away Mission — Solo Seferi (Track C)
+# Nokta Cleaner — AI Destekli Not Temizleme ve Uzman Onay Sistemi
 
-**Öğrenci No:** 231118057  
-**İsim:** Eray Çubukçu  
-**Seçilen Track:** Track C — Migration & Dedup
-
----
-
-## 🎯 Proje Vizyonu
-**Nokta Cleaner**, dağınık fikir kırıntılarını (noktaları) analiz ederek; mükerrer kayıtları birleştiren, anlamsız verileri (slop) ayıklayan ve bunları profesyonel "İdea Kartları"na dönüştüren bir mobil kuluçka asistanıdır. Özellikle WhatsApp not dökümleri gibi karmaşık verileri "çöpsüz" bir spesifikasyona dönüştürmek için tasarlanmıştır.
+**Öğrenci No:** 231118057
+**Kategori:** C — Mobil Uygulama
 
 ---
 
-## 🚀 Teknik Stack & Teslimat
-- **Framework:** React Native + Expo
-- **AI Engine:** Google Gemini 1.5 Flash (Metin işleme ve dedup mantığı için optimize edildi).
-- **Styling:** NativeWind (Tailwind CSS) & StyleSheet (Minimalist Siyah-Beyaz Tema).
-- **Güvenlik:** `.env` (EXPO_PUBLIC_GEMINI_API_KEY) ile API anahtarı yönetimi.
+## APK İndir (Android)
 
-### 🔗 Linkler
-- **Expo Go (Link/QR):** https://expo.dev/accounts/cubukcu/projects/expo-template-blank/builds/2eab6f1a-7642-4d09-ad2c-6c5a62e6d97c
-- **60 Sn Demo Videosu:** https://www.youtube.com/watch?v=cuMZs3rzhbs
-- **APK Dosyası:** `./app-release.apk` (Klasör içerisinde mevcuttur).
+[APK İndir](https://expo.dev/accounts/cubukcu/projects/expo-template-blank/builds/e38dc81b-9786-439e-989f-dc36d8ab847b)
+
+Telefonda tarayıcıyla aç → İndir → Yükle *(Bilinmeyen kaynaklara izin ver)*
 
 ---
 
-## 🛠 Decision Log (Mühendislik Kararları)
+## Ne Yapar?
 
-1. **Neden Track C?** Fikirlerin "slop-free" olması vizyonuna en çok hizmet eden aşamanın temizlik ve birleştirme (migration) olduğuna karar verdim. Dağınık veriyi anlamlı bir yapıya (artifact) dönüştürmek projenin bel kemiğidir.
-2. **Mimari:** AI isteklerini bir `Service` katmanına (`GeminiService.js`) ayırarak kodun okunabilirliğini artırdım.
-3. **API Hata Yönetimi:** Gemini API'daki 404 (Endpoint mismatch) hatalarını aşmak için kütüphane yerine doğrudan `fetch` (REST) yapısını kullanarak endpoint stabilitesini sağladım.
-4. **UI Kararı:** Mobil odaklı bir deneyim için Apple tarzı minimalist, siyah-beyaz yüksek kontrastlı bir tema seçildi. Kullanıcıyı fikirlerden uzaklaştıracak görsel gürültüden kaçınıldı.
+Dağınık notları (WhatsApp dışa aktarma, bullet point karışıklığı, toplantı notları) yapıştır. Gemini AI şunları yapar:
+
+1. Gereksiz metinleri temizler (timestamp, sohbet dolgu metni)
+2. Tekrarlayan fikirleri tek bir noktada birleştirir
+3. Her fikri kategorize eder: **Technical / Business / Design / Other**
+
+Çıkan kartları uzman inceleyip onaylar, reddeder, öncelik atar ve düzenler.
+
+---
+
+## Özellikler
+
+### AI İşleme
+- Gemini AI ile not temizleme, tekrar giderme ve otomatik kategorizasyon
+- Model fallback zinciri: `gemini-flash-lite-latest` → `gemini-2.5-flash` → `gemini-2.0-flash`
+- API limiti aşılırsa otomatik olarak bir sonraki modele geçer
+
+### Human-in-the-Loop (Uzman Desteği)
+| Özellik | Açıklama |
+|---|---|
+| **Onayla / Reddet** | Her kart için yeşil/kırmızı border + badge |
+| **Toplu Onayla / Reddet** | Tüm kartlara tek tıkla işlem |
+| **Inline Düzenleme** | Başlık, açıklama, kategori düzenleme |
+| **Uzman Notu** | Her karta özel not alanı |
+| **Manuel Kart Ekleme** | AI'dan bağımsız yeni kart oluşturma |
+| **Reddedilenleri Yeniden Analiz Et** | Reddedilen kartları AI'a tekrar gönder |
+| **Onaylananları Dışa Aktar** | Onaylı kartları notlar + etiketler + atanan kişiyle panoya kopyala |
+
+### Uzman İş Akışı
+| Özellik | Açıklama |
+|---|---|
+| **Öncelik** | High / Medium / Low — renkli badge ile görsel gösterim |
+| **Atanan Kişi** | Her karta `@isim` atama, başlık altında görünür |
+| **Etiketler** | Serbest etiket ekleme/çıkarma, aramada taranır |
+| **Kart Bağlantısı** | İlişkili kartları birbirine bağlama (checkbox seçici) |
+| **Oturum Raporu** | Canlı özet: durum, kategori, öncelik, atanan kişiler, etiketler + Tam Raporu Dışa Aktar |
+
+### UX
+| Özellik | Açıklama |
+|---|---|
+| **Dark Mode** | Tüm komponentlerde tam tema desteği |
+| **Arama** | Başlık, açıklama, etiket ve atanan kişiye göre anlık arama |
+| **Kategori Filtresi** | All / Technical / Business / Design / Other pill filtreleri |
+| **Oturum Geçmişi** | Son 5 analiz otomatik kaydedilir (localStorage), tek tıkla geri yükle |
+| **Kart Sıralama** | ↑ ↓ butonları ile öncelik sıralaması |
+| **Web + Android** | Expo ile hem web tarayıcıda hem telefonda çalışır |
 
 ---
 
-## 📈 Engineering Trace (Commit Disiplini)
-Proje boyunca anlamlı commitlerle ilerlenmiştir:
-- `fix: resolve Gemini API 404 error by forcing v1 endpoint`
-- `style: fix layout overflow and align component widths`
-- `feat: full application build for Track C`
+## Uygulama Akışı
+
+```
+Ham Notlar → AI Analizi → Kart Listesi
+                              ↓
+                    Uzman İncelemesi
+                    ├── Onayla / Reddet
+                    ├── Öncelik Ata
+                    ├── Kişi Ata
+                    ├── Etiket Ekle
+                    ├── Kart Bağla
+                    ├── Düzenle / Not Ekle
+                    └── Reddedilenleri Yeniden Analiz Et
+                              ↓
+                    Oturum Raporu → Dışa Aktar
+```
 
 ---
+
+## Yerel Kurulum
+
+```bash
+cd app
+cp .env.example .env
+# .env dosyasına EXPO_PUBLIC_GEMINI_API_KEY değerini yaz
+npm install
+npx expo start --web        # Web tarayıcı
+npx expo start --android    # Android (Expo Go gerekli)
+```
+
+Gemini API key ücretsiz al: [aistudio.google.com/apikey](https://aistudio.google.com/apikey)
+
+---
+
+## Teknoloji
+
+- React Native + Expo SDK 54
+- NativeWind v4 (Tailwind CSS)
+- Google Gemini AI (`@google/generative-ai`)
+- expo-clipboard
+- localStorage (oturum geçmişi)
