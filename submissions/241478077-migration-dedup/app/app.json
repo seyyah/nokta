@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "Nokta Capture",
+    "slug": "nokta-capture-241478077",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#121212"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nokta.capture241478077"
+    },
+    "android": {
+      "package": "com.nokta.capture241478077",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#121212"
+      },
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "8bfbfbbe-9a47-4623-a697-4ca34fa8bff1"
+      }
+    }
+  }
+}
