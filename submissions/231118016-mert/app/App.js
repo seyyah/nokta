@@ -6,6 +6,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import IdeaScreen from './app/screens/IdeaScreen';
 import QuestionsScreen from './app/screens/QuestionsScreen';
 import SpecScreen from './app/screens/SpecScreen';
+import ExpertScreen from './app/screens/ExpertScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -40,6 +41,11 @@ export default function App() {
             name="SpecScreen" 
             component={SpecScreen} 
             options={{ title: 'Idea Specification' }} 
+          />
+          <Stack.Screen 
+            name="ExpertScreen" 
+            component={ExpertScreen} 
+            options={{ title: 'Uzman İncelemesi (HITL)' }} 
           />
         </Stack.Navigator>
       </NavigationContainer>

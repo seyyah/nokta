@@ -4,7 +4,7 @@ import ScoreCard from '../components/ScoreCard';
 import MissingFields from '../components/MissingFields';
 import { callGeminiAPI } from '../utils/geminiApi';
 
-const SpecScreen = ({ route }) => {
+const SpecScreen = ({ route, navigation }) => {
   const { idea, apiKey, answers, questions } = route.params || {};
 
   const [loading, setLoading] = useState(true);
@@ -101,7 +101,22 @@ Example format:
         ))}
       </View>
       
-      <View style={{height: 40}} /> 
+      {/* HITL — Uzman İncelemesi Butonu */}
+      <TouchableOpacity
+        style={styles.expertButton}
+        onPress={() =>
+          navigation.navigate('ExpertScreen', {
+            idea,
+            score: specData.score || 0,
+            specSections: specData.specSections || [],
+          })
+        }
+      >
+        <Text style={styles.expertButtonText}>👨‍⚖️  Uzmana Gönder (HITL)</Text>
+        <Text style={styles.expertButtonSub}>Kıdemli danışman spec'ini incelesin</Text>
+      </TouchableOpacity>
+
+      <View style={{height: 40}} />
     </ScrollView>
   );
 };
@@ -213,6 +228,29 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#333',
     lineHeight: 24,
+  },
+  expertButton: {
+    backgroundColor: '#0f3460',
+    borderRadius: 12,
+    padding: 18,
+    marginTop: 12,
+    alignItems: 'center',
+    gap: 4,
+    shadowColor: '#0f3460',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  expertButtonText: {
+    color: '#fff',
+    fontSize: 17,
+    fontWeight: '700',
+  },
+  expertButtonSub: {
+    color: '#a0b4d0',
+    fontSize: 12,
+    marginTop: 2,
   },
 });
 
