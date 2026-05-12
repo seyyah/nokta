@@ -1,0 +1,28 @@
+{
+  "name": "@nokta-hoop/token-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@nokta-hoop/hoop-call": "file:../../packages/hoop-call",
+    "@nokta-hoop/hoop-core": "file:../../packages/hoop-core",
+    "@stream-io/node-sdk": "^0.7.28",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "groq-sdk": "^1.1.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.9.2"
+  }
+}

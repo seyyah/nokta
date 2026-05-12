@@ -1,0 +1,74 @@
+{
+  "expo": {
+    "name": "Nokta Hoop",
+    "slug": "nokta-hoop-mobile",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bitcode": false,
+      "infoPlist": {
+        "NSSpeechRecognitionUsageDescription": "Allow Nokta Hoop to convert your speech into text for Mascot conversations.",
+        "NSMicrophoneUsageDescription": "Allow Nokta Hoop to use the microphone for Mascot voice conversations."
+      }
+    },
+    "android": {
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.BLUETOOTH",
+        "android.permission.BLUETOOTH_CONNECT",
+        "android.permission.BLUETOOTH_ADMIN",
+        "android.permission.WAKE_LOCK",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.CAMERA",
+        "android.permission.INTERNET",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ],
+      "package": "com.noktahoop.mobile"
+    },
+    "plugins": [
+      "@stream-io/video-react-native-sdk",
+      [
+        "@config-plugins/react-native-webrtc",
+        {
+          "cameraPermission": "Allow Nokta Hoop to access your camera for video calls.",
+          "microphonePermission": "Allow Nokta Hoop to access your microphone for video calls."
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 24,
+            "buildArchs": [
+              "arm64-v8a",
+              "x86_64"
+            ]
+          }
+        }
+      ],
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Allow Nokta Hoop to use the microphone for Mascot voice conversations.",
+          "speechRecognitionPermission": "Allow Nokta Hoop to convert your speech into text for Mascot conversations.",
+          "androidSpeechServicePackages": [
+            "com.google.android.googlequicksearchbox"
+          ]
+        }
+      ],
+      "expo-audio"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "f62aa28d-9d72-4782-b98b-064cdc134e3a"
+      }
+    },
+    "owner": "eslengulakbulut"
+  }
+}

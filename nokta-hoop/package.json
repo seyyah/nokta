@@ -1,0 +1,31 @@
+{
+  "name": "nokta-hoop",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/mobile",
+    "packages/hoop-core",
+    "packages/hoop-call",
+    "services/token-server"
+  ],
+  "scripts": {
+    "mobile:start": "npm --workspace @nokta-hoop/mobile run start --",
+    "mobile:android": "npm --workspace @nokta-hoop/mobile run android",
+    "mobile:typecheck": "npm --workspace @nokta-hoop/mobile run typecheck",
+    "core:typecheck": "npm --workspace @nokta-hoop/hoop-core run typecheck",
+    "core:test": "npm --workspace @nokta-hoop/hoop-core run test",
+    "server:dev": "npm --workspace @nokta-hoop/token-server run dev",
+    "server:typecheck": "npm --workspace @nokta-hoop/token-server run typecheck",
+    "tts:dev": "python services/tts-server/src/main.py",
+    "tts:install": "python -m pip install -r services/tts-server/requirements.txt",
+    "call:typecheck": "npm --workspace @nokta-hoop/hoop-call run typecheck",
+    "call:test": "npm --workspace @nokta-hoop/hoop-call run test",
+    "typecheck": "npm run core:typecheck && npm run call:typecheck && npm run server:typecheck && npm run mobile:typecheck",
+    "test": "npm run core:test && npm run call:test"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.9.2"
+  }
+}

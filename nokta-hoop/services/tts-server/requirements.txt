@@ -1,0 +1,7 @@
+setuptools<81
+chatterbox-tts
+fastapi
+piper-tts
+python-dotenv
+soundfile
+uvicorn[standard]

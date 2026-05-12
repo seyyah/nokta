@@ -1,0 +1,46 @@
+{
+  "name": "@nokta-hoop/mobile",
+  "version": "0.1.0",
+  "main": "index.ts",
+  "private": true,
+  "scripts": {
+    "start": "expo start --dev-client",
+    "android": "expo run:android --all-arch",
+    "ios": "expo run:ios",
+    "web": "expo start --web",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@config-plugins/react-native-webrtc": "13",
+    "@nokta-hoop/hoop-call": "file:../../packages/hoop-call",
+    "@nokta-hoop/hoop-core": "file:../../packages/hoop-core",
+    "@react-native-community/netinfo": "11.4.1",
+    "@react-three/fiber": "^9.6.1",
+    "@stream-io/react-native-webrtc": "^137.2.0",
+    "@stream-io/video-react-native-sdk": "^1.33.0",
+    "babel-preset-expo": "~54.0.10",
+    "expo": "~54.0.33",
+    "expo-audio": "~1.1.1",
+    "expo-build-properties": "~1.0.10",
+    "expo-dev-client": "~6.0.21",
+    "expo-gl": "~16.0.10",
+    "expo-speech": "~14.0.8",
+    "expo-speech-recognition": "^3.1.3",
+    "expo-status-bar": "~3.0.9",
+    "react": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-gesture-handler": "~2.28.0",
+    "react-native-safe-area-context": "~5.6.0",
+    "three": "^0.184.0"
+  },
+  "devDependencies": {
+    "@react-native-community/cli": "^20.1.3",
+    "@types/react": "~19.1.0",
+    "@types/three": "^0.184.1",
+    "typescript": "~5.9.2"
+  },
+  "overrides": {
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+  }
+}
