@@ -10,10 +10,18 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@nokta/hoop-call": "file:../../../../packages/hoop-call",
+    "@stream-io/video-client": "^1.49.0",
+    "@stream-io/video-react-sdk": "^1.36.1",
+    "@types/react": "~19.1.10",
     "expo": "~54.0.33",
     "expo-status-bar": "~3.0.9",
     "react": "19.1.0",
-    "react-native": "0.81.5"
+    "react-dom": "^19.2.6",
+    "react-native": "0.81.5",
+    "react-native-gestures": "^0.3.0",
+    "react-native-svg": "^15.15.5",
+    "typescript": "~5.9.2"
   },
   "private": true
 }

@@ -1,26 +1,42 @@
-# Nokta Away Mission - Track A
+# 231118017 - Büşra Nur Yüksel - Nokta Track A
 
-**Öğrenci:** Büşra
-**Öğrenci No:** 231118017
-**Seçilen Track:** Track A — Dot Capture & Enrich
+## Submission Details
+- **Öğrenci No:** 231118017
+- **Slug:** busra-nokta
+- **Track:** A (Expert Support / HITL)
 
-## 📋 Proje Özeti
-Bu uygulama, ham iş fikirlerini alıp Gemini AI desteğiyle yapılandırılmış mühendislik sorularına (Problem, User, Scope, Constraint) dönüştüren bir mobil arayüzdür. 
+## Checklist
+- [x] Yalnızca `submissions/231118017-busra-nokta/` altında değişiklik yaptım.
+- [x] README'de Expo QR link var.
+- [x] README'de 60 sn demo video linki var.
+- [x] `app-release.apk` klasörde mevcut.
+- [x] README'de decision log yazdım.
+- [x] Track seçimim README'de net.
 
-## 🚀 Uygulama Erişimi
-* **Expo Go Link / QR:** [https://expo.dev/accounts/busra9900/projects/app/builds/88145b21-d1bb-4328-a2a9-9b893db2a3d9](https://expo.dev/accounts/busra9900/projects/app/builds/88145b21-d1bb-4328-a2a9-9b893db2a3d9)
-* **APK Dosyası:** [app-release.apk](./app-release.apk)
 
-## 🎥 Demo Videosu
-* **Video Linki:** [https://www.youtube.com/watch?v=o-1zmbZUubk]
+## 🚀 Expo QR Code
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+█ ▄▄▄▄▄ █▄▄▄ ▀ ▀█ █ ▄▄▄▄▄ █
+█ █   █ ██▄▀ █ ▀▄▄█ █   █ █
+█ █▄▄▄█ ██▀▄ ▄███▀█ █▄▄▄█ █
+█▄▄▄▄▄▄▄█ ▀▄█ ▀▄▀ █▄▄▄▄▄▄▄█
+█▄ ▀▄▄▀▄▀█▄▀█▄▀█▀ █▄█▀█▀▀▄█
+█ ▀▄█▀ ▄██▄██▄▄▄▄ ▀███▄▀▀ █
+█▀▀▀ ██▄ ▄▄ █▀█▄ █ ▄▀▀█▀ ██
+█ ▄▀▀▄▀▄▄█ ▄█▀▄▀ ▄▀ ██▄▀  █
+█▄█▄▄▄▄▄█ ▀▀ ▄▄ █ ▄▄▄  ▄▀▄█
+█ ▄▄▄▄▄ ██▀█▀▄  █ █▄█ ███ █
+█ █   █ █  █▄ ▀█▄ ▄  ▄ █▀▀█
+█ █▄▄▄█ █▀   ▀█▄ ▄█▀▀▄█   █
+█▄▄▄▄▄▄▄█▄██▄██▄▄▄▄█▄▄███▄█
 
-## 🧠 Teknik Karar Günlüğü (Decision Log)
-1. **Framework Seçimi:** Projenin hızlı prototipleme gereksinimi ve Android çıktı alma kolaylığı nedeniyle **React Native + Expo** tercih edilmiştir.
-2. **AI Modeli ve Entegrasyonu:** Google'ın en hızlı modeli olan **Gemini 1.5 Flash** kullanılmıştır. SDK ve API versiyonları arasındaki (v1beta) uyuşmazlıkları yönetmek adına bir **Fallback (Geri Çekilme) Mekanizması** kurgulanmıştır.
-3. **Hata Yönetimi:** İnternet kesintisi veya API kotası dolması durumunda uygulamanın çökmemesi için simüle edilmiş mühendislik soruları (Mock Data) devreye girecek şekilde `try-catch` blokları yapılandırılmıştır.
-4. **Klasör Mimarisi:** Hocanın belirttiği `submissions` standardına sadık kalınarak, tüm `app` dosyaları ve `apk` çıktısı tek bir dizinde toplanmıştır.
 
-## 🛠️ Kurulum
-1. `submissions/231118017-busra-nokta/app` klasörüne girin.
-2. `npm install` komutunu çalıştırın.
-3. `npx expo start` ile projeyi ayağa kaldırın.
+
+## 📽️ Demo Video
+https://youtu.be/XqEAs-SOQO8?si=C9wB16dfCcuLM_oT
+
+
+## 📝 Decision Log (Karar Günlüğü)
+1. **HITL Entegrasyonu:** Sistem, LLM tarafından tespit edilen "Kritik Güvenlik Riski" (örneğin kredi kartı verilerinin açık metin saklanması) durumunda otomatik olarak bir Mentor Görüşmesi başlatacak şekilde tasarlandı.
+2. **Stream Video Simülasyonu:** Expo Go kısıtlamaları nedeniyle gerçek bir WebRTC stream yerine, teknik analizi yapan bir AI-Expert (Mentor) arayüzü ve transkript mekanizması kurgulandı.
+3. **Writeback Mekanizması:** Görüşme sonunda mentorun verdiği teknik tavsiyelerin (Horizontal Scaling, Kafka vb.) "Spec'e Ekle" butonu ile ana dökümana kalıcı olarak eklenmesi sağlandı.
