@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Keyboard } from 'react-native';
 
-export default function InputSection({ onSubmit, isLoading }) {
+export default function InputSection({ onSubmit, isLoading, theme }) {
   const [text, setText] = useState('');
 
   const handleSubmit = () => {
@@ -10,45 +10,53 @@ export default function InputSection({ onSubmit, isLoading }) {
     onSubmit(text);
   };
 
-  const isEmpty = text.trim().length === 0;
+  const isEmpty    = text.trim().length === 0;
   const isDisabled = isLoading || isEmpty;
 
-  const getButtonStyle = () => {
-    if (isLoading) return 'bg-black border-[2px] border-black';
-    if (isEmpty) return 'bg-gray-100 border-[2px] border-black/5';
-    return 'bg-black border-[2px] border-black';
-  };
-
-  const getTextStyle = () => {
-    if (isLoading) return 'text-white';
-    if (isEmpty) return 'text-gray-400';
-    return 'text-white';
-  };
+  const btnBg   = isDisabled ? theme.btnDisabledBg   : theme.btnBg;
+  const btnText = isDisabled ? theme.btnDisabledText : theme.btnText;
 
   return (
-    <View className="w-full flex-col gap-4">
+    <View style={{ width: '100%', gap: 16 }}>
       <TextInput
-        className="bg-white border-[2px] border-black/10 text-black p-6 min-h-[160px] max-h-[300px] text-[17px] font-medium w-full rounded-2xl"
+        style={{
+          backgroundColor: theme.inputBg,
+          borderWidth: 2,
+          borderColor: theme.border,
+          color: theme.text,
+          padding: 20,
+          minHeight: 160,
+          maxHeight: 300,
+          fontSize: 17,
+          fontWeight: '500',
+          width: '100%',
+          borderRadius: 16,
+          textAlignVertical: 'top',
+        }}
         multiline
         placeholder="Paste your raw, messy notes..."
-        placeholderTextColor="#a1a1aa"
+        placeholderTextColor={theme.placeholder}
         value={text}
         onChangeText={setText}
         textAlignVertical="top"
         editable={!isLoading}
       />
-
       <TouchableOpacity
-        className={`w-full h-16 flex-row justify-center items-center rounded-2xl ${getButtonStyle()}`}
+        style={{
+          width: '100%',
+          height: 64,
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
+          borderRadius: 16,
+          backgroundColor: btnBg,
+        }}
         onPress={handleSubmit}
         disabled={isDisabled}
         activeOpacity={0.85}
       >
-        {isLoading ? (
-          <ActivityIndicator color="white" style={{ marginRight: 10 }} />
-        ) : null}
-
-        <Text className={`font-black text-[13px] tracking-[0.15em] uppercase ${getTextStyle()}`}>
+        {isLoading && <ActivityIndicator color={btnText} style={{ marginRight: 10 }} />}
+        <Text style={{ fontWeight: '900', fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', color: btnText }}>
           {isLoading ? 'Processing' : 'Analyze Data'}
         </Text>
       </TouchableOpacity>
