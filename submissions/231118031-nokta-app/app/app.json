@@ -1,0 +1,21 @@
+{
+  "expo": {
+    "name": "Nokta Audit Forge",
+    "slug": "231118031-nokta-audit-forge",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "nokta-audit-forge",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.nokta.auditforge231118031",
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "output": "static"
+    }
+  }
+}
