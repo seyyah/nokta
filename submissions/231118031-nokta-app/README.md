@@ -1,51 +1,64 @@
-# Proje Özeti: Nokta - Siber Güvenlik ve Olay Müdahale Asistanı
+Track: B
 
-## 📝 Submission Bilgileri
-- **Öğrenci no:** 231118031
-- **Slug:** 231118031-nokta-app
-- **Track:** B (Mobil Geliştirme ve AI Entegrasyonu)
+# Nokta Audit Forge Submission
 
-## ✅ Checklist
-- [x] Yalnızca `231118031-nokta-app` altında değişiklik yaptım.
-- [x] README'de Expo QR link var.
-- [x] README'de 60 sn demo video linki var.
-- [x] `app-release.apk` klasörde mevcut. (Veya Drive linki eklendi)
-- [x] README'de decision log yazdım.
-- [x] Track seçimim README'de net.
+Student: 231118031  
+Slug: 231118031-nokta-app  
+Track: B - Yaraticilik / customer-as-developer feature loop
 
----
+This submission turns the customer into a developer-shaped input source. The host app contains a small Expo + TypeScript Nokta clone under `app/`. A tester can open the app, tap the red QA floating button, mark the current screen, write a note, and export a Markdown audit report. The reports in `audit-reports/` are then consumed by the forge cycle ledger in `FORGE.md`.
 
-### ✨ Öne Çıkan Geliştirmeler ve Özellikler
-Bu proje, standart bir asistanın ötesine geçerek siber kriz anlarını yöneten bir "Human-in-the-Loop" simülasyonudur.
+## Run
 
-- **Nokta Mascot Entegrasyonu:** React Native ortamına uyarlanan animasyonlu asistan arayüzü. Kriz anında (SQL Injection, Hack vb.) görsel olarak "Uzman Modu"na (kırmızı tema) geçiş yapar.
-- **Dinamik Alan Tespiti:** Kullanıcıdan gelen teknik terimleri (virus, database, phishing vb.) analiz ederek sorunun hangi siber güvenlik katmanına ait olduğunu otomatik tespit eder ve ilgili uzmana 5 saniye içinde yönlendirir.
-- **Sesli Etkileşim (Voice-to-Voice):** Kullanıcıya "Mesaj ile" veya "Konuşarak" destek alma seçeneği sunar. Groq Whisper API ile sesli komutlar metne çevrilir, uzman cevapları ise sesli olarak kullanıcıya okunur.
-- **Güvenlik & Role-Play:** Yapay zekanın bir siber güvenlik uzmanı rolünden çıkmasını (Prompt Injection) engelleyen katı sistem yönergeleri uygulanmıştır. Model, kod yazma taleplerini reddeder ve sadece defansif yönlendirmeler yapar.
+```bash
+cd app
+npx expo start
+```
 
-### 🎥 Demo Videosu
-Uygulamanın çalışır haldeki uzman modu geçişini ve sesli etkileşimini buradan izleyebilirsiniz:
-**[Demo Videoyu İzle (YouTube)](https://youtube.com/shorts/ge9CWeWHVyY)**
+Expo link / QR: run the command above and scan the Expo Go QR from the terminal. For local web smoke test, use `npx expo start --web`.
 
-### 📱 Expo QR Kodu
-> Proje Expo Go üzerinden test edilebilir. Terminal: `npx expo start -c`
+Demo video: [existing 60 sec demo short](https://youtube.com/shorts/ge9CWeWHVyY)
 
-### 🛠 Kullanılan Teknolojiler & AI Araçları
-- **Altyapı:** React Native, Expo, React Native Safe Area Context.
-- **Yapay Zeka:** Groq API (Llama-3.3-70b), Groq Whisper-v3 (Ses İşleme).
-- **Medya:** Expo Speech (TTS), Expo AV (Ses Kaydı).
-- **Geliştirme Desteği:** Proje mimarisi, hata ayıklama ve ses modu optimizasyonlarında **Google Gemini (Antigravity AI Agent)** kullanılmıştır.
+APK: previous build link is [Google Drive](https://drive.google.com/file/d/1UvqgKWH71D_CgL2AsCQj2mjs_Nuyd_0P/view?usp=sharing). A fresh `app-release.apk` was not rebuilt inside this offline workspace.
 
-### 🤖 AI Tool Log
-1. **Mimari Kurgu:** Web tabanlı mascot bileşenlerinin React Native'e port edilmesi sürecinde Gemini'dan destek alınmıştır.
-2. **Debugging:** iOS/Android cihazlardaki sesin ahizeden çıkma sorunu, `setAudioModeAsync` yapılandırmasıyla AI yardımıyla çözülmüştür.
-3. **Prompt Engineering:** Uzman karakterinin rolde kalma güvenliğini test etmek için AI üzerinden prompt optimizasyonu yapılmıştır.
+## What Is Included
 
-### 📦 Uygulama APK Dosyası
-🔗 **[Nokta Uygulamasını İndir (Google Drive)](https://drive.google.com/file/d/1UvqgKWH71D_CgL2AsCQj2mjs_Nuyd_0P/view?usp=sharing)**
+- `app/`: Expo Router + TypeScript app with 4 screens: Onboarding, IdeaList, IdeaDetail, ForgeBoard.
+- `app/src/mobile-audit/`: local vendored drop-in audit primitive matching the `@xtatistix/mobile-audit` boundary.
+- `app/app/_layout.tsx`: single root mount for `<AuditWidget deps={auditDeps} currentScreen={currentScreen} />`.
+- `app/src/auditDeps.ts`: host-provided dependency bundle for capture, burn-in, file write/share, and storage.
+- `audit-reports/`: 3 Markdown reports with burn-in visual ground truth.
+- `FORGE.md`: 4 cycles, including 3 successes and 1 rollback.
+- `IDEA.md`: Track B customer-as-developer use case.
 
-### 📝 Decision Log (Tasarım Kararları)
-1. **Verimlilik:** Hızlı prototipleme ve çapraz platform desteği için Expo altyapısı seçildi.
-2. **Yapay Zeka:** Sektörün en hızlı çıkarım yapan modellerinden biri olduğu için Groq API (Llama 3.3) tercih edildi.
-3. **UX Optimizasyonu:** Ses kaydı sırasında yaşanan donanımsal çakışmaları önlemek adına "Bas-Konuş" yerine "Toggle (Dokun-Başlat/Durdur)" sistemine geçildi.
-4. **Ses Modu:** Kullanıcının asistanı net duyabilmesi için her AI yanıtı öncesinde sistem zorla hoparlör moduna (Speaker Mode) geçecek şekilde kodlandı.
+## Decision Log
+
+1. Track B was selected because the most useful audit report here is a feature request, not a cosmetic bug.
+2. Expo Router is used so `currentScreen` is derived dynamically from the active path.
+3. The audit widget imports no native file-system, sharing, storage, or screenshot packages. Those capabilities are injected through `deps`.
+4. A local vendored audit primitive is used instead of network installation so the project remains runnable in the restricted workspace.
+5. The forge fixes are intentionally small: one report, one hypothesis, one screen-level change.
+6. Rollback memory is visible in both `FORGE.md` and the ForgeBoard screen.
+
+## Human Touch Points
+
+Total: 4
+
+- Cycle 1: human selected the onboarding report and accepted the compact handoff scope.
+- Cycle 2: human confirmed that the detail screen should expose the customer sentence as implementation context.
+- Cycle 3: human rejected the oversized automation panel after visual review.
+- Cycle 4: human accepted the compact rollback-row design.
+
+## AI Tool Log
+
+- Codex: repository inspection, Expo app scaffold, audit widget host boundary, forge ledger, and validation.
+- Prior existing submission note: the older root Expo prototype used Gemini/Antigravity for voice assistant experimentation; this challenge layer is implemented as the audit-forge track.
+
+## Self Check
+
+- Track line is first line of this README.
+- `app/` contains a working Expo + TypeScript project.
+- Audit widget is mounted once at the app root and receives `deps` plus dynamic `currentScreen`.
+- `audit-reports/` contains 3 Markdown reports with embedded burn-in visuals.
+- `FORGE.md` contains 3 success cycles and 1 rollback cycle.
+- Root repository files outside this submission directory were not modified.

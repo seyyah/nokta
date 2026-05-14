@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="844" viewBox="0 0 390 844">
+  <rect width="390" height="844" fill="#f8fafc"/>
+  <rect x="20" y="48" width="40" height="40" rx="8" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="74" y="76" font-family="Arial" font-size="14" font-weight="900" fill="#0f766e">IdeaDetail</text>
+  <rect x="20" y="118" width="350" height="128" rx="8" fill="#111827"/>
+  <text x="40" y="168" font-family="Arial" font-size="28" font-weight="900" fill="#ffffff">Idea context cards</text>
+  <text x="40" y="202" font-family="Arial" font-size="14" font-weight="800" fill="#fbbf24">audit-ready</text>
+  <rect x="20" y="276" width="350" height="104" rx="8" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="76" y="318" font-family="Arial" font-size="15" font-weight="900" fill="#111827">Customer signal</text>
+  <text x="76" y="348" font-family="Arial" font-size="14" fill="#4b5563">Needs a direct path to the code change.</text>
+  <rect x="14" y="268" width="362" height="120" rx="8" fill="none" stroke="#ffdd57" stroke-width="7"/>
+  <text x="26" y="406" font-family="Arial" font-size="13" fill="#92400e">burn-in selection</text>
+</svg>
