@@ -5,10 +5,10 @@
 - Slug: audit-forge
 
 ## Expo Link
-BURAYA_LINK
+https://expo.dev/accounts/myank/projects/app/builds/3d799ae9-206c-46b5-9853-9a8bee4d4039
 
 ## Demo Video
-BURAYA_VIDEO
+https://youtube.com/shorts/J-NMtEUsb5s?feature=share
 
 ## Açıklama
 
