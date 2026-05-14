@@ -2,9 +2,20 @@ Track: B
 
 # Nokta Audit Forge Submission
 
-Student: 231118031  
-Slug: 231118031-nokta-app  
-Track: B - Yaraticilik / customer-as-developer feature loop
+## Submission
+
+- **Ogrenci no:** 231118031
+- **Slug:** 231118031-nokta-app
+- **Track:** B
+
+## Checklist
+
+- [x] Yalnizca `submissions/231118031-nokta-app/` altinda degisiklik yaptim
+- [x] README'de Expo QR/link bilgisi var
+- [x] README'de 60 sn demo video linki var
+- [x] `app-release.apk` klasorde mevcut
+- [x] README'de decision log yazdim
+- [x] Track secimim README'de net
 
 This submission turns the customer into a developer-shaped input source. The host app contains a small Expo + TypeScript Nokta clone under `app/`. A tester can open the app, tap the red QA floating button, mark the current screen, write a note, and export a Markdown audit report. The reports in `audit-reports/` are then consumed by the forge cycle ledger in `FORGE.md`.
 
@@ -17,9 +28,9 @@ npx expo start --offline
 
 Expo link / QR: run the command above and scan the Expo Go QR from the terminal. If network access is available, `npx expo start --web` can also open the web preview.
 
-Demo video: [existing 60 sec demo short](https://youtube.com/shorts/ge9CWeWHVyY)
+Demo video: [60 sec demo short](https://youtube.com/shorts/ge9CWeWHVyY)
 
-APK: previous build link is [Google Drive](https://drive.google.com/file/d/1UvqgKWH71D_CgL2AsCQj2mjs_Nuyd_0P/view?usp=sharing). A fresh `app-release.apk` was not rebuilt inside this offline workspace.
+APK: `app-release.apk` is included in this folder. It was produced locally with Gradle from an ASCII temp build path because the original OneDrive path contains Turkish characters that break Android autolinking.
 
 ## What Is Included
 
@@ -51,7 +62,10 @@ Total: 4
 
 ## AI Tool Log
 
-- Codex: repository inspection, Expo app scaffold, audit widget host boundary, forge ledger, and validation.
+Hangi tool'lari kullandim?
+
+- Codex: repository inspection, Expo app scaffold, audit widget host boundary, forge ledger, README/checklist cleanup, APK build troubleshooting, and validation.
+- Gradle / Expo CLI: local Android release APK build.
 - Prior existing submission note: the older root Expo prototype used Gemini/Antigravity for voice assistant experimentation; this challenge layer is implemented as the audit-forge track.
 
 ## Self Check
