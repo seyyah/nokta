@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 16,
     paddingHorizontal: spacing.card,
-    paddingVertical: 14,
+    paddingVertical: 18,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: palette.line,
   },
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
   },
   rowHint: {
     fontSize: 13,
-    lineHeight: 20,
-    color: palette.faint,
+    lineHeight: 21,
+    color: palette.muted,
   },
 });
