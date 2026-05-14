@@ -1,0 +1,38 @@
+# NOKTA Audit Forge Submission
+
+- Öğrenci No: 231118070
+- Track: C
+- Slug: audit-forge
+
+## Expo Link
+BURAYA_LINK
+
+## Demo Video
+BURAYA_VIDEO
+
+## Açıklama
+
+Bu proje, NOKTA challenge kapsamında hazırlanmış minimal bir audit-forge uygulamasıdır.
+
+Uygulama içinde:
+- Audit widget
+- FAB butonu
+- Sarı kutu ile işaretleme
+- Markdown audit raporu üretimi
+- Forge cycle mantığı
+- Rollback örneği
+
+simüle edilmiştir.
+
+## Human Touch Points
+
+1. Track seçimi
+2. Audit report review
+3. Forge cycle kontrolü
+4. Rollback kararı
+
+## AI Tool Log
+
+- ChatGPT
+- Expo
+- EAS Build
