@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "Audit Forge Host",
+    "slug": "audit-forge-host",
+    "version": "1.0.0",
+    "scheme": "auditforgehost",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "android": {
+      "package": "com.bahri.auditforgehost"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
