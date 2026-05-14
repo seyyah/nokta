@@ -92,13 +92,16 @@ const styles = StyleSheet.create({
   },
   tags: {
     flexDirection: 'row',
-    gap: 8,
+    flexWrap: 'wrap',
+    columnGap: 8,
+    rowGap: 8,
   },
   tag: {
     backgroundColor: '#f2ede4',
     borderRadius: 999,
     paddingHorizontal: 12,
     paddingVertical: 8,
+    alignSelf: 'flex-start',
   },
   tagText: {
     color: palette.ink,
@@ -108,7 +111,7 @@ const styles = StyleSheet.create({
   cardBody: {
     color: palette.muted,
     fontSize: 14,
-    lineHeight: 21,
+    lineHeight: 23,
   },
   linkButton: {
     backgroundColor: palette.ink,
