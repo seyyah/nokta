@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -12,6 +12,8 @@ import {
   KeyboardAvoidingView,
   Image,
   Dimensions,
+  ScrollView,
+  Keyboard,
 } from 'react-native';
 import type { AuditNoteBounds } from '../core/types';
 
@@ -40,6 +42,23 @@ export function AuditOverlay({
 }: Props) {
   const [note, setNote] = useState('');
   const [saving, setSaving] = useState(false);
+  const [keyboardInset, setKeyboardInset] = useState(0);
+
+  useEffect(() => {
+    if (Platform.OS !== 'android') return;
+
+    const showSub = Keyboard.addListener('keyboardDidShow', (event) => {
+      setKeyboardInset(event.endCoordinates.height);
+    });
+    const hideSub = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardInset(0);
+    });
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   const handleSave = async () => {
     if (!note.trim()) {
@@ -69,13 +88,13 @@ export function AuditOverlay({
   const scaleX = renderedW / screenW;
   const scaleY = renderedH / screenH;
 
-  return (
-    <Modal visible={visible} animationType="slide" transparent presentationStyle="overFullScreen">
-      <KeyboardAvoidingView
-        style={styles.backdrop}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+  const sheet = (
+    <View style={styles.sheet}>
+      <ScrollView
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'none'}
+        showsVerticalScrollIndicator={false}
       >
-        <View style={styles.sheet}>
           <View style={styles.handle} />
 
           <Text style={styles.title}>Bug Raporu</Text>
@@ -120,7 +139,6 @@ export function AuditOverlay({
             placeholderTextColor="#999"
             value={note}
             onChangeText={setNote}
-            autoFocus
           />
 
           <View style={styles.actions}>
@@ -135,8 +153,28 @@ export function AuditOverlay({
               )}
             </TouchableOpacity>
           </View>
+      </ScrollView>
+    </View>
+  );
+
+  return (
+    <Modal
+      visible={visible}
+      animationType="slide"
+      transparent
+      presentationStyle="overFullScreen"
+      statusBarTranslucent={Platform.OS === 'android'}
+      navigationBarTranslucent={Platform.OS === 'android'}
+    >
+      {Platform.OS === 'ios' ? (
+        <KeyboardAvoidingView style={styles.backdrop} behavior="padding">
+          {sheet}
+        </KeyboardAvoidingView>
+      ) : (
+        <View style={[styles.backdrop, keyboardInset ? { paddingBottom: keyboardInset } : null]}>
+          {sheet}
         </View>
-      </KeyboardAvoidingView>
+      )}
     </Modal>
   );
 }
@@ -153,6 +191,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     padding: SHEET_PADDING,
     paddingBottom: 40,
+    maxHeight: '92%',
   },
   handle: {
     width: 40,

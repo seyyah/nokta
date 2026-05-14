@@ -7,7 +7,8 @@
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "android": {
-      "package": "com.bahri.auditforgehost"
+      "package": "com.bahri.auditforgehost",
+      "softwareKeyboardLayoutMode": "pan"
     },
     "plugins": [
       "expo-router"

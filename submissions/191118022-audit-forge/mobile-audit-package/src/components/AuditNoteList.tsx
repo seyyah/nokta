@@ -134,8 +134,15 @@ export function AuditNoteList({ notes, onEdit, onDelete, onExportMd, onExportDoc
       </View>
 
       {/* Edit modal */}
-      <Modal visible={editingId !== null} animationType="slide" transparent presentationStyle="overFullScreen">
-        <KeyboardAvoidingView style={styles.editBackdrop} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <Modal
+        visible={editingId !== null}
+        animationType="slide"
+        transparent
+        presentationStyle="overFullScreen"
+        statusBarTranslucent={Platform.OS === 'android'}
+        navigationBarTranslucent={Platform.OS === 'android'}
+      >
+        <KeyboardAvoidingView style={styles.editBackdrop} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <View style={styles.editSheet}>
             <View style={styles.handle} />
             <Text style={styles.editTitle}>Notu Düzenle</Text>
@@ -144,7 +151,6 @@ export function AuditNoteList({ notes, onEdit, onDelete, onExportMd, onExportDoc
               multiline
               value={editText}
               onChangeText={setEditText}
-              autoFocus
               placeholderTextColor="#999"
             />
             <View style={styles.editActions}>
