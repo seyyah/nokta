@@ -12,10 +12,10 @@ This submission turns the customer into a developer-shaped input source. The hos
 
 ```bash
 cd app
-npx expo start
+npx expo start --offline
 ```
 
-Expo link / QR: run the command above and scan the Expo Go QR from the terminal. For local web smoke test, use `npx expo start --web`.
+Expo link / QR: run the command above and scan the Expo Go QR from the terminal. If network access is available, `npx expo start --web` can also open the web preview.
 
 Demo video: [existing 60 sec demo short](https://youtube.com/shorts/ge9CWeWHVyY)
 
