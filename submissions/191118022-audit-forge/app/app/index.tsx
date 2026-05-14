@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'expo-router';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { ScreenScaffold } from '../components/ScreenScaffold';
 import { palette, spacing } from '../lib/theme';
 
@@ -11,6 +11,9 @@ const quickLinks = [
 ] as const;
 
 export default function HomeScreen() {
+  const { width } = useWindowDimensions();
+  const isCompact = width < 420;
+
   return (
     <ScreenScaffold
       title="Audit-first host shell"
@@ -25,14 +28,14 @@ export default function HomeScreen() {
           The host app keeps three visible screens alive so a tester can capture layout issues,
           export markdown, and hand the report to a coding agent without a backend hop.
         </Text>
-        <View style={styles.heroActions}>
+        <View style={[styles.heroActions, isCompact && styles.heroActionsCompact]}>
           <Link href="/backlog" asChild>
-            <Pressable style={styles.primaryButton}>
+            <Pressable style={[styles.primaryButton, isCompact && styles.actionButtonCompact]}>
               <Text style={styles.primaryButtonText}>Review backlog cards</Text>
             </Pressable>
           </Link>
           <Link href="/settings" asChild>
-            <Pressable style={styles.secondaryButton}>
+            <Pressable style={[styles.secondaryButton, isCompact && styles.actionButtonCompact]}>
               <Text style={styles.secondaryButtonText}>Check runtime policy</Text>
             </Pressable>
           </Link>
@@ -103,6 +106,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 12,
   },
+  heroActionsCompact: {
+    flexDirection: 'column',
+  },
   primaryButton: {
     minWidth: 168,
     backgroundColor: palette.accent,
@@ -123,6 +129,10 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderWidth: 1,
     borderColor: palette.line,
+  },
+  actionButtonCompact: {
+    width: '100%',
+    minWidth: 0,
   },
   secondaryButtonText: {
     color: palette.ink,
