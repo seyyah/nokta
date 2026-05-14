@@ -1,0 +1,42 @@
+{
+  "expo": {
+    "name": "Nokta Hoop",
+    "slug": "nokta-hoop",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/nokta.jpeg",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/nokta.jpeg",
+      "resizeMode": "contain",
+      "backgroundColor": "#0a0a0f"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.eslengul.noktahoop"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/nokta.jpeg",
+        "backgroundColor": "#0a0a0f"
+      },
+      "package": "com.eslengul.noktahoop"
+    },
+    "web": {
+      "favicon": "./assets/nokta.jpeg"
+    },
+    "plugins": [
+      [
+        "@stream-io/video-react-native-sdk",
+        {
+          "addMainApplicationExport": true
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "757f70b7-c81b-436d-9980-87a331165a6c"
+      }
+    }
+  }
+}
