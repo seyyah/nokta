@@ -14,7 +14,7 @@ Minimal Expo + TypeScript host app that mounts `@xtatistix/mobile-audit` once, p
 ## Delivery Snapshot
 
 - Expo link: `expo-go / local dev session` using `exp://192.168.1.57:8081` during verification
-- Demo video link: `https://drive.google.com/file/d/REPLACE_BEFORE_SUBMISSION/view`
+- Demo video link: `https://youtube.com/shorts/mNWAeRHWJ-w?si=-woTaau7acM1CKG8`
 - Widget mount point: `app/components/AuditMount.native.tsx`
 - Single-mount rule: `grep -r "AuditWidget" app/` should resolve to one host mount line when `node_modules/` is absent
 
