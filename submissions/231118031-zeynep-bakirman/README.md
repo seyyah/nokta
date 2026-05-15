@@ -5,7 +5,7 @@ Track: A (Sadelik)
 ## Proje Detayları
 * **Öğrenci:** Zeynep Bakırman (231118031)
 * **Expo Link:** [Buraya Expo QR/linkini veya 'Local Build' yazabilirsin]
-* **Demo Videosu:** [Buraya 60 saniyelik ekran kaydı linkini ekle]
+* **Demo Videosu:** [(https://youtube.com/shorts/5cY7-JtuoWA)]
 
 ## Kullanılan AI Araçları
 * Forge döngüsü için **Gemini** kullanıldı.
