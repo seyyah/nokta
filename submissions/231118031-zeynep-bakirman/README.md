@@ -4,7 +4,7 @@ Track: A (Sadelik)
 
 ## Proje Detayları
 * **Öğrenci:** Zeynep Bakırman (231118031)
-* **Expo Link:** [Buraya Expo QR/linkini veya 'Local Build' yazabilirsin]
+* **Expo Link:** [https://expo.dev/accounts/zeynepbakirman/projects/app/builds/ee62cbab-835e-4e7d-be08-4d3b2140b4d2]
 * **Demo Videosu:** [(https://youtube.com/shorts/5cY7-JtuoWA)]
 
 ## Kullanılan AI Araçları
