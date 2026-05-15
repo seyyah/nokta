@@ -69,6 +69,9 @@ export function AuditOverlay({
     try {
       await onSave(note.trim());
       setNote('');
+    } catch (error) {
+      console.warn('[AuditOverlay] save failed:', error);
+      Alert.alert('Kaydedilemedi', 'Rapor kaydedilirken bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       setSaving(false);
     }

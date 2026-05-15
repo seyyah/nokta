@@ -139,11 +139,29 @@ export function AuditWidget({ deps, appName = 'App', initialPosition }: Props) {
     setMode('annotating');
   };
 
+  const stamp = () => new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-');
+
+  const persistScreenshot = async (uri: string) => {
+    if (!uri.startsWith('data:')) {
+      return uri;
+    }
+
+    const match = uri.match(/^data:(.*?);base64,(.*)$/);
+    if (!match) {
+      return uri;
+    }
+
+    const [, mimeType, base64] = match;
+    const extension = mimeType.includes('jpeg') || mimeType.includes('jpg') ? 'jpg' : 'png';
+    return deps.writeFileBinary(`audit-shot-${stamp()}.${extension}`, base64);
+  };
+
   const handleSaveNote = async (noteText: string) => {
     const { height: SH, width: SW } = Dimensions.get('screen');
+    const screenshotUri = await persistScreenshot(capturedUri);
     await manager.add({
       screenName: deps.currentScreen,
-      screenshot: capturedUri,
+      screenshot: screenshotUri,
       screenshotAspect: SH / SW,
       highlightBounds: selectedBounds,
       note: noteText,
@@ -163,8 +181,6 @@ export function AuditWidget({ deps, appName = 'App', initialPosition }: Props) {
     await manager.remove(id);
     await loadNotes();
   };
-
-  const stamp = () => new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-');
 
   const handleExportMd = async () => {
     const all = await manager.getAll();
