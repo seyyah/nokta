@@ -140,6 +140,7 @@ export function AuditWidget({ deps, appName = 'App', initialPosition }: Props) {
   };
 
   const stamp = () => new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-');
+  const screenshotStamp = () => `${stamp()}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 
   const persistScreenshot = async (uri: string) => {
     if (!uri.startsWith('data:')) {
@@ -153,11 +154,32 @@ export function AuditWidget({ deps, appName = 'App', initialPosition }: Props) {
 
     const [, mimeType, base64] = match;
     const extension = mimeType.includes('jpeg') || mimeType.includes('jpg') ? 'jpg' : 'png';
-    return deps.writeFileBinary(`audit-shot-${stamp()}.${extension}`, base64);
+    return deps.writeFileBinary(`audit-shot-${screenshotStamp()}.${extension}`, base64);
+  };
+
+  const migrateStoredScreenshots = async () => {
+    const existing = await manager.getAll();
+    let changed = false;
+    const migrated = await Promise.all(
+      existing.map(async (entry) => {
+        const screenshot = await persistScreenshot(entry.screenshot);
+        if (screenshot === entry.screenshot) {
+          return entry;
+        }
+        changed = true;
+        return { ...entry, screenshot };
+      })
+    );
+
+    if (changed) {
+      await deps.storage.saveNotes(migrated);
+      setNotes(migrated);
+    }
   };
 
   const handleSaveNote = async (noteText: string) => {
     const { height: SH, width: SW } = Dimensions.get('screen');
+    await migrateStoredScreenshots();
     const screenshotUri = await persistScreenshot(capturedUri);
     await manager.add({
       screenName: deps.currentScreen,
