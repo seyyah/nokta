@@ -9,15 +9,16 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@react-native-async-storage/async-storage": "^3.0.2",
+    "@react-native-async-storage/async-storage": "2.2.0",
     "@xtatistix/mobile-audit": "^0.1.0",
     "expo": "~55.0.24",
     "expo-file-system": "~55.0.20",
     "expo-router": "~55.0.14",
     "expo-sharing": "~55.0.19",
-    "react": "19.2.6",
-    "react-native": "0.85.3",
-    "react-native-view-shot": "^5.1.0"
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-native": "0.83.6",
+    "react-native-view-shot": "4.0.3"
   },
   "devDependencies": {
     "@types/react": "~19.2.6",
