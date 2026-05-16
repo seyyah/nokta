@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "Nokta Audit Forge",
+    "slug": "nokta-audit-forge-231118060",
+    "scheme": "noktaforge231118060",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "plugins": [
+      "expo-router"
+    ],
+    "android": {
+      "package": "com.aliordek.noktaauditforge",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#f7f3ea"
+      }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      }
+    }
+  }
+}
