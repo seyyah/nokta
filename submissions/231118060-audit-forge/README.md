@@ -55,6 +55,7 @@ Toplam human touch points: 2
 - [x] `/`, `/reports`, `/forge` route'lari var.
 - [x] `audit-reports/` altinda 3 Markdown raporu ve burn-in PNG var.
 - [x] `IDEA.md`, `EVAL.md`, `FORGE.md` teslim klasorunde tutuluyor.
+- [x] `app-release.apk` gercek release APK olarak uretildi.
 - [x] Gercek kullanici verisi yok; tum veriler mock QA notu.
 
 ## Scope
