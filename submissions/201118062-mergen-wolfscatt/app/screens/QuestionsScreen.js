@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import PrimaryButton from "../components/PrimaryButton";
-import ProgressDots from "../components/ProgressDots";
 import ScreenContainer from "../components/ScreenContainer";
 import SecondaryButton from "../components/SecondaryButton";
 import SectionCard from "../components/SectionCard";
@@ -78,8 +77,6 @@ export default function QuestionsScreen({
       </SectionCard>
 
       <SectionCard style={styles.questionCard}>
-        <ProgressDots total={questions.length} currentIndex={currentIndex} />
-
         <View style={styles.questionHeader}>
           <View style={styles.stepBadge}>
             <Text style={styles.stepBadgeText}>Soru {progressText}</Text>
