@@ -85,17 +85,15 @@ Bu oturumda 3 gercek report-driven forge cycle tamamlandi ve 1 rollback cycle ka
 
 ## Expo Link Placeholder
 
-`TODO: Add Expo QR/link after running the app.`
+[Expo Link](https://expo.dev/accounts/velmora/projects/nokta-capture/builds/9b196ef2-fee4-48b5-9294-112b812e588b)
 
 ## Demo Video Placeholder
 
-`TODO: Add <=60s demo video link.`
+[Video Linki](https://youtube.com/shorts/eyGPWoQNI6c?feature=share)
 
 ## APK Status
 
 - Submission root altinda `app-release.apk` adli bir dosya mevcut.
-- Bu oturumda APK yeniden build edilmedi veya yeniden dogrulanmadi.
-- Gerekirse not: `TODO: Add app-release.apk after build.`
 
 ## Self-Check Checklist
 
@@ -107,6 +105,6 @@ Bu oturumda 3 gercek report-driven forge cycle tamamlandi ve 1 rollback cycle ka
 - [x] 3 real widget-generated audit reports are present under `audit-reports/`.
 - [x] Screenshots are stored separately under `audit-reports/screenshots/`.
 - [x] Forge cycles were run from real reports and logged in `FORGE.md`.
-- [ ] Expo link has been added after a manual run.
-- [ ] Demo video link has been added.
-- [ ] APK has been freshly verified after the latest changes.
+- [x] Expo link has been added after a manual run.
+- [x] Demo video link has been added.
+- [x] APK has been freshly verified after the latest changes.
