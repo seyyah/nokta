@@ -54,23 +54,23 @@ Loop: READ → LOCATE → HYPOTHESIZE → REPAIR → TEST → VERIFY → COMMIT/
 
 ## Cycle 3
 
-Report used:
+Report used: `reports/settings-rollback-warning.md`
 
-READ:
+READ: The report says rollback is important for Track C but too easy to miss on SettingsScreen.
 
-LOCATE:
+LOCATE: `app/src/screens/SettingsScreen.tsx`
 
-HYPOTHESIZE:
+HYPOTHESIZE: The rollback policy should look like a quality gate. The smallest repair is stronger visual hierarchy inside the existing rollback panel.
 
-REPAIR:
+REPAIR: Converted the rollback panel into a high-contrast gate with a "COMMIT BLOCKER" badge and explicit "No VERIFY, no COMMIT." rule.
 
-TEST:
+TEST: `npm run typecheck` and `npm run lint`
 
-VERIFY:
+VERIFY: Rollback now stands out while scanning SettingsScreen, and the Track C rule remains tied to failed verification instead of generic settings text.
 
-COMMIT/ROLLBACK:
+COMMIT/ROLLBACK: COMMIT
 
-Result:
+Result: Accepted. Failed repair handling is now visibly part of the Otonomi guardrail.
 
 Loop: READ → LOCATE → HYPOTHESIZE → REPAIR → TEST → VERIFY → COMMIT/ROLLBACK
 

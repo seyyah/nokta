@@ -30,11 +30,15 @@ export function SettingsScreen() {
       </View>
 
       <View style={styles.rollback}>
-        <Text style={styles.rollbackTitle}>Rollback rule</Text>
+        <View style={styles.rollbackHeader}>
+          <Text style={styles.rollbackTitle}>Rollback rule</Text>
+          <Text style={styles.rollbackBadge}>COMMIT BLOCKER</Text>
+        </View>
         <Text style={styles.rollbackBody}>
           A repair that fails verification must be rejected, reverted, or left uncommitted. The failed attempt is then
           written into FORGE.md as a Rollback Cycle.
         </Text>
+        <Text style={styles.rollbackGate}>No VERIFY, no COMMIT.</Text>
       </View>
 
       <View style={styles.panel}>
@@ -145,22 +149,43 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   rollback: {
-    backgroundColor: '#fff7ed',
-    borderColor: '#fdba74',
+    backgroundColor: '#431407',
+    borderColor: '#f97316',
     borderRadius: 8,
-    borderWidth: 1,
-    gap: 8,
+    borderWidth: 2,
+    gap: 10,
     padding: 16,
   },
+  rollbackHeader: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    justifyContent: 'space-between',
+  },
   rollbackTitle: {
-    color: '#9a3412',
+    color: '#ffedd5',
     fontSize: 20,
     fontWeight: '900',
   },
+  rollbackBadge: {
+    backgroundColor: '#ffedd5',
+    borderRadius: 6,
+    color: '#9a3412',
+    fontSize: 11,
+    fontWeight: '900',
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+  },
   rollbackBody: {
-    color: '#7c2d12',
+    color: '#fed7aa',
     fontSize: 14,
     lineHeight: 20,
+  },
+  rollbackGate: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '900',
   },
   loopText: {
     color: '#0f4c5c',
