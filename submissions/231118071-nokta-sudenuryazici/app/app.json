@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "Nokta Canvas",
+    "slug": "nokta-canvas",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./public/favicon.svg",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./public/favicon.svg",
+      "resizeMode": "contain",
+      "backgroundColor": "#0F172A"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./public/favicon.svg",
+        "backgroundColor": "#0F172A"
+      },
+      "package": "com.sudenur.noktacanvas"
+    },
+    "web": {
+      "favicon": "./public/favicon.svg"
+    }
+  }
+}

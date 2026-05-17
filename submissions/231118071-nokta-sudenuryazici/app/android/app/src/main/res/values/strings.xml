@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">NoktaCanvas</string>
+    <string name="title_activity_main">NoktaCanvas</string>
+    <string name="package_name">com.nokta.canvas</string>
+    <string name="custom_url_scheme">com.nokta.canvas</string>
+</resources>
