@@ -1,8 +1,3 @@
-/**
- * app/idea/[id].tsx — IdeaDetailScreen
- * Seçilen fikrin detay ekranı.
- */
-
 import React, { useState } from 'react';
 import {
   View,
@@ -27,35 +22,26 @@ const IDEAS: Record<string, Idea> = {
   '1': {
     id: '1',
     title: 'Sessiz Saat Modu',
-    summary: 'Belirlenen saatlerde bildirimleri otomatik kapat, odaklanma skorunu göster.',
-    tag: 'Üretkenlik',
+    summary: 'Belirlenen saatlerde bildirimleri otomatik kapat, odaklanma skorunu goster.',
+    tag: 'Uretkenlik',
     votes: 42,
-    body:
-      'Kullanıcı belirli saat aralıklarını "odak blokları" olarak işaretler. Bu bloklarda tüm bildirimler ' +
-      'sistem seviyesinde susturulur. Blok bittiğinde özet: kaç bildirim geldi, kaçını kaçırdın, ' +
-      'odaklanma skoru (0-100). Blok geçmişi haftalık grafik olarak görünür.',
+    body: 'Kullanici belirli saat araliklarini odak bloklari olarak isaretler. Bu bloklarda tum bildirimler sistem seviyesinde susturulur. Blok bittiginde ozet: kac bildirim geldi, kacini kacirdin, odaklanma skoru 0-100. Blok gecmisi haftalik grafik olarak gorunur.',
   },
   '2': {
     id: '2',
-    title: 'Hafıza Kartları',
-    summary: 'Her fikri spaced-repetition kartına çevir, unutmadan önce hatırlat.',
-    tag: 'Öğrenme',
+    title: 'Hafiza Kartlari',
+    summary: 'Her fikri spaced-repetition kartina cevir, unutmadan once hatirlat.',
+    tag: 'Ogrenme',
     votes: 31,
-    body:
-      'Bir fikri "karta çevir" butonuna basarsın. Sistem arka yüzünü AI ile doldurur: ' +
-      'anahtar soru, bağlantılı kavramlar, örnek kullanım. SM-2 algoritmasıyla tekrar zamanlanır. ' +
-      'Sabah bildirimi: "Bugün 3 kart süresi doldu." Kartlar uygulama içinde mini oyunla çalışılır.',
+    body: 'Bir fikri karta cevir butonuna basarsin. Sistem arka yuzunu AI ile doldurur: anahtar soru, baglantili kavramlar, ornek kullanim. SM-2 algoritmasi ile tekrar zamanlanir. Sabah bildirimi: Bugun 3 kart suresi doldu. Kartlar uygulama icinde mini oyunla calisilir.',
   },
   '3': {
     id: '3',
     title: 'Harita Modunda Fikirler',
-    summary: 'Fikirleri koordinata bağla; "bu yerde aklıma geldi" mantığıyla görselleştir.',
-    tag: 'Keşif',
+    summary: 'Fikirleri koordinata bagli goster.',
+    tag: 'Kesif',
     votes: 18,
-    body:
-      'Her not kaydedildiğinde arka planda GPS koordinatı alınır. "Harita görünümü"ne geçince ' +
-      'dünya haritasında pin'ler görürsün. Pin'e tıkladında o lokasyonda doğan fikirler listelenir. ' +
-      'Isı haritası: hangi şehirde daha çok fikrin var? Yolculuk modunda otomatik aktif.',
+    body: 'Her not kaydedildiginde arka planda GPS koordinati alinir. Harita gorunumune gecince dunya haritasinda pinler gorursun. Pine tikladiginda o lokasyonda dogan fikirler listelenir. Isi haritasi: hangi sehirde daha cok fikrin var? Yolculuk modunda otomatik aktif.',
   },
 };
 
@@ -67,9 +53,9 @@ export default function IdeaDetailScreen() {
   if (!idea) {
     return (
       <SafeAreaView style={styles.safe}>
-        <Text style={styles.errorText}>Fikir bulunamadı.</Text>
+        <Text style={styles.errorText}>Fikir bulunamadi.</Text>
         <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.backLink}>← Geri dön</Text>
+          <Text style={styles.backLink}>Geri don</Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
@@ -81,23 +67,18 @@ export default function IdeaDetailScreen() {
         <View style={styles.badge}>
           <Text style={styles.badgeText}>{idea.tag}</Text>
         </View>
-
         <Text style={styles.title}>{idea.title}</Text>
         <Text style={styles.summary}>{idea.summary}</Text>
-
         <View style={styles.divider} />
-
-        <Text style={styles.bodyLabel}>Detay</Text>
+        <Text style={styles.bodyLabel}>DETAY</Text>
         <Text style={styles.body}>{idea.body}</Text>
-
         <View style={styles.actions}>
           <TouchableOpacity
             style={[styles.voteBtn, voted && styles.voteBtnActive]}
             onPress={() => setVoted((v) => !v)}
-            accessibilityLabel="Oy ver"
           >
             <Text style={styles.voteBtnText}>
-              {voted ? '▲ Oylandı' : '▲ Oy Ver'}
+              {voted ? 'Oylanidi' : 'Oy Ver'}
             </Text>
             <Text style={styles.voteCount}>{idea.votes + (voted ? 1 : 0)}</Text>
           </TouchableOpacity>
@@ -122,7 +103,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 24, fontWeight: '800', color: '#e2e8f0', marginBottom: 10 },
   summary: { fontSize: 15, color: '#94a3b8', lineHeight: 22, marginBottom: 20 },
   divider: { height: 1, backgroundColor: '#2d2d4e', marginBottom: 20 },
-  bodyLabel: { fontSize: 12, color: '#6366f1', fontWeight: '700', marginBottom: 8, letterSpacing: 1 },
+  bodyLabel: { fontSize: 12, color: '#6366f1', fontWeight: '700', marginBottom: 8 },
   body: { fontSize: 15, color: '#cbd5e1', lineHeight: 24 },
   actions: { marginTop: 32 },
   voteBtn: {
