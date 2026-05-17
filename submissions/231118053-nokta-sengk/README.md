@@ -8,10 +8,11 @@ SlopSense is an autonomous mobile agent that evaluates startup pitches and marke
 ---
 
 ## 📱 Links & Demo
-- **📺 60s Demo Video:** [İzlemek için Tıklayın (YouTube)](https://youtube.com/shorts/C0DgwQkw148?feature=share)
-- **🎥 Güncel Demo Video (Expert Support):** [İzlemek için Tıklayın (YouTube)](https://www.youtube.com/shorts/IlArif22sDo)
-- **🚀 Expo QR Code & Build:** [Expo Proje Sayfası](https://expo.dev/accounts/sengka/projects/app/builds/26a5373d-4d0d-40a9-9e59-70ed4699a7e0)
-- **📦 Android APK (v2):** `submissions/231118053-nokta-sengk/app-releasev2.apk` 
+- **📺 İlk Demo Video:** [İzlemek için Tıklayın (YouTube)](https://youtube.com/shorts/C0DgwQkw148?feature=share)
+- **🎥 Önceki Demo Video (Expert Support):** [İzlemek için Tıklayın (YouTube)](https://www.youtube.com/shorts/IlArif22sDo)
+- **🔥 YENİ Demo Video (Audit & Forge):** [İzlemek için Tıklayın (YouTube)](https://youtube.com/shorts/hoCWMCkK1Dg)
+- **🚀 Expo QR Code & Build (v3):** [Expo Proje Sayfası](https://expo.dev/accounts/sengka/projects/app/builds/040692f5-9823-425d-a680-04263ccb9350)
+- **📦 Android APK (v3):** `submissions/231118053-nokta-sengk/app-releasev3.apk` 
 
 ## 🚀 Features
 - **Slop Score (0-100):** A dynamic, color-coded visual indicator of a pitch's hype-to-reality ratio.
