@@ -1,8 +1,8 @@
 export const COLORS = {
-  background: '#0F0F12',
+  background: '#0B1120', // Cycle 3: Changed to deep slate blue to complement orange
   surface: '#1A1A1F',
   surfaceLight: '#25252B',
-  primary: '#8B5CF6', // Neon Purple
+  primary: '#F97316', // Vibrant Orange (Bug #1 Fix)
   secondary: '#06B6D4', // Cyan
   text: '#FFFFFF',
   textSecondary: '#94A3B8',
