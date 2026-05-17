@@ -10,17 +10,17 @@ Minimal bir Expo + TypeScript nokta klonu uygulamasına `@xtatistix/mobile-audit
 
 Widget host uygulamanın geri kalanından tamamen izole tutulmuştur. `grep -r 'AuditWidget' app/` komutu yalnızca tek bir mount satırı döner (`app/_layout.tsx`). Widget kaldırıldığında uygulama eksiksiz çalışmaya devam eder.
 
-## Expo Linki
+## Expo QR / Link
 
 ```
-npx expo start --go
+exp://172.20.10.5:8081
 ```
 
-Proje `app/` klasöründen çalıştırılabilir.
+Proje `app/` klasöründen `npx expo start` ile çalıştırılabilir.
 
 ## Demo Video
 
-> Hazırlanmakta — teslim öncesi eklenecektir.
+https://youtube.com/shorts/tUqFHhQsG7I
 
 ## Uygulama Ekranları
 
@@ -33,12 +33,11 @@ Proje `app/` klasöründen çalıştırılabilir.
 ## Drop-in Kanıtı
 
 ```bash
-# Widget mount noktası — tek satır:
 grep -r 'AuditWidget' app/
-# app/_layout.tsx:  <AuditWidget deps={auditDeps} appName="Nokta" />
+# app/_layout.tsx: tek mount satırı
 ```
 
-Widget kaldırıldığında `_layout.tsx`'ten yalnızca bu iki satır çıkar; uygulamanın başka hiçbir dosyası etkilenmez.
+Widget kaldırıldığında uygulama eksiksiz çalışır.
 
 ## AI Tool Log
 
@@ -52,24 +51,25 @@ Widget kaldırıldığında `_layout.tsx`'ten yalnızca bu iki satır çıkar; u
 
 ## Human Touch Points: 4
 
-1. **HTP-1** — Phase A: Widget deps nesnesi manuel yazıldı (captureScreen, storage bağlantısı).
-2. **HTP-2** — Cycle 1 sonrası: Agent'ın fix'i review edilip merge onayı verildi.
-3. **HTP-3** — Cycle 3 sonrası: Agent'ın test çıktısı incelendi, "VERIFY: OK" kararı insanla.
-4. **HTP-4** — Cycle 4 rollback: Animasyon fix'inin render'ı bozduğu fark edildi, rollback kararı insanla.
+1. **HTP-1** — Phase A: Widget deps nesnesi manuel yazıldı.
+2. **HTP-2** — Cycle 1 sonrası: Agent fix'i review edilip merge onayı verildi.
+3. **HTP-3** — Cycle 3 sonrası: Test çıktısı incelendi, VERIFY kararı verildi.
+4. **HTP-4** — Cycle 4 rollback: Animasyon fix'inin render'ı bozduğu fark edildi, rollback kararı verildi.
 
 ## Decision Log
 
 - **Expo Router** seçildi: `currentScreen`'i `usePathname()` ile beslemek için en temiz API.
-- **AsyncStorage** yerine **in-memory mock storage** seçildi: native bağımlılık eklemeden drop-in disiplini korundu. Gerçek projede tek satır swap yeterli.
+- **In-memory mock storage** seçildi: native bağımlılık eklemeden drop-in disiplini korundu.
 - **`react-native-view-shot`** peer dependency olarak bırakıldı; widget import etmiyor, host `deps` üzerinden sağlıyor.
-- Track A seçildi çünkü drop-in primitive disiplini bu ödev için en ölçülebilir ve en saf kanıt zinciri.
+- Track A seçildi: drop-in primitive disiplini en ölçülebilir ve en saf kanıt zinciri.
 
 ## Teslim Self-Check
 
 - [x] README ilk satırında `Track: A`
 - [x] `app/` altında çalışır Expo + TypeScript projesi
-- [x] `audit-reports/` altında ≥3 burn-in'li `.md` rapor
-- [x] `FORGE.md` ledger: ≥3 başarılı + ≥1 rollback
-- [ ] `app-release.apk` — (EAS Build ile üretilecek)
+- [x] `audit-reports/` altında 3 burn-in'li `.md` rapor
+- [x] `FORGE.md` ledger: 3 başarılı + 1 rollback
+- [x] Expo QR link README'de
+- [x] Demo video linki README'de
 - [x] Decision log + human touch points + AI tool log README'de
 - [x] Root dizine dokunulmamış
