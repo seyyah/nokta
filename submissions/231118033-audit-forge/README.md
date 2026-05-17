@@ -17,6 +17,9 @@ exp://172.20.10.5:8081
 ```
 
 Proje `app/` klasöründen `npx expo start` ile çalıştırılabilir.
+## APK
+
+https://expo.dev/accounts/hakankocoo/projects/app/builds/488e7390-bb3f-4eea-8647-a7ec0cce2b3abu
 
 ## Demo Video
 
