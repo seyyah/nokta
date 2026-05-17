@@ -27,6 +27,18 @@ Nokta kullanıcısı hem müşteri hem geliştiricidir. Kendi fikrini analiz ett
 - Track B seçildi: Nokta'nın fikir analizi use case'i müşteri-geliştirici döngüsüne doğal uyum sağlıyor
 - OpenCode kullanıldı: Claude Code ücretli olduğu için ücretsiz alternatif tercih edildi
 
+
+## APK
+https://drive.google.com/file/d/1vEnmG29_m8woAZrYK1g6ogBERaMxZ6jG/view?usp=sharing
+
+## Expo Link
+https://expo.dev/accounts/ravzanur/projects/nokta-audit/updates/30e41fc2-b343-4f34-bbbf-a60ddc92e90b
+
+
+
+## Demo Video
+https://youtube.com/shorts/vKSz9qZ7YGw?feature=share
+
 ## Expo
 ```bash
 npx expo start
