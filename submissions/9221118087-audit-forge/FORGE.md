@@ -10,23 +10,23 @@ Phase A prepares the Expo app, sample reports, generated report flow, and this l
 
 ## Cycle 1
 
-Report used:
+Report used: `reports/home-primary-action.md`
 
-READ:
+READ: The report says the HomeScreen primary action is unclear for first-time users. The marked area is the main audit-flow action, and the user note says generic start language does not explain that the action creates an audit report.
 
-LOCATE:
+LOCATE: `app/src/screens/HomeScreen.tsx`
 
-HYPOTHESIZE:
+HYPOTHESIZE: HomeScreen needs an explicit, visible audit-report call to action near the loop summary. The smallest repair is copy and layout, not navigation or widget state changes.
 
-REPAIR:
+REPAIR: Added a bordered "Create an audit report" action panel that tells the user to tap the red floating button, mark the problem area, and generate Markdown for the coding agent.
 
-TEST:
+TEST: `npm run typecheck` and `npm run lint`
 
-VERIFY:
+VERIFY: The HomeScreen now contains a clear audit-report action with a visible red cue. It fits within the existing vertical mobile layout and keeps the floating widget as the actual report trigger.
 
-COMMIT/ROLLBACK:
+COMMIT/ROLLBACK: COMMIT
 
-Result:
+Result: Accepted. The human touch point is clearer before the user enters the Markdown report flow.
 
 Loop: READ → LOCATE → HYPOTHESIZE → REPAIR → TEST → VERIFY → COMMIT/ROLLBACK
 

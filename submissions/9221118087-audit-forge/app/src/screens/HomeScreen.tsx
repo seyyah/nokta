@@ -41,6 +41,16 @@ export function HomeScreen() {
         </Text>
       </View>
 
+      <View style={styles.auditAction}>
+        <View style={styles.auditActionText}>
+          <Text style={styles.auditActionTitle}>Create an audit report</Text>
+          <Text style={styles.auditActionBody}>
+            Tap the red floating button, mark the problem area, and generate Markdown for the coding agent.
+          </Text>
+        </View>
+        <Text style={styles.auditActionCue}>!</Text>
+      </View>
+
       <View style={styles.cards}>
         {screens.map((screen) => (
           <ScreenCard key={screen.name} screen={screen} />
@@ -99,6 +109,41 @@ const styles = StyleSheet.create({
     color: '#d7f9ff',
     fontSize: 14,
     lineHeight: 20,
+  },
+  auditAction: {
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    borderColor: '#be123c',
+    borderRadius: 8,
+    borderWidth: 2,
+    flexDirection: 'row',
+    gap: 12,
+    padding: 16,
+  },
+  auditActionText: {
+    flex: 1,
+    gap: 5,
+  },
+  auditActionTitle: {
+    color: '#17202a',
+    fontSize: 18,
+    fontWeight: '900',
+  },
+  auditActionBody: {
+    color: '#334155',
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  auditActionCue: {
+    backgroundColor: '#be123c',
+    borderRadius: 20,
+    color: '#ffffff',
+    fontSize: 24,
+    fontWeight: '900',
+    height: 40,
+    lineHeight: 40,
+    textAlign: 'center',
+    width: 40,
   },
   cards: {
     gap: 12,
