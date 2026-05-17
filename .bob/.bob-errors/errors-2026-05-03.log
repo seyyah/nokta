@@ -1,0 +1,38 @@
+
+================================================================================
+ERROR LOGGED: 2026-05-03T10:32:22.580Z
+User ID: nurettin.senyer@gmail.com
+================================================================================
+Error Name: GatewayError
+Error Message: Failed to handle chat completion - HTTP 401: Unauthorized - {"error":"unauthorized","message":"Token verification failed: 'exp' claim expired at Sun, 03 May 2026 08:37:07 GMT"}
+
+
+
+Stack Trace:
+GatewayError: Failed to handle chat completion - HTTP 401: Unauthorized - {"error":"unauthorized","message":"Token verification failed: 'exp' claim expired at Sun, 03 May 2026 08:37:07 GMT"}
+
+
+    at t.fromResponse (file:///home/seyyah/.nvm/versions/node/v24.14.0/lib/node_modules/bobshell/bundle/bob.js:765:8542)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async t.createChatCompletion (file:///home/seyyah/.nvm/versions/node/v24.14.0/lib/node_modules/bobshell/bundle/bob.js:777:8820)
+    at async dnt.createChatCompletionWithTokenRenewal (file:///home/seyyah/.nvm/versions/node/v24.14.0/lib/node_modules/bobshell/bundle/bob.js:2152:237)
+    at async dnt.generateContentStreamInternal (file:///home/seyyah/.nvm/versions/node/v24.14.0/lib/node_modules/bobshell/bundle/bob.js:2157:52)
+    at async V6.loggingStreamWrapper (file:///home/seyyah/.nvm/versions/node/v24.14.0/lib/node_modules/bobshell/bundle/bob.js:800:31296)
+    at async gY.processStreamResponse (file:///home/seyyah/.nvm/versions/node/v24.14.0/lib/node_modules/bobshell/bundle/bob.js:2463:81)
+    at async file:///home/seyyah/.nvm/versions/node/v24.14.0/lib/node_modules/bobshell/bundle/bob.js:2457:22044
+    at async PQ.run (file:///home/seyyah/.nvm/versions/node/v24.14.0/lib/node_modules/bobshell/bundle/bob.js:2463:3153)
+    at async nwe.sendMessageStream (file:///home/seyyah/.nvm/versions/node/v24.14.0/lib/node_modules/bobshell/bundle/bob.js:2796:511)
+================================================================================
+
+
+================================================================================
+ERROR LOGGED: 2026-05-03T10:34:27.106Z
+User ID: nurettin.senyer@gmail.com
+================================================================================
+Error Name: TypeError
+Error Message: fetch failed
+
+Stack Trace:
+TypeError: fetch failed
+================================================================================
+

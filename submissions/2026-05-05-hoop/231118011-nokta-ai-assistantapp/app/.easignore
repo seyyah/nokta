@@ -1,0 +1,20 @@
+﻿@"
+node_modules/
+.expo/
+.git/
+.vscode/
+android/
+ios/
+dist/
+web-build/
+build/
+.gradle/
+*.apk
+*.aab
+*.zip
+*.rar
+*.7z
+*.log
+.env
+.env.local
+"@ | Set-Content -Encoding UTF8 .easignore
