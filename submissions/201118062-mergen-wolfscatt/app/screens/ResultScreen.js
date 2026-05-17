@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Alert, Share, StyleSheet, Text, View } from "react-native";
 import PrimaryButton from "../components/PrimaryButton";
 import ScreenContainer from "../components/ScreenContainer";
 import SecondaryButton from "../components/SecondaryButton";
@@ -13,7 +13,7 @@ function BulletList({ items }) {
       {items.map((item, index) => (
         <View key={`${item}-${index}`} style={styles.listItem}>
           <View style={styles.bullet} />
-          <Text style={styles.listText}>{item}</Text>
+          <Text selectable style={styles.listText}>{item}</Text>
         </View>
       ))}
     </View>
@@ -35,6 +35,34 @@ function SpecBlock({ index, title, children, tone = "default" }) {
 }
 
 export default function ResultScreen({ spec, onRestart, onBackToQuestions }) {
+  const handleShareSummary = async () => {
+    if (!spec) {
+      return;
+    }
+
+    const summaryLines = [
+      "Nokta Capture - Urun Ozeti",
+      "",
+      `Fikir Ozeti: ${spec.ideaSummary}`,
+      `Problem: ${spec.problem}`,
+      `Hedef Kullanici: ${spec.targetUser}`,
+      "MVP Kapsami:",
+      ...spec.mvpItems.map((item) => `- ${item}`),
+      `Kisit / Risk: ${spec.constraints}`,
+      `Onerilen Ilk Adim: ${spec.firstStep}`
+    ];
+
+    try {
+      await Share.share({
+        title: "Nokta Capture Ozeti",
+        message: summaryLines.join("\n")
+      });
+    } catch (error) {
+      Alert.alert("Paylaşım başarısız", "Özet şu anda paylaşılamadı. Lütfen tekrar dene.");
+      console.warn("[ResultScreen] share failed:", error);
+    }
+  };
+
   if (!spec) {
     return (
       <ScreenContainer centered contentContainerStyle={styles.emptyContainer}>
@@ -68,20 +96,20 @@ export default function ResultScreen({ spec, onRestart, onBackToQuestions }) {
 
       <SectionCard tone="tint" style={styles.summaryCard}>
         <Text style={styles.summaryLabel}>Üst özet</Text>
-        <Text style={styles.summaryText}>{spec.ideaSummary}</Text>
+        <Text selectable style={styles.summaryText}>{spec.ideaSummary}</Text>
       </SectionCard>
 
       <View style={styles.sectionStack}>
         <SpecBlock index="01" title="Fikir özeti">
-          <Text style={styles.bodyText}>{spec.ideaSummary}</Text>
+          <Text selectable style={styles.bodyText}>{spec.ideaSummary}</Text>
         </SpecBlock>
 
         <SpecBlock index="02" title="Problem">
-          <Text style={styles.bodyText}>{spec.problem}</Text>
+          <Text selectable style={styles.bodyText}>{spec.problem}</Text>
         </SpecBlock>
 
         <SpecBlock index="03" title="Hedef kullanıcı">
-          <Text style={styles.bodyText}>{spec.targetUser}</Text>
+          <Text selectable style={styles.bodyText}>{spec.targetUser}</Text>
         </SpecBlock>
 
         <SpecBlock index="04" title="MVP kapsamı" tone="muted">
@@ -89,21 +117,22 @@ export default function ResultScreen({ spec, onRestart, onBackToQuestions }) {
         </SpecBlock>
 
         <SpecBlock index="05" title="Kısıt / risk">
-          <Text style={styles.bodyText}>{spec.constraints}</Text>
+          <Text selectable style={styles.bodyText}>{spec.constraints}</Text>
         </SpecBlock>
 
         <SpecBlock index="06" title="Önerilen ilk adım" tone="tint">
-          <Text style={styles.bodyTextStrong}>{spec.firstStep}</Text>
+          <Text selectable style={styles.bodyTextStrong}>{spec.firstStep}</Text>
         </SpecBlock>
       </View>
 
       <SectionCard tone="muted" style={styles.actionsCard}>
         <Text style={styles.actionsTitle}>Sonraki adım</Text>
         <Text style={styles.actionsText}>
-          İstersen cevaplarını düzenleyip özeti yeniden üretebilir veya akışı baştan başlatabilirsin.
+          İstersen özeti paylaşabilir, metinleri seçip kopyalayabilir, cevaplarını düzenleyip özeti yeniden üretebilir veya akışı baştan başlatabilirsin.
         </Text>
 
         <View style={styles.buttonGroup}>
+          <SecondaryButton title="Özeti Paylaş" onPress={handleShareSummary} />
           <PrimaryButton title="Yeniden Başlat" onPress={onRestart} />
           <SecondaryButton title="Cevapları Düzenle" onPress={onBackToQuestions} />
         </View>
