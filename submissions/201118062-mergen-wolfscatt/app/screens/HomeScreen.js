@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import ExampleIdeaCard from "../components/ExampleIdeaCard";
 import PrimaryButton from "../components/PrimaryButton";
 import ScreenContainer from "../components/ScreenContainer";
@@ -16,6 +16,7 @@ const HIGHLIGHTS = ["4 kısa soru", "Tek sayfalık özet", "Odaklı MVP çıktı
 export default function HomeScreen({ initialIdea, onStart }) {
   const [idea, setIdea] = useState(initialIdea || "");
   const [error, setError] = useState("");
+  const hasIdea = idea.trim().length > 0;
 
   const handleIdeaChange = (value) => {
     setIdea(value);
@@ -27,6 +28,11 @@ export default function HomeScreen({ initialIdea, onStart }) {
 
   const handleUseExample = (value) => {
     setIdea(value);
+    setError("");
+  };
+
+  const handleClearIdea = () => {
+    setIdea("");
     setError("");
   };
 
@@ -99,6 +105,14 @@ export default function HomeScreen({ initialIdea, onStart }) {
           hint="Ne kadar net yazarsan, çıktı o kadar kullanışlı olur."
           minHeight={160}
         />
+
+        {hasIdea ? (
+          <View style={styles.quickActionRow}>
+            <Pressable onPress={handleClearIdea} style={({ pressed }) => [styles.clearAction, pressed && styles.clearActionPressed]}>
+              <Text style={styles.clearActionText}>Fikri Temizle</Text>
+            </Pressable>
+          </View>
+        ) : null}
 
         <ExampleIdeaCard
           title="Hızlı başlamak istersen"
@@ -200,6 +214,23 @@ const styles = StyleSheet.create({
   ctaBlock: {
     gap: spacing.md,
     marginTop: spacing.xs
+  },
+  quickActionRow: {
+    alignItems: "flex-end",
+    marginTop: -spacing.xs
+  },
+  clearAction: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.pill,
+    backgroundColor: colors.dangerSoft
+  },
+  clearActionPressed: {
+    opacity: 0.72
+  },
+  clearActionText: {
+    ...typography.caption,
+    color: colors.danger
   },
   ctaCopy: {
     gap: spacing.xs
