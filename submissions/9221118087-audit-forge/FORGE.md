@@ -32,23 +32,23 @@ Loop: READ → LOCATE → HYPOTHESIZE → REPAIR → TEST → VERIFY → COMMIT/
 
 ## Cycle 2
 
-Report used:
+Report used: `reports/reports-empty-state.md`
 
-READ:
+READ: The report says generated reports are hard to distinguish from packaged sample reports on ReportsScreen.
 
-LOCATE:
+LOCATE: `app/src/screens/ReportsScreen.tsx` and `app/src/components/ReportCard.tsx`
 
-HYPOTHESIZE:
+HYPOTHESIZE: ReportsScreen already passes source data into ReportCard, but the visual treatment is too subtle. The smallest repair is to make source a prominent card-level distinction.
 
-REPAIR:
+REPAIR: Added source metadata in ReportCard with explicit labels, different badge colors, and source-colored left borders for generated local reports versus sample files.
 
-TEST:
+TEST: `npm run typecheck` and `npm run lint`
 
-VERIFY:
+VERIFY: Report cards now read "Generated locally" or "Sample file" and have different left border colors, so generated widget output can be scanned separately from bundled examples.
 
-COMMIT/ROLLBACK:
+COMMIT/ROLLBACK: COMMIT
 
-Result:
+Result: Accepted. The generated report queue is clearer without adding dependencies or changing report storage.
 
 Loop: READ → LOCATE → HYPOTHESIZE → REPAIR → TEST → VERIFY → COMMIT/ROLLBACK
 

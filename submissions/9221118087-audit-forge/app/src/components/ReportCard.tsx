@@ -13,14 +13,38 @@ const severityColors = {
   high: '#fecaca',
 };
 
+const sourceMeta = {
+  generated: {
+    label: 'Generated locally',
+    badgeColor: '#dcfce7',
+    borderColor: '#22c55e',
+  },
+  sample: {
+    label: 'Sample file',
+    badgeColor: '#e0f2fe',
+    borderColor: '#38bdf8',
+  },
+};
+
 export function ReportCard({ report, source, onPress }: Props) {
+  const sourceDetails = sourceMeta[source];
+
   return (
-    <Pressable style={({ pressed }) => [styles.card, pressed && styles.pressed]} onPress={onPress}>
+    <Pressable
+      style={({ pressed }) => [
+        styles.card,
+        { borderLeftColor: sourceDetails.borderColor },
+        pressed && styles.pressed,
+      ]}
+      onPress={onPress}
+    >
       <View style={styles.topRow}>
         <View style={[styles.badge, { backgroundColor: severityColors[report.severity] }]}>
           <Text style={styles.badgeText}>{report.severity.toUpperCase()}</Text>
         </View>
-        <Text style={styles.source}>{source}</Text>
+        <View style={[styles.sourceBadge, { backgroundColor: sourceDetails.badgeColor }]}>
+          <Text style={styles.source}>{sourceDetails.label}</Text>
+        </View>
       </View>
       <Text style={styles.title}>{report.title}</Text>
       <Text style={styles.meta}>
@@ -40,6 +64,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#ffffff',
     borderColor: '#d4dce8',
+    borderLeftWidth: 5,
     borderRadius: 8,
     borderWidth: 1,
     padding: 14,
@@ -63,10 +88,15 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '800',
   },
+  sourceBadge: {
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
   source: {
-    color: '#64748b',
+    color: '#0f172a',
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '800',
     textTransform: 'uppercase',
   },
   title: {
