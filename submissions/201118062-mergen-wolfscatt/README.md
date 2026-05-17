@@ -1,40 +1,14 @@
-# Nokta Capture
+Track: B
 
-## Seçilen Track
+# Nokta Audit-Forge Submission
 
-**Track A - Dot Capture & Enrich**
+## Project Summary
 
-## Kısa Proje Özeti
+Bu submission, mevcut Expo tabanli Nokta host uygulamasina `@xtatistix/mobile-audit` widget'ini root seviyesinde entegre eder. Uygulama hala fikir girisi, soru akisi ve sonuc ekranini calistirir; buna ek olarak kullanici ekran uzerinden audit FAB'e dokunup ekran goruntusu alabilir, sari kutu ile alan isaretleyebilir, not yazabilir ve gercek Markdown raporu disa aktarabilir.
 
-Nokta Capture, kullanıcının ham bir uygulama veya girişim fikrini alıp kısa bir ürün netleştirme akışıyla tek sayfalık bir spec özetine dönüştüren mobil bir prototiptir. Bu çalışma, Nokta vizyonunun tamamını değil; fikir yakalama, 4 takip sorusu ile netleştirme ve özet üretme dilimini hedefleyen küçük ve odaklı bir submission'dır.
+Bu teslimde resmi track `B` olarak secildi. Ayrica Track C'den ilham alan bir otonomi kati eklendi: insan dokunus sayaci, rollback kaydi, manuel golden scenario listesi ve gercek raporlar geldikten sonra doldurulacak forge ledger yapisi.
 
-## Özellikler
-
-- Ham fikir girişi
-- 4 adet takip ürünü sorusu
-- Kısa cevaplarla ilerleyen yönlendirilmiş akış
-- Tek sayfalık ürün özeti üretimi
-- Temiz ve mobil odaklı prototype deneyimi
-- Gerekirse local/mock logic ile AI davranışı simülasyonu
-
-## Ana Akış
-
-1. Kullanıcı ham fikrini tek cümle veya kısa paragraf olarak girer.
-2. Uygulama sırayla 4 takip sorusu sorar.
-3. Sorular problem, hedef kullanıcı, ilk sürüm kapsamı ve temel kısıt üzerine yoğunlaşır.
-4. Kullanıcı kısa cevaplarını girer.
-5. Uygulama bu cevaplardan tek sayfalık bir ürün özeti oluşturur.
-6. Kullanıcı sonuç ekranında daha net, paylaşılabilir bir spec çıktısı görür.
-
-## Kullanılan Teknolojiler
-
-- React Native
-- Expo
-- JavaScript
-- Local state yönetimi
-- Mock/local summary generation logic
-
-## Kurulum ve Çalıştırma
+## How To Run
 
 ```bash
 cd submissions/201118062-mergen-wolfscatt/app
@@ -42,56 +16,96 @@ npm install
 npx expo start
 ```
 
-Expo açıldıktan sonra uygulama:
+`npx expo start` sonrasi uygulamayi Expo Go veya emulator ile acin. Codex bu oturumda interaktif Expo acilisini dogrulayamadi.
 
-- Expo Go ile QR kod okutularak
-- Android emulator üzerinden
-- Web preview ile
+## AuditWidget Integration Summary
 
-çalıştırılabilir.
+- `AuditWidget` yalnizca bir kez, [App.js](app/App.js) icinde root seviyesinde mount edildi.
+- Host bagimliliklari [auditHost.js](app/auditHost.js) icinde toplandi.
+- `currentScreen`, mevcut local `screen` state'inden uretiliyor.
+- `deps` icinde `captureScreen`, `captureRef`, `writeFile`, `writeFileBinary`, `shareFile` ve `storage` host tarafindan enjekte ediliyor.
+- Her kayitli note artik audit note list icinden ayri `Markdown` ve `Screenshot` aksiyonlari ile disa aktarilabiliyor.
+- Markdown export artik screenshot'i base64 icine gommek yerine `./screenshots/<slug>.png` goreli path'i ile referansliyor.
+- Widget kendi icinde native paket import etmiyor; native sinir host uygulamada kaliyor.
 
-## Proje Yapısı
+## Real Audit Report Workflow
 
-```text
-submissions/201118062-mergen-wolfscatt/
-├─ README.md
-├─ idea.md
-├─ app/
-│  ├─ components/
-│  ├─ constants/
-│  ├─ data/
-│  ├─ screens/
-│  ├─ utils/
-│  ├─ App.js
-│  ├─ package.json
-│  └─ app.json
-└─ app-release.apk
-```
+1. Uygulamayi acin.
+2. Hedef ekrana gidin.
+3. Audit FAB'e dokunun.
+4. Ekran goruntusunu alin.
+5. Sari kutu ile ilgili alani isaretleyin.
+6. Notunuzu yazin.
+7. Audit note list ekranini acin ve ilgili note kartindaki `Markdown` aksiyonu ile `.md` dosyasini olusturun.
+8. Ayni note icin `Screenshot` aksiyonunu kullanarak ayri `.png` dosyasini alin.
+9. Markdown dosyasini `audit-reports/` klasorune, screenshot dosyasini `audit-reports/screenshots/` klasorune kopyalayin.
+10. Markdown icindeki image path'in `./screenshots/<slug>.png` oldugunu kontrol edin.
+11. Gerekirse dosya adini repo icinde `01-home-feature-request.md` gibi daha kisa bir formata cevirin.
 
-Not: Challenge kuralına uygun şekilde root klasör değiştirilmemiştir. Tüm çalışma yalnızca `submissions/201118062-mergen-wolfscatt/` altında tutulmuştur.
+Eski kombine export raporu `audit-reports/archive/` altina alindi. Final forge girdileri icin hala en az 3 adet tek-note Markdown raporu ve bunlara ait ayri PNG screenshot dosyalarina ihtiyac var.
 
-## Expo Linki
+## Planned Track B Captures
 
-[Expo linki](https://expo.dev/accounts/velmora/projects/nokta-capture/builds/897a568c-aa77-4a96-ab52-cd1eb3308a60)
+- `01-home-feature-request.md`
+  Ornek not: `Bu giris ekraninda fikri hizlica temizleme butonu olsa iyi olurdu.`
+- `02-question-feature-request.md`
+  Ornek not: `Bu soru ekraninda onceki soruya geri donebilme ozelligi olsa iyi olurdu.`
+- `03-result-feature-request.md`
+  Ornek not: `Sonuc ekraninda uretilen ozeti kopyalama butonu olsa iyi olurdu.`
 
-## Demo Video
+## Forge Cycle Process
 
-[Video](https://youtube.com/shorts/VzqHTmlCTUc?feature=share)
+Her gercek rapor icin hedeflenen dongu:
 
-## APK
+`READ -> LOCATE -> HYPOTHESIZE -> REPAIR -> TEST -> VERIFY -> COMMIT/ROLLBACK`
 
-`[APK dosya yolu ]`
+Bu oturumda yalnizca entegrasyon ve ledger hazirligi yapildi. Gercek widget raporlari kopyalandiktan sonra her rapor icin minimum degisiklik prensibiyle ayri forge cycle calistirilmali.
 
-## Decision Log
+## Human Touch Points Counter
 
-- Tam Nokta platformu yerine yalnızca Track A'nın çekirdek akışı seçildi; böylece submission yüzeysel değil, çalışan bir dilim oldu.
-- Girdi formatı metin odaklı tutuldu; ses girişi bu challenge süresinde değerine göre fazla ek yük oluşturacağı için kapsam dışı bırakıldı.
-- Takip soru sayısı 4 olarak sabitlendi; bu sayı hem yeterli netleştirme sağlıyor hem de mobil akışı uzatmıyor.
-- Sorular açık uçlu sohbet yerine problem, kullanıcı, kapsam ve kısıt eksenlerine bağlandı; bu sayede çıktı daha tutarlı hale geldi.
-- Gerçek LLM entegrasyonu zorunlu kabul edilmedi; gerektiğinde local/mock logic ile demo akışı garanti altına alındı.
-- Çıktı formatı uzun PRD yerine tek sayfalık ürün özeti olarak tasarlandı; amaç hızlı okunan ve hemen kullanılabilen bir sonuç üretmekti.
-- Mimari, tek kullanıcı senaryosunu hızlı gösterecek şekilde basit tutuldu; authentication, backend ve kalıcı veri yapıları eklenmedi.
+- Mevcut sayac: `1`
+- Tamamlanan insan dokunusu: gorevin kapsam ve guvenlik kurallarinin verilmesi
+- Bekleyen insan dokunuslari:
+  - uygulamayi acip 3 gercek audit raporu uretmek
+  - export edilen `.md` ve burn-in goruntulerini `audit-reports/` altina kopyalamak
+  - APK build ve demo video kaydini eklemek
 
-## Kullanılan AI Araçları
+## AI Tool Log
 
-- ChatGPT / Codex: içerik netleştirme, akış tasarımı, metin yazımı ve uygulama geliştirme desteği
+- Tool: `Codex`
+- Usage: audit integration, host dependency adapter, report workflow documentation, forge ledger preparation
+
+## Submission Documents
+
+- Decision log: [DECISIONS.md](DECISIONS.md)
+- Idea note: [IDEA.md](IDEA.md)
+- Evaluation checklist: [EVAL.md](EVAL.md)
+- Forge ledger: [FORGE.md](FORGE.md)
+- Audit report instructions: [audit-reports/README.md](audit-reports/README.md)
+
+## Expo Link Placeholder
+
+`TODO: Add Expo QR/link after running the app.`
+
+## Demo Video Placeholder
+
+`TODO: Add <=60s demo video link.`
+
+## APK Status
+
+- Submission root altinda `app-release.apk` adli bir dosya mevcut.
+- Bu oturumda APK yeniden build edilmedi veya yeniden dogrulanmadi.
+- Gerekirse not: `TODO: Add app-release.apk after build.`
+
+## Self-Check Checklist
+
+- [x] Existing app was adapted instead of creating a new app.
+- [x] `AuditWidget` is mounted once at the app root.
+- [x] Host-side deps are injected from the app boundary.
+- [x] `DECISIONS.md`, `IDEA.md`, `EVAL.md`, `FORGE.md` and `audit-reports/README.md` exist.
+- [x] Root repository files outside this submission folder were not edited.
+- [ ] 3 real widget-generated audit reports are present under `audit-reports/`.
+- [ ] Final forge cycles have been completed from real reports.
+- [ ] Expo link has been added after a manual run.
+- [ ] Demo video link has been added.
+- [ ] APK has been freshly verified after the latest changes.

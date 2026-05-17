@@ -1,12 +1,21 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { AuditWidget } from "@xtatistix/mobile-audit";
 import HomeScreen from "./screens/HomeScreen";
 import QuestionsScreen from "./screens/QuestionsScreen";
 import LoadingScreen from "./screens/LoadingScreen";
 import ResultScreen from "./screens/ResultScreen";
 import { FOLLOW_UP_QUESTIONS, INITIAL_ANSWERS } from "./data/questions";
 import { generateSpec } from "./utils/enrichment";
+import { createAuditDeps } from "./auditHost";
+
+const AUDIT_SCREEN_NAMES = {
+  home: "HomeScreen",
+  questions: "QuestionsScreen",
+  loading: "LoadingScreen",
+  result: "ResultScreen"
+};
 
 export default function App() {
   const [screen, setScreen] = useState("home");
@@ -17,6 +26,8 @@ export default function App() {
   const generationTimeoutRef = useRef(null);
 
   const questions = useMemo(() => FOLLOW_UP_QUESTIONS, []);
+  const currentScreen = AUDIT_SCREEN_NAMES[screen] || screen;
+  const auditDeps = useMemo(() => createAuditDeps(currentScreen), [currentScreen]);
 
   const clearGenerationTimeout = () => {
     if (generationTimeoutRef.current) {
@@ -111,6 +122,8 @@ export default function App() {
       {screen === "result" && (
         <ResultScreen spec={spec} onRestart={handleRestart} onBackToQuestions={handleEditAnswers} />
       )}
+
+      <AuditWidget deps={auditDeps} appName="Nokta Capture" />
     </SafeAreaProvider>
   );
 }
