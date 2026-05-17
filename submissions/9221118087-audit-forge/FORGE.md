@@ -76,22 +76,22 @@ Loop: READ → LOCATE → HYPOTHESIZE → REPAIR → TEST → VERIFY → COMMIT/
 
 ## Rollback Cycle
 
-Report used:
+Report used: `reports/reports-empty-state.md`
 
-READ:
+READ: The report asks for generated reports to be distinguishable from sample reports. After Cycle 2, source labels and borders already solved the scan problem.
 
-LOCATE:
+LOCATE: `app/src/screens/ReportsScreen.tsx`
 
-HYPOTHESIZE:
+HYPOTHESIZE: A possible next refinement was to hide sample reports after a generated report exists, reducing list noise and making the generated queue feel primary.
 
-REPAIR:
+REPAIR: Attempted to conditionally render the sample report section only when `generatedReports.length === 0`.
 
-TEST:
+TEST: `npm run typecheck` passed. `npm run lint` passed.
 
-VERIFY:
+VERIFY: Rejected. The attempted change removed sample reports from ReportsScreen after the first generated report. That violates the assignment requirement that generated reports should be viewable in the app while the three bundled sample reports remain usable as coding-agent input.
 
-COMMIT/ROLLBACK:
+COMMIT/ROLLBACK: ROLLBACK. Reverted the conditional rendering attempt and restored the sample report section so it is always visible.
 
-Result:
+Result: Not accepted. The repair was technically valid but product-invalid for this submission, so the code change was rolled back and only this rollback record remains.
 
 Loop: READ → LOCATE → HYPOTHESIZE → REPAIR → TEST → VERIFY → COMMIT/ROLLBACK
