@@ -6,7 +6,7 @@ Track: B
 
 Bu submission, mevcut Expo tabanli Nokta host uygulamasina `@xtatistix/mobile-audit` widget'ini root seviyesinde entegre eder. Uygulama hala fikir girisi, soru akisi ve sonuc ekranini calistirir; buna ek olarak kullanici ekran uzerinden audit FAB'e dokunup ekran goruntusu alabilir, sari kutu ile alan isaretleyebilir, not yazabilir ve gercek Markdown raporu disa aktarabilir.
 
-Bu teslimde resmi track `B` olarak secildi. Ayrica Track C'den ilham alan bir otonomi kati eklendi: insan dokunus sayaci, rollback kaydi, manuel golden scenario listesi ve gercek raporlar geldikten sonra doldurulacak forge ledger yapisi.
+Bu teslimde resmi track `B` olarak secildi. Ayrica Track C'den ilham alan bir otonomi kati eklendi: insan dokunus sayaci, rollback kaydi, manuel golden scenario listesi ve gercek raporlardan beslenen [FORGE.md](FORGE.md) ledger yapisi.
 
 ## How To Run
 
@@ -42,7 +42,7 @@ npx expo start
 10. Markdown icindeki image path'in `./screenshots/<slug>.png` oldugunu kontrol edin.
 11. Gerekirse dosya adini repo icinde `01-home-feature-request.md` gibi daha kisa bir formata cevirin.
 
-Eski kombine export raporu `audit-reports/archive/` altina alindi. Final forge girdileri icin hala en az 3 adet tek-note Markdown raporu ve bunlara ait ayri PNG screenshot dosyalarina ihtiyac var.
+Gercek AuditWidget raporlari artik `audit-reports/` altinda, ilgili screenshot dosyalari ise `audit-reports/screenshots/` altinda tutuluyor. Bu raporlar kullanilarak Codex ile 3 ayri forge cycle calistirildi; ayrintilar [FORGE.md](FORGE.md) icinde kayitli.
 
 ## Planned Track B Captures
 
@@ -59,21 +59,21 @@ Her gercek rapor icin hedeflenen dongu:
 
 `READ -> LOCATE -> HYPOTHESIZE -> REPAIR -> TEST -> VERIFY -> COMMIT/ROLLBACK`
 
-Bu oturumda yalnizca entegrasyon ve ledger hazirligi yapildi. Gercek widget raporlari kopyalandiktan sonra her rapor icin minimum degisiklik prensibiyle ayri forge cycle calistirilmali.
+Bu oturumda 3 gercek report-driven forge cycle tamamlandi ve 1 rollback cycle kaydedildi. Her degisiklik minimum diff prensibiyle, yalnizca hedef raporun istedigine bagli kalinarak uygulandi.
 
 ## Human Touch Points Counter
 
-- Mevcut sayac: `1`
-- Tamamlanan insan dokunusu: gorevin kapsam ve guvenlik kurallarinin verilmesi
+- Mevcut sayac: `2`
+- Tamamlanan insan dokunuslari:
+  - gorevin kapsam ve guvenlik kurallarinin verilmesi
+  - kullanicinin uygulamayi calistirip 3 gercek audit raporu uretmesi
 - Bekleyen insan dokunuslari:
-  - uygulamayi acip 3 gercek audit raporu uretmek
-  - export edilen `.md` ve burn-in goruntulerini `audit-reports/` altina kopyalamak
   - APK build ve demo video kaydini eklemek
 
 ## AI Tool Log
 
 - Tool: `Codex`
-- Usage: audit integration, host dependency adapter, report workflow documentation, forge ledger preparation
+- Usage: audit integration, report export refinement, Track B forge cycles, ledger generation
 
 ## Submission Documents
 
@@ -104,8 +104,9 @@ Bu oturumda yalnizca entegrasyon ve ledger hazirligi yapildi. Gercek widget rapo
 - [x] Host-side deps are injected from the app boundary.
 - [x] `DECISIONS.md`, `IDEA.md`, `EVAL.md`, `FORGE.md` and `audit-reports/README.md` exist.
 - [x] Root repository files outside this submission folder were not edited.
-- [ ] 3 real widget-generated audit reports are present under `audit-reports/`.
-- [ ] Final forge cycles have been completed from real reports.
+- [x] 3 real widget-generated audit reports are present under `audit-reports/`.
+- [x] Screenshots are stored separately under `audit-reports/screenshots/`.
+- [x] Forge cycles were run from real reports and logged in `FORGE.md`.
 - [ ] Expo link has been added after a manual run.
 - [ ] Demo video link has been added.
 - [ ] APK has been freshly verified after the latest changes.
