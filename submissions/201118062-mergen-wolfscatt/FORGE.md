@@ -8,6 +8,7 @@
   - `audit-reports/01-home-burada-fikri-hizli-sil.md`
   - `audit-reports/02-questions-bu-kisimda-ust-uste.md`
   - `audit-reports/03-result-bu-son-ekranda-ozeti.md`
+  - `audit-reports/04-home-tum-ekranin-stil-yapisini.md`
 - Screenshot folder: `audit-reports/screenshots/`
 - Rollback policy: Eger bir hipotez kapsamdan cikiyor, birden fazla ekrani genis capta etkiliyor veya gorunur faydasina gore fazla dosyaya yayiliyorsa degisiklik geri alinmali ya da kod degistirmeden reddedilmelidir.
 
@@ -16,7 +17,7 @@
 | Cycle 1 | `01-home-burada-fikri-hizli-sil.md` | HomeScreen uzerinde fikir alaninin yakinina kucuk bir temizleme aksiyonu eklemek, nottaki hizli sil beklentisini minimum diff ile karsilar. | Success | `app/screens/HomeScreen.js` | No `lint`, `test`, or `typecheck` scripts. Static review done; manual Expo verification required. | `TODO` | `1kg` | `2` |
 | Cycle 2 | `02-questions-bu-kisimda-ust-uste.md` | QuestionsScreen icindeki ust uste iki progress gorunumunden, bar benzeri olan `ProgressDots` kaldirilirsa tek ve yeterli ilerleme bilgisi kalir. | Success | `app/screens/QuestionsScreen.js` | No `lint`, `test`, or `typecheck` scripts. Static review done; manual Expo verification required. | `TODO` | `2kg` | `2` |
 | Cycle 3 | `03-result-bu-son-ekranda-ozeti.md` | ResultScreen uzerine kucuk bir paylasma aksiyonu eklemek ve sonucu secilebilir yapmak, yeni bagimlilik eklemeden rapordaki copy/share istegini en kucuk guvenli sekilde karsilar. | Success | `app/screens/ResultScreen.js` | No `lint`, `test`, or `typecheck` scripts. Static review done; manual Expo verification required. | `TODO` | `3kg` | `2` |
-| Cycle 4 | `rollback cycle` | Tum ekranlari kapsayan merkezi theme/style refactor, bu raporlarin tekil beklentilerine daha hizli cevap vermeyi kolaylastirabilir. | Rollback: considered and rejected before code change | `-` | No code change. Decision review only. | `-` | `0kg` | `2` |
+| Cycle 4 | `04-home-style-refactor-rollback.md` | A global style refactor could make all screens visually consistent. | rollback | `-` | Rejected before implementation because it violates minimal diff and report-bounded scope | `-` | `0kg` | `1` |
 
 ## Cycle Notes
 
@@ -47,14 +48,22 @@
 - TEST: Script yok. Kod yolu statik olarak incelendi.
 - VERIFY: Expo Go'da sonuc ekraninda `Ozeti Paylas` ile native share sheet acilmali; metinler basili tutularak secilebilmeli.
 
-### Rollback Cycle
+### Cycle 4
 
-- READ: Sonraki kolaylik icin merkezi bir stil refactor fikri dusunuldu.
-- LOCATE: Theme, button, field ve screen seviyesinde birden fazla dosyaya yayiliyor.
-- HYPOTHESIZE: Bu refactor tekil rapor difflerini kucultmek yerine buyutur.
-- REPAIR: Kod degisikligi yapilmadi.
-- TEST: Gerekmedi.
-- VERIFY: `0kg` rollback olarak ledger'a kaydedildi.
+- READ: `04-home-tum-ekranin-stil-yapisini.md` raporu, tum ekranin stil yapisinin degistirilmesini ve tum uygulama stillerinin buna gore guncellenmesini istiyor.
+- LOCATE: Bu istek HomeScreen ile sinirli kalmiyor; [theme.js](app/constants/theme.js) uzerinden ortak renk, spacing ve tipografi tanimlarina, ayrıca birden fazla screen/component dosyasina yayiliyor.
+- HYPOTHESIZE: Kuresel bir stil refactor, uygulamayi daha tutarli gosterebilir.
+- REPAIR ATTEMPT OR REJECT: Reddedildi. Bu talep tek report icin fazla genis, birden fazla ekrani kapsiyor ve report icindeki "minimal diff / unrelated screens'e dokunma / app'i yeniden yazma" sinirlarini ihlal ediyor.
+- TEST: Uygulanacak kod degisikligi birakilmadigi icin script testi yok; karar kapsam uyumu uzerinden dogrulandi.
+- VERIFY: Kalici global stil degisikligi tutulmadi; uygulama bu cycle oncesindeki calisir durumda birakildi.
+
+#### Rollback Note
+
+- Kullanici talebi: Tum ekranin stil yapisini degistirip tum uygulama stillerini buna gore guncellemek.
+- Neden cok broad: Theme sabitleri, ortak componentler ve birden fazla screen ayni anda etkileniyor.
+- Neden reddedildi: Track B forge donguleri report-driven ve sinirli olmali; bu istek minimal, bounded bir diff uretmiyor.
+- Neden faydali: Bu reddedilen hipotez, gelecekte tema iyilestirmesi yapilacaksa bunun ayri ve bilincli bir kapsamla ele alinmasi gerektigini netlestirdi.
+- Kalici sonuc: Herhangi bir global style refactor tutulmadi, app code degismedi.
 
 ## Commit Commands
 
