@@ -120,10 +120,10 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   input: {
-    backgroundColor: COLORS.surface,
+    backgroundColor: COLORS.surfaceLight, // Cycle 2: Made input background slightly lighter
     borderRadius: BORDER_RADIUS.lg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
+    borderWidth: 1.5,
+    borderColor: COLORS.primary, // Cycle 2: Changed border to primary orange
     color: COLORS.text,
     padding: SPACING.lg,
     height: 250,

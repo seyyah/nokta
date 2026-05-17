@@ -8,13 +8,16 @@ SlopSense is an autonomous mobile agent that evaluates startup pitches and marke
 ---
 
 ## 📱 Links & Demo
-- **📺 60s Demo Video:** [İzlemek için Tıklayın (YouTube)](https://youtube.com/shorts/C0DgwQkw148?feature=share)
-- **🚀 Expo QR Code & Build:** [Expo Proje Sayfası](https://expo.dev/accounts/sengka/projects/app/builds/26a5373d-4d0d-40a9-9e59-70ed4699a7e0)
-- **📦 Android APK:** `submissions/231118053-nokta-sengk/app-release.apk` 
-
+- **📺 İlk Demo Video:** [İzlemek için Tıklayın (YouTube)](https://youtube.com/shorts/C0DgwQkw148?feature=share)
+- **🎥 Önceki Demo Video (Expert Support):** [İzlemek için Tıklayın (YouTube)](https://www.youtube.com/shorts/IlArif22sDo)
+- **🔥 YENİ Demo Video (Audit & Forge):** [İzlemek için Tıklayın (YouTube)](https://youtube.com/shorts/hoCWMCkK1Dg)
+- **🚀 Expo QR Code & Build (v3):** [Expo Proje Sayfası](https://expo.dev/accounts/sengka/projects/app/builds/040692f5-9823-425d-a680-04263ccb9350)
+- **📦 Android APK (v3):** `submissions/231118053-nokta-sengk/app-releasev3.apk` 
 
 ## 🚀 Features
 - **Slop Score (0-100):** A dynamic, color-coded visual indicator of a pitch's hype-to-reality ratio.
+- **🛠️ Hibrit Uzman Desteği (Hybrid Expert Support):** AI analysis paired with a collaborative "Human Intervention" system for high-stakes pitch verification.
+- **🧠 Expert Hub:** Specialized insights from simulated CTO, CFO, and Strategist personas.
 - **Engineering-Guided Reasoning:** Detailed breakdown of specific claims, identifying factual inconsistencies and jargon overload.
 - **A2UI Adaptive Loading:** A premium loading experience that demonstrates the "agent's thought process" through sequential technical state transitions.
 - **🔥 BONUS: Sosyal Sensör (Social Sensor):** An advanced module that leverages LLM market knowledge to identify potential competitors and hidden market risks.
@@ -30,6 +33,7 @@ SlopSense is an autonomous mobile agent that evaluates startup pitches and marke
 1. **Direct Fetch:** API anahtarı (AQ. format) uyumluluğu için SDK yerine doğrudan `fetch` kullanıldı.
 2. **Reanimated Removal:** Deneysel React Native sürümlerindeki (0.81+) stabilite sorunları nedeniyle animasyonlar standart React state'leri ile optimize edildi.
 3. **Strict JSON Prompting:** AI yanıtlarının her zaman parse edilebilir olması için özel bir JSON temizleme mantığı geliştirildi.
+4. **Hybrid Collaboration Architecture:** AI'nın hızını insan uzmanlığının güvenilirliği ile birleştiren yeni bir "Expert Hub" mimarisi entegre edildi.
 
 ---
 
@@ -43,9 +47,9 @@ SlopSense is an autonomous mobile agent that evaluates startup pitches and marke
 ---
 
 ## 👨‍💻 Author & Submission Info
-- **Project Folder:** `submissions/20210123-track-b-slop/`
-- **Total Meaningful Commits:** 5+
-- **Artifacts Included:** Source code, README, Documentation.
+- **Project Folder:** `submissions/231118053-nokta-sengk/`
+- **Total Meaningful Commits:** 10+
+- **Artifacts Included:** Source code, README, Documentation, APK.
 
 ---
 
