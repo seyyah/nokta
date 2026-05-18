@@ -22,10 +22,9 @@ export default function OnboardingScreen() {
       </View>
 
       <View style={styles.footer}>
-        {/* BUG-001: Yanlış route — '/(tabs)/idea' yerine '/(tabs)/ideas' olmalı */}
         <TouchableOpacity
           style={styles.button}
-          onPress={() => router.push('/(tabs)/idea' as never)}
+          onPress={() => router.push('/(tabs)/ideas' as never)}
         >
           <Text style={styles.buttonText}>Başla →</Text>
         </TouchableOpacity>
