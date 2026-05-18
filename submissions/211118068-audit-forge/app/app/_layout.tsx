@@ -4,7 +4,7 @@ import {
   documentDirectory,
   cacheDirectory,
   writeAsStringAsync,
-} from 'expo-file-system';
+} from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import { AuditWidget } from '@xtatistix/mobile-audit';
 import { auditStorage } from '../auditStorage';
