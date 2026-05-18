@@ -25,7 +25,7 @@ Sizin önceki Mascot Health Support çalışmanızdan kopyalanan ve teslimat kla
 
 ### 🎥 Demo Tanıtım Videosu
 Uygulamanın çalışmasını, ekranlar arasındaki geçişleri ve `AuditWidget`'ın ekran yakalama akışını gösteren orijinal tanıtım videosuna buradan ulaşabilirsiniz:
-- 🔗 [Idea Refiner Tanıtım Videosu (YouTube)](https://youtu.be/zPQXMSJGY04)
+- 🔗 [Idea Refiner Tanıtım Videosu (YouTube Shorts)](https://youtube.com/shorts/oWtWv0cRVus)
 
 ---
 
