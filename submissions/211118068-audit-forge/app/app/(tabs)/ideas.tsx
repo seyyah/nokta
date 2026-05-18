@@ -12,8 +12,18 @@ export default function IdeasScreen() {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <IdeaCard idea={item} />}
         contentContainerStyle={styles.list}
-        // BUG-002: ListEmptyComponent eksik — liste boşaldığında ekran tamamen boş kalıyor
+        ListEmptyComponent={<EmptyState />}
       />
+    </View>
+  );
+}
+
+function EmptyState() {
+  return (
+    <View style={styles.empty}>
+      <Text style={styles.emptyIcon}>💭</Text>
+      <Text style={styles.emptyTitle}>Henüz fikir yok</Text>
+      <Text style={styles.emptyHint}>İlk fikrini eklemek için + kullan</Text>
     </View>
   );
 }
@@ -69,4 +79,8 @@ const styles = StyleSheet.create({
   badgeText: { fontSize: 12 },
   cardDescription: { fontSize: 14, color: '#6B7280', lineHeight: 20 },
   cardDate: { fontSize: 12, color: '#9CA3AF' },
+  empty: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 80, gap: 8 },
+  emptyIcon: { fontSize: 48 },
+  emptyTitle: { fontSize: 18, fontWeight: '700', color: '#374151' },
+  emptyHint: { fontSize: 14, color: '#9CA3AF' },
 });
