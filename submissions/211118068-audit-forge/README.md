@@ -22,7 +22,7 @@ QR kodu Expo Go ile tara (iOS/Android).
 
 ## Demo Video
 
-https://youtube.com/shorts/PLACEHOLDER — *(APK build sonrası eklenecek)*
+https://youtube.com/shorts/6G0HnG6ZxnU?feature=share
 
 ---
 
