@@ -4,7 +4,6 @@ import {
   documentDirectory,
   cacheDirectory,
   writeAsStringAsync,
-  EncodingType,
 } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { AuditWidget } from '@xtatistix/mobile-audit';
@@ -42,12 +41,12 @@ export default function RootLayout() {
             captureRef(ref, { format: 'png', result: 'tmpfile' }),
           writeFile: async (filename, content) => {
             const uri = baseDir + filename;
-            await writeAsStringAsync(uri, content, { encoding: EncodingType.UTF8 });
+            await writeAsStringAsync(uri, content, { encoding: 'utf8' });
             return uri;
           },
           writeFileBinary: async (filename, base64) => {
             const uri = baseDir + filename;
-            await writeAsStringAsync(uri, base64, { encoding: EncodingType.Base64 });
+            await writeAsStringAsync(uri, base64, { encoding: 'base64' });
             return uri;
           },
           shareFile: (uri) => Sharing.shareAsync(uri, { mimeType: 'text/markdown', dialogTitle: 'Audit Raporu' }),
