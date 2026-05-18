@@ -16,8 +16,9 @@ export default function IdeaDetailScreen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      {/* BUG-003: numberOfLines eksik — uzun başlık layout'u bozuyor */}
-      <Text style={styles.title}>{idea.title}</Text>
+      <Text style={styles.title} numberOfLines={2} ellipsizeMode="tail">
+        {idea.title}
+      </Text>
 
       <View style={styles.metaRow}>
         <View style={[styles.statusBadge, idea.status === 'done' && styles.statusDone]}>
@@ -46,7 +47,6 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#111827',
     lineHeight: 34,
-    // numberOfLines eklenmediği için çok uzun başlıklar layout'u bozuyor (BUG-003)
   },
   metaRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   statusBadge: {
