@@ -22,7 +22,7 @@ const IdeaScreen = ({ navigation }) => {
           <Text style={styles.label}>What is your idea?</Text>
           <TextInput
             style={styles.input}
-            placeholder="Enter your idea"
+            placeholder="Harika fikrinizi detaylıca anlatın..."
             placeholderTextColor="#999"
             multiline
             numberOfLines={6}
