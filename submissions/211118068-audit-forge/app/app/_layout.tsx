@@ -1,6 +1,11 @@
 import { Stack, usePathname } from 'expo-router';
 import { captureScreen, captureRef } from 'react-native-view-shot';
-import * as FileSystem from 'expo-file-system';
+import {
+  documentDirectory,
+  cacheDirectory,
+  writeAsStringAsync,
+  EncodingType,
+} from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { AuditWidget } from '@xtatistix/mobile-audit';
 import { auditStorage } from '../auditStorage';
@@ -12,6 +17,8 @@ function resolveScreen(pathname: string): string {
   if (pathname.includes('/settings')) return 'SettingsScreen';
   return 'UnknownScreen';
 }
+
+const baseDir = documentDirectory ?? cacheDirectory ?? '';
 
 export default function RootLayout() {
   const pathname = usePathname();
@@ -34,18 +41,16 @@ export default function RootLayout() {
           captureRef: (ref) =>
             captureRef(ref, { format: 'png', result: 'tmpfile' }),
           writeFile: async (filename, content) => {
-            const uri = FileSystem.documentDirectory + filename;
-            await FileSystem.writeAsStringAsync(uri, content);
+            const uri = baseDir + filename;
+            await writeAsStringAsync(uri, content, { encoding: EncodingType.UTF8 });
             return uri;
           },
           writeFileBinary: async (filename, base64) => {
-            const uri = FileSystem.documentDirectory + filename;
-            await FileSystem.writeAsStringAsync(uri, base64, {
-              encoding: FileSystem.EncodingType.Base64,
-            });
+            const uri = baseDir + filename;
+            await writeAsStringAsync(uri, base64, { encoding: EncodingType.Base64 });
             return uri;
           },
-          shareFile: (uri) => Sharing.shareAsync(uri),
+          shareFile: (uri) => Sharing.shareAsync(uri, { mimeType: 'text/markdown', dialogTitle: 'Audit Raporu' }),
           storage: auditStorage,
           currentScreen,
           reporterId: 'karahan-qa',
