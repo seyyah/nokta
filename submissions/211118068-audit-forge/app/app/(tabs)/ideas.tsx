@@ -1,9 +1,12 @@
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, RefreshControl } from 'react-native';
+import { useState } from 'react';
 import { router } from 'expo-router';
 import { mockIdeas, type Idea } from '../../constants/mockIdeas';
 
 export default function IdeasScreen() {
   const ideas = mockIdeas;
+  // BUG: refreshing başlangıç değeri true — sonsuz spinner
+  const [refreshing, setRefreshing] = useState(true);
 
   return (
     <View style={styles.container}>
@@ -13,6 +16,12 @@ export default function IdeasScreen() {
         renderItem={({ item }) => <IdeaCard idea={item} />}
         contentContainerStyle={styles.list}
         ListEmptyComponent={<EmptyState />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => { setRefreshing(true); setTimeout(() => setRefreshing(false), 800); }}
+          />
+        }
       />
     </View>
   );
