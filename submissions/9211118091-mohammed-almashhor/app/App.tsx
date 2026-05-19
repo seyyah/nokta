@@ -92,6 +92,8 @@ Example format: [{"id": "problem", "label": "💥 CORE FRICTION", "hint": "Why d
            } else {
              throw new Error("Invalid format");
            }
+        } else {
+           throw new Error("No choices returned from API");
         }
       } else {
         // Fallback robust logic if no key
@@ -232,9 +234,9 @@ Example format: [{"id": "problem", "label": "💥 CORE FRICTION", "hint": "Why d
             </TouchableOpacity>
 
             <TouchableOpacity 
-              style={[styles.btnTrigger, ideaDot.length < 10 && styles.btnDisabled, { flex: 2, marginLeft: 10 }]} 
+              style={[styles.btnTrigger, ideaDot.trim().length < 10 && styles.btnDisabled, { flex: 2, marginLeft: 10 }]} 
               onPress={handleDotSubmit}
-              disabled={ideaDot.length < 10}
+              disabled={ideaDot.trim().length < 10}
             >
               <Text style={styles.btnText}>INITIATE SLOP-CHECK</Text>
             </TouchableOpacity>
