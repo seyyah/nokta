@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "LearnDot",
+    "slug": "learndot",
+    "version": "1.0.1",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0F0F0F"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0F0F0F"
+      },
+      "package": "com.gizemtangel.learndot"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "2c51860b-cbe6-4187-8753-3706c88e4d41"
+      }
+    }
+  }
+}

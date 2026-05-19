@@ -1,0 +1,17 @@
+
+node_modules/
+.expo/
+android/build/
+android/.gradle/
+ios/build/
+android/.idea/
+.idea/
+*.jks
+*.keystore
+android/app/build/
+
+android_old/
+node_modules/
+android/
+.expo/
+*.log

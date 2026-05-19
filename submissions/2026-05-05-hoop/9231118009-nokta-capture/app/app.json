@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "Slop Dedektörü",
+    "slug": "slop-dedektoru",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#0f0f0f"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nokta.slopdedektoru"
+    },
+    "android": {
+      "package": "com.nokta.slopdedektoru"
+    },
+    "web": {},
+    "extra": {
+      "eas": {
+        "projectId": "4a2b42ab-0f21-4136-9b97-37c55140e5ff"
+      }
+    }
+  }
+}
