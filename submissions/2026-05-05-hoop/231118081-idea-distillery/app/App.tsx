@@ -107,6 +107,19 @@ function featureCreepActionItems(result: DistillationResult) {
   });
 }
 
+function selectedDecisionItems(brief: SavedGameBrief) {
+  const selectedItems = brief.result.nextDecisions
+    .map((decision) => {
+      const selected = brief.selections[decision.id];
+      return selected ? `${decision.question} -> ${selected}` : null;
+    })
+    .filter((item): item is string => Boolean(item));
+
+  return selectedItems.length > 0
+    ? selectedItems
+    : ['No user decisions were locked before this ticket was created.'];
+}
+
 function createId(prefix: string) {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
@@ -682,27 +695,34 @@ export default function App() {
       </View>
     );
 
-  const renderTicketSummary = (ticket: ReviewTicket) => (
-    <View key={ticket.id} style={styles.ticketCard}>
-      <View style={styles.savedHeader}>
-        <Text style={styles.savedTitle}>{ticket.title}</Text>
-        <View style={styles.statusPill}>
-          <Text style={styles.statusText}>{ticket.readiness.mode}</Text>
+  const renderTicketSummary = (ticket: ReviewTicket) => {
+    const ticketBrief = store.briefs.find((item) => item.id === ticket.briefId);
+    const lockedDecisionCount = ticketBrief ? Object.keys(ticketBrief.selections).length : 0;
+
+    return (
+      <View key={ticket.id} style={styles.ticketCard}>
+        <View style={styles.savedHeader}>
+          <Text style={styles.savedTitle}>{ticket.title}</Text>
+          <View style={styles.statusPill}>
+            <Text style={styles.statusText}>{ticket.readiness.mode}</Text>
+          </View>
         </View>
+        <Text style={styles.savedMeta}>
+          {ticket.mentorPacket.recommendedMentor} / {lockedDecisionCount} user decisions
+        </Text>
+        <Text style={styles.savedSummary}>{ticket.mentorPacket.why[0]}</Text>
+        <Pressable
+          style={styles.primaryButton}
+          onPress={() => {
+            setActiveTicketId(ticket.id);
+            setMentorTicketFeedback(ticket.feedbackText ?? '');
+          }}
+        >
+          <Text style={styles.primaryButtonText}>Review Ticket</Text>
+        </Pressable>
       </View>
-      <Text style={styles.savedMeta}>{ticket.mentorPacket.recommendedMentor}</Text>
-      <Text style={styles.savedSummary}>{ticket.mentorPacket.why[0]}</Text>
-      <Pressable
-        style={styles.primaryButton}
-        onPress={() => {
-          setActiveTicketId(ticket.id);
-          setMentorTicketFeedback(ticket.feedbackText ?? '');
-        }}
-      >
-        <Text style={styles.primaryButtonText}>Review Ticket</Text>
-      </Pressable>
-    </View>
-  );
+    );
+  };
 
   const renderMentorTicketDetail = () => {
     if (!activeTicket) {
@@ -743,6 +763,17 @@ export default function App() {
               </Text>
             ))}
           </View>
+
+          {brief ? (
+            <View style={styles.mentorGroup}>
+              <Text style={styles.mentorGroupTitle}>User locked decisions</Text>
+              {selectedDecisionItems(brief).map((item, index) => (
+                <Text key={`${item}-${index}`} style={styles.questionText}>
+                  {index + 1}. {item}
+                </Text>
+              ))}
+            </View>
+          ) : null}
         </View>
 
         {brief ? (
