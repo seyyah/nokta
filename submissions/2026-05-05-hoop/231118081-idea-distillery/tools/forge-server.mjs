@@ -272,8 +272,8 @@ async function buildPrompt(payload, reportPath) {
     'Hard rules:',
     '- You may propose a repair or a rollback.',
     '- If the request is unsafe, too broad, or violates the app lifecycle, return action "rollback".',
-    '- If repairing, return a unified diff only.',
-    '- Diff paths must be relative to this submission root, for example app/App.tsx.',
+    '- If repairing, prefer exact search/replace edits copied from the source context.',
+    '- Edit paths must be relative to this submission root, for example app/App.tsx.',
     '- You may modify only app/App.tsx or files under app/src/.',
     '- Do not modify root repo files, other submissions, .env files, package files, or build config.',
     '- Keep the diff minimal and tied to this single audit report.',
@@ -288,11 +288,19 @@ async function buildPrompt(payload, reportPath) {
       hypothesis: 'One sentence hypothesis',
       kg: 1,
       testCommand: 'npm run typecheck',
-      diff: 'diff --git a/app/App.tsx b/app/App.tsx\n...',
+      edits: [
+        {
+          file: 'app/App.tsx',
+          search: 'exact source text to replace',
+          replace: 'exact replacement text',
+        },
+      ],
+      diff: '',
       rollbackReason: '',
     }, null, 2),
     '',
-    'Use action "rollback" with an empty diff when the request should not be applied.',
+    'Use action "rollback" with empty edits when the request should not be applied.',
+    'When the audit asks for green readiness bullets, the expected direction is: add a small optional bullet color prop to DraftSectionCard and pass palette.success only for the Prototype Readiness card.',
     '',
     `Saved audit report path: ${path.relative(submissionRoot, reportPath).replace(/\\/g, '/')}`,
     `Detected screen: ${extractScreenName(payload.content)}`,
@@ -500,6 +508,68 @@ function validateDiff(diff) {
   return paths;
 }
 
+function validatePatchPath(filePath) {
+  const normalized = normalizeDiffPath(filePath);
+
+  if (!normalized) {
+    throw new Error(`Invalid edit path: ${filePath}`);
+  }
+
+  if (!allowedPatchPrefixes.some((prefix) => normalized === prefix || normalized.startsWith(prefix))) {
+    throw new Error(`Edit touches denied path: ${normalized}`);
+  }
+
+  return normalized;
+}
+
+async function applySearchReplaceEdits(edits, runDir) {
+  if (!Array.isArray(edits) || edits.length === 0) {
+    throw new Error('Repair action did not include edits.');
+  }
+
+  const touchedFiles = [];
+
+  for (const edit of edits) {
+    const relativePath = validatePatchPath(String(edit.file ?? ''));
+    const search = String(edit.search ?? '');
+    const replace = String(edit.replace ?? '');
+
+    if (!search) {
+      throw new Error(`Edit for ${relativePath} has empty search text.`);
+    }
+
+    const absolutePath = path.join(submissionRoot, relativePath);
+    const current = await fs.readFile(absolutePath, 'utf8');
+    const backupPath = path.join(runDir, 'backups', relativePath);
+
+    if (!current.includes(search)) {
+      throw new Error(`Search text was not found in ${relativePath}.`);
+    }
+
+    await fs.mkdir(path.dirname(backupPath), { recursive: true });
+    if (!existsSync(backupPath)) {
+      await fs.writeFile(backupPath, current, 'utf8');
+    }
+    await fs.writeFile(absolutePath, current.replace(search, replace), 'utf8');
+    touchedFiles.push(relativePath);
+  }
+
+  return [...new Set(touchedFiles)];
+}
+
+async function restoreSearchReplaceBackups(touchedFiles, runDir) {
+  for (const relativePath of touchedFiles) {
+    const backupPath = path.join(runDir, 'backups', relativePath);
+
+    if (!existsSync(backupPath)) {
+      continue;
+    }
+
+    const original = await fs.readFile(backupPath, 'utf8');
+    await fs.writeFile(path.join(submissionRoot, relativePath), original, 'utf8');
+  }
+}
+
 function escapeTableCell(value) {
   return String(value ?? '')
     .replace(/\r?\n/g, ' ')
@@ -610,19 +680,30 @@ async function processAudit(payload, runId) {
     return { status: 'rollback', reason: decision.rollbackReason ?? 'Rejected by model.' };
   }
 
-  const patchPath = path.join(runDir, 'patch.diff');
-  await fs.writeFile(patchPath, decision.diff, 'utf8');
-  const touchedFiles = validateDiff(decision.diff);
+  let touchedFiles = [];
+  let patchPath = '';
 
-  await runChecked(gitCommand, ['apply', '--check', '--whitespace=nowarn', patchPath], { cwd: submissionRoot });
-  await runChecked(gitCommand, ['apply', '--whitespace=nowarn', patchPath], { cwd: submissionRoot });
+  if (Array.isArray(decision.edits) && decision.edits.length > 0) {
+    await fs.writeFile(path.join(runDir, 'edits.json'), `${JSON.stringify(decision.edits, null, 2)}\n`, 'utf8');
+    touchedFiles = await applySearchReplaceEdits(decision.edits, runDir);
+  } else {
+    patchPath = path.join(runDir, 'patch.diff');
+    await fs.writeFile(patchPath, decision.diff, 'utf8');
+    touchedFiles = validateDiff(decision.diff);
+    await runChecked(gitCommand, ['apply', '--check', '--whitespace=nowarn', patchPath], { cwd: submissionRoot });
+    await runChecked(gitCommand, ['apply', '--whitespace=nowarn', patchPath], { cwd: submissionRoot });
+  }
 
   const test = await run(npmCommand, ['run', 'typecheck'], { cwd: appRoot });
   await fs.writeFile(path.join(runDir, 'typecheck.stdout.txt'), test.stdout, 'utf8');
   await fs.writeFile(path.join(runDir, 'typecheck.stderr.txt'), test.stderr, 'utf8');
 
   if (test.code !== 0) {
-    await run(gitCommand, ['apply', '-R', '--whitespace=nowarn', patchPath], { cwd: submissionRoot });
+    if (patchPath) {
+      await run(gitCommand, ['apply', '-R', '--whitespace=nowarn', patchPath], { cwd: submissionRoot });
+    } else {
+      await restoreSearchReplaceBackups(touchedFiles, runDir);
+    }
     await appendForgeRow({
       reportName,
       hypothesis: decision.hypothesis ?? 'Patch should satisfy audit report.',
