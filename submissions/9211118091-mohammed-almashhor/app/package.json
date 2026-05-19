@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
+    "docx": "^9.6.1",
     "expo": "~55.0.0",
     "expo-file-system": "^55.0.20",
     "expo-sharing": "^55.0.19",
