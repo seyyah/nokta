@@ -747,24 +747,42 @@ function greenSectionTarget(payload) {
   return Object.keys(greenSectionRecipes).find((title) => text.includes(normalizeText(title))) ?? null;
 }
 
-function greenSectionRecipeEdits(title, colorProp = 'palette.success') {
-  const recipe = greenSectionRecipes[title];
+async function sectionColorRecipeEdits(title, colorProp = 'palette.success') {
+  const appSource = await fs.readFile(path.join(appRoot, 'App.tsx'), 'utf8');
+  const titleNeedle = `title="${title}"`;
+  const titleIndex = appSource.indexOf(titleNeedle);
 
-  if (!recipe) {
+  if (titleIndex === -1) {
     return [];
   }
 
-  const replace = recipe.replace.map((line) =>
-    line.includes('bulletColor={palette.success}')
-      ? `          bulletColor={${colorProp}}`
-      : line
-  );
+  const blockStart = appSource.lastIndexOf('<DraftSectionCard', titleIndex);
+  const blockEnd = appSource.indexOf('/>', titleIndex);
+
+  if (blockStart === -1 || blockEnd === -1) {
+    return [];
+  }
+
+  const search = appSource.slice(blockStart, blockEnd + 2);
+  let replace = search;
+
+  if (/^\s*bulletColor=\{[^}]+\}/m.test(search)) {
+    replace = search.replace(/^(\s*)bulletColor=\{[^}]+\}/m, `$1bulletColor={${colorProp}}`);
+  } else {
+    const helperMatch = search.match(/^(\s*)helperText=.*$/m);
+
+    if (!helperMatch) {
+      return [];
+    }
+
+    replace = search.replace(helperMatch[0], `${helperMatch[0]}\n${helperMatch[1]}bulletColor={${colorProp}}`);
+  }
 
   return [
     {
       file: 'app/App.tsx',
-      search: recipe.search.join('\n'),
-      replace: replace.join('\n'),
+      search,
+      replace,
     },
   ];
 }
@@ -1003,7 +1021,7 @@ async function processAudit(payload, runId) {
           hypothesis: `The selected ${deterministicTarget} card should show the requested ${deterministicColor.label} bullet color immediately.`,
           kg: 1,
           testCommand: 'npm run typecheck',
-          edits: greenSectionRecipeEdits(deterministicTarget, deterministicColor.prop),
+          edits: await sectionColorRecipeEdits(deterministicTarget, deterministicColor.prop),
           diff: '',
           rollbackReason: '',
         }
@@ -1122,7 +1140,7 @@ async function processAudit(payload, runId) {
       if (shouldUsePlayerFantasyRecipe(payload)) {
         fallbackEdits = playerFantasyRecipeEdits();
       } else if (sectionTarget && requestedColor) {
-        fallbackEdits = greenSectionRecipeEdits(sectionTarget, requestedColor.prop);
+        fallbackEdits = await sectionColorRecipeEdits(sectionTarget, requestedColor.prop);
       } else if (shouldUseGreenReadinessRecipe(payload, decision)) {
         fallbackEdits = greenReadinessRecipeEdits();
       }
