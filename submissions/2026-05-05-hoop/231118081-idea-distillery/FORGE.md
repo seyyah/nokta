@@ -79,3 +79,9 @@ agent:
 - it runs `npm run typecheck`
 - it commits only after tests pass
 - it logs rollback when the model rejects the request or validation fails
+
+## Automated Server Cycles
+
+| Cycle | Report | Hypothesis | Result | Changed files | Test result | Commit hash | kg | Human touch points |
+|---|---|---|---|---|---|---|---:|---:|
+| 5 | `audit-reports/inbox/2026-05-19T17-29-45-004Z-bug-report-2026-05-19-17-29.md` | Introducing a bullet color prop enables dynamic styling for readiness indicators, with success color specifically applied to the Prototype Readiness card to meet user expectations. | rollback | app/src/components/DraftSectionCard.tsx | npm run typecheck failed; reverse patch applied | rollback before commit | 0 | 0 |
