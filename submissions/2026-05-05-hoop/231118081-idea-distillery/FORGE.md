@@ -9,6 +9,12 @@ Review -> Repair -> Validate
 Audit report -> Codex repair -> Typecheck/manual verify -> Ledger
 ```
 
+Optional automation extends the same loop:
+
+```txt
+Audit report -> local forge server -> Ollama patch -> typecheck -> commit/rollback
+```
+
 ## Phase A
 
 | Step | Evidence |
@@ -18,6 +24,7 @@ Audit report -> Codex repair -> Typecheck/manual verify -> Ledger
 | Mount location | `app/App.tsx` root component |
 | Dynamic screen | state-based `currentScreen` from `home`, `user`, `newBrief.result`, `mentor.ticketDetail`, `savedBrief.detail` |
 | Integration commit | `e945e9b` |
+| Optional server | `tools/forge-server.mjs` can receive new audit reports and run a guarded Ollama repair loop |
 
 ## Phase B Cycles
 
@@ -60,3 +67,15 @@ Cycle 2: 5kg cumulative
 Cycle 3: 9kg cumulative
 Cycle 4: rollback, cumulative kg remains 9kg
 ```
+
+## Automation Guardrails
+
+The optional local server is intentionally narrower than a free-form coding
+agent:
+
+- it accepts only `POST /audit` markdown input
+- it asks Ollama for JSON with a unified diff
+- it validates that diff paths stay under `app/App.tsx` or `app/src/`
+- it runs `npm run typecheck`
+- it commits only after tests pass
+- it logs rollback when the model rejects the request or validation fails

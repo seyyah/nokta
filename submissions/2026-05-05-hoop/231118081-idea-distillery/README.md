@@ -28,6 +28,16 @@ User sees a problem or feature opportunity
 -> The accepted behavior is added to EVAL.md as a ratchet
 ```
 
+Optional automation layer:
+
+```txt
+Audit widget exports markdown
+-> local forge server receives it
+-> Ollama proposes a bounded patch
+-> server typechecks
+-> Git commit or rollback is logged
+```
+
 The Codex iterative repair notebook was used only as methodology. I did not add
 the notebook, Python runner, or heavy automation files to this submission. The
 notebook's `Review -> Repair -> Validate` loop maps to this app as
@@ -44,6 +54,8 @@ notebook's `Review -> Repair -> Validate` loop maps to this app as
 - Mentor sees only pending tickets.
 - Mentor feedback writes back into the saved brief as future plan.
 - Audit FAB is mounted as a drop-in widget and can export markdown reports.
+- If `EXPO_PUBLIC_FORGE_ENDPOINT` is set, markdown reports are also sent to a
+  local forge server for autonomous repair.
 
 ## Audit Integration
 
@@ -63,6 +75,33 @@ Host boundary:
 
 The widget is mounted in `app/App.tsx`. Native packages stay in the host adapter
 under `app/src/audit/`, not inside the widget package.
+
+## Optional Local Forge Server
+
+The extra autonomy layer lives in:
+
+`tools/forge-server.mjs`
+
+It listens for `POST /audit`, sends the report to a local Ollama model, accepts
+only bounded JSON patch output, runs `npm run typecheck`, and commits or logs a
+rollback. Full instructions are in `FORGE_AUTOMATION.md`.
+
+Example:
+
+```powershell
+cd submissions/2026-05-05-hoop/231118081-idea-distillery
+$env:OLLAMA_MODEL="your-installed-model"
+node tools/forge-server.mjs
+```
+
+Then set `app/.env`:
+
+```env
+EXPO_PUBLIC_FORGE_ENDPOINT=http://10.0.2.2:8787/audit
+```
+
+Use `localhost` for web/iOS simulator and the computer LAN IP for a physical
+phone.
 
 ## Audit Reports
 
@@ -128,9 +167,11 @@ copy .env.example .env
 ```env
 EXPO_PUBLIC_GROQ_API_KEY=your_groq_key
 EXPO_PUBLIC_GROQ_MODEL=llama-3.3-70b-versatile
+EXPO_PUBLIC_FORGE_ENDPOINT=
 ```
 
-Groq is optional. The app works with local fallback when no key is present.
+Groq is optional. The forge endpoint is also optional. The app works with local
+fallback when no key or server endpoint is present.
 
 ## Run
 
@@ -198,6 +239,8 @@ This APK was rebuilt on 2026-05-19 after adding the audit native dependencies.
 - Did not import native modules from the widget package.
 - Used the Codex repair notebook only as methodology, not as repo artifact.
 - Added audit reports as the input surface for forge cycles.
+- Added an optional Ollama-powered local forge server so new audit markdown can
+  trigger a guarded repair loop.
 - Accepted three small user-facing repairs.
 - Rejected direct Home mentor ticket creation because it breaks the saved brief
   lifecycle.
@@ -207,12 +250,16 @@ This APK was rebuilt on 2026-05-19 after adding the audit native dependencies.
 
 - Codex: read active mission, inspected the existing app, integrated audit host
   deps, ran forge repair cycles, updated README/FORGE/EVAL, and ran typecheck.
+- Ollama: optional local model endpoint for the autonomous forge server; no
+  shared chat history is required or stored by the app.
 - Groq API: optional runtime analyst for game pitch distillation; local fallback
   is used when no API key is configured.
 
 ## Known Limits
 
 - Audit exports are local files shared from the device; there is no backend.
+- The local forge server is a developer-machine automation tool, not a hosted
+  production backend.
 - Mentor connection is an in-app review queue, not a real video call.
 - The EAS build was run from an app-only temporary copy so the monorepo's other
   submission folders were not uploaded into the build archive.

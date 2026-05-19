@@ -8,6 +8,7 @@ import { AuditStorage, AuditWidgetDeps } from './AuditWidgetHost';
 
 const AUDIT_STORAGE_KEY = 'nokta-game-pitch-audit-notes-v1';
 const REPORT_DIR_NAME = 'nokta-game-pitch-audit/';
+const FORGE_ENDPOINT = process.env.EXPO_PUBLIC_FORGE_ENDPOINT?.trim();
 
 const auditStorage: AuditStorage = {
   async loadNotes() {
@@ -51,6 +52,11 @@ async function writeAuditFile(filename: string, content: string) {
   await FileSystem.writeAsStringAsync(fileUri, content, {
     encoding: FileSystem.EncodingType.UTF8,
   });
+
+  if (filename.toLowerCase().endsWith('.md')) {
+    void sendAuditReportToForge(filename, content, fileUri);
+  }
+
   return fileUri;
 }
 
@@ -73,6 +79,30 @@ async function shareAuditFile(uri: string) {
   await Sharing.shareAsync(uri, {
     dialogTitle: 'Share Nokta Game Pitch audit report',
   });
+}
+
+async function sendAuditReportToForge(filename: string, content: string, fileUri: string) {
+  if (!FORGE_ENDPOINT) {
+    return;
+  }
+
+  try {
+    await fetch(FORGE_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        filename,
+        content,
+        fileUri,
+        source: 'Nokta Game Pitch AuditWidget',
+        exportedAt: new Date().toISOString(),
+      }),
+    });
+  } catch (error) {
+    console.warn('[AuditForge] Failed to send audit report:', error);
+  }
 }
 
 export function createAuditWidgetDeps(currentScreen: string): AuditWidgetDeps {
