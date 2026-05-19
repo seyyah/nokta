@@ -975,10 +975,26 @@ async function processAudit(payload, runId) {
   await ensureCleanWorktree();
 
   const reportPath = await saveAuditReport(payload, runId);
-  const prompt = await buildPrompt(payload, reportPath);
-  await fs.writeFile(path.join(runDir, 'prompt.txt'), prompt, 'utf8');
+  const deterministicTarget = greenSectionTarget(payload);
+  const decision =
+    deterministicTarget && !(await greenSectionAlreadyApplied(deterministicTarget))
+      ? {
+          action: 'repair',
+          screen: extractScreenName(payload.content),
+          summary: `Apply green ${deterministicTarget} bullets`,
+          hypothesis: `The selected ${deterministicTarget} card should show the customer-developer change immediately.`,
+          kg: 1,
+          testCommand: 'npm run typecheck',
+          edits: greenSectionRecipeEdits(deterministicTarget),
+          diff: '',
+          rollbackReason: '',
+        }
+      : await (async () => {
+          const prompt = await buildPrompt(payload, reportPath);
+          await fs.writeFile(path.join(runDir, 'prompt.txt'), prompt, 'utf8');
+          return callOllama(prompt, runDir);
+        })();
 
-  const decision = await callOllama(prompt, runDir);
   await fs.writeFile(path.join(runDir, 'decision.json'), `${JSON.stringify(decision, null, 2)}\n`, 'utf8');
 
   const screen = decision.screen || extractScreenName(payload.content);
