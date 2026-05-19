@@ -662,6 +662,21 @@ function greenReadinessRecipeEdits() {
   ];
 }
 
+async function greenReadinessAlreadyApplied() {
+  const appSource = await fs.readFile(path.join(appRoot, 'App.tsx'), 'utf8');
+  const cardSource = await fs.readFile(
+    path.join(appRoot, 'src', 'components', 'DraftSectionCard.tsx'),
+    'utf8'
+  );
+
+  return (
+    appSource.includes('title={`Prototype Readiness: ${result.readiness.status}`}') &&
+    appSource.includes('bulletColor={palette.success}') &&
+    cardSource.includes('bulletColor?: string;') &&
+    cardSource.includes('bulletColor ? { backgroundColor: bulletColor } : undefined')
+  );
+}
+
 async function restoreSearchReplaceBackups(touchedFiles, runDir) {
   for (const relativePath of touchedFiles) {
     const backupPath = path.join(runDir, 'backups', relativePath);
@@ -773,6 +788,25 @@ async function processAudit(payload, runId) {
   const screen = decision.screen || extractScreenName(payload.content);
   const kg = Number.isFinite(Number(decision.kg)) ? Math.max(0, Math.min(5, Number(decision.kg))) : 1;
   const reportName = path.relative(submissionRoot, reportPath).replace(/\\/g, '/');
+
+  if (shouldUseGreenReadinessRecipe(payload, decision) && await greenReadinessAlreadyApplied()) {
+    await appendForgeRow({
+      reportName,
+      hypothesis: decision.hypothesis ?? 'Green readiness indicators should make the customer request visible.',
+      result: 'rollback',
+      changedFiles: 'none retained',
+      testResult: 'already satisfied before patch',
+      commitHash: 'rollback before commit',
+      kg: 0,
+      humanTouchPoints: 0,
+    });
+
+    if (autoCommit) {
+      await commitFiles(['FORGE.md'], '[FORGE: Ledger] Log already-satisfied audit -- 0kg');
+    }
+
+    return { status: 'rollback', reason: 'Audit request is already satisfied.' };
+  }
 
   if (decision.action !== 'repair') {
     await appendForgeRow({
