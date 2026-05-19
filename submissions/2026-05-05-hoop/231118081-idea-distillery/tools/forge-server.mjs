@@ -262,6 +262,7 @@ async function buildPrompt(payload, reportPath) {
     .join('\n');
   const appTsx = await readText('app/App.tsx', Number(process.env.FORGE_APP_CONTEXT_CHARS ?? 36000));
   const types = await readText('app/src/types/draft.ts', 12000);
+  const componentContext = await readComponentContext();
   const evalDoc = existsSync(path.join(submissionRoot, 'EVAL.md'))
     ? await readText('EVAL.md', 9000)
     : '';
@@ -320,11 +321,37 @@ async function buildPrompt(payload, reportPath) {
     types,
     '```',
     '',
+    'Component source context:',
+    '```tsx',
+    componentContext,
+    '```',
+    '',
     'app/App.tsx:',
     '```tsx',
     appTsx,
     '```',
   ].join('\n');
+}
+
+async function readComponentContext() {
+  const componentDir = path.join(appRoot, 'src', 'components');
+
+  if (!existsSync(componentDir)) {
+    return '';
+  }
+
+  const files = (await fs.readdir(componentDir))
+    .filter((file) => file.endsWith('.tsx'))
+    .sort();
+  const chunks = [];
+
+  for (const file of files) {
+    const relativePath = `app/src/components/${file}`;
+    chunks.push(`// ${relativePath}`);
+    chunks.push(await readText(relativePath, 9000));
+  }
+
+  return chunks.join('\n\n');
 }
 
 async function callOllama(prompt, runDir) {
