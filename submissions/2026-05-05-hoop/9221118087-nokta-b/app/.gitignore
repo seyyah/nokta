@@ -1,6 +1,0 @@
-node_modules/
-.expo/
-dist/
-*.log
-npm-debug.*
-.DS_Store

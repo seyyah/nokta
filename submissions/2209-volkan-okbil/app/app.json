@@ -1,0 +1,21 @@
+{
+  "expo": {
+    "name": "OkbilApp",
+    "slug": "okbilapp",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.okbilapp"
+    },
+    "plugins": [
+      "expo-sqlite"
+    ]
+  }
+}
