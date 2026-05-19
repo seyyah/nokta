@@ -59,6 +59,7 @@ Uygulama ham fikri metin veya ses yoluyla alır, Problem/Kullanıcı/Kapsam/Kıs
 | 2026-04-20 | expo-av ses kaydı | Expo ekosistemiyle entegre, native config gerektirmez |
 | 2026-04-20 | EXPO_PUBLIC_ prefix | Expo'nun managed workflow için önerilen env yöntemi |
 | 2026-04-20 | Antigravity AI ile geliştirme | Birincil kod üretim aracı |
+| 2026-05-19 | Track B otonom forge | Audit widget eklendi, 3 başarılı ve 1 rollback ile otonom geliştirme yapıldı, loglar FORGE.md'ye işlendi |
 
 ---
 
