@@ -616,6 +616,142 @@ function shouldUsePlayerFantasyRecipe(payload) {
   return mentionsPlayerFantasy && mentionsGreen && mentionsIndicator;
 }
 
+const greenSectionRecipes = {
+  'Game Summary': {
+    search: [
+      '        <DraftSectionCard',
+      '          title="Game Summary"',
+      "          items={sectionItems(result, 'Game Summary')}",
+      '          helperText="The pitch compressed into a buildable game direction."',
+      '        />',
+    ],
+    replace: [
+      '        <DraftSectionCard',
+      '          title="Game Summary"',
+      "          items={sectionItems(result, 'Game Summary')}",
+      '          helperText="The pitch compressed into a buildable game direction."',
+      '          bulletColor={palette.success}',
+      '        />',
+    ],
+  },
+  'Core Loop': {
+    search: [
+      '        <DraftSectionCard',
+      '          title="Core Loop"',
+      "          items={sectionItems(result, 'Core Loop')}",
+      '          helperText="The repeatable minute-to-minute player activity."',
+      '        />',
+    ],
+    replace: [
+      '        <DraftSectionCard',
+      '          title="Core Loop"',
+      "          items={sectionItems(result, 'Core Loop')}",
+      '          helperText="The repeatable minute-to-minute player activity."',
+      '          bulletColor={palette.success}',
+      '        />',
+    ],
+  },
+  'Core Mechanics': {
+    search: [
+      '        <DraftSectionCard',
+      '          title="Core Mechanics"',
+      "          items={sectionItems(result, 'Core Mechanics')}",
+      '          helperText="Only the mechanics that support the first playable loop."',
+      '        />',
+    ],
+    replace: [
+      '        <DraftSectionCard',
+      '          title="Core Mechanics"',
+      "          items={sectionItems(result, 'Core Mechanics')}",
+      '          helperText="Only the mechanics that support the first playable loop."',
+      '          bulletColor={palette.success}',
+      '        />',
+    ],
+  },
+  'Scope Boundary': {
+    search: [
+      '        <DraftSectionCard',
+      '          title="Scope Boundary"',
+      "          items={sectionItems(result, 'Scope Boundary')}",
+      '          helperText="The cut line between prototype and future wishlist."',
+      '          tone="muted"',
+      '        />',
+    ],
+    replace: [
+      '        <DraftSectionCard',
+      '          title="Scope Boundary"',
+      "          items={sectionItems(result, 'Scope Boundary')}",
+      '          helperText="The cut line between prototype and future wishlist."',
+      '          bulletColor={palette.success}',
+      '          tone="muted"',
+      '        />',
+    ],
+  },
+  'Feature Creep Warnings': {
+    search: [
+      '        <DraftSectionCard',
+      '          title="Feature Creep Warnings"',
+      '          items={featureCreepActionItems(result)}',
+      '          helperText="Each warning is phrased as a decision the customer-developer can hand to the agent."',
+      '        />',
+    ],
+    replace: [
+      '        <DraftSectionCard',
+      '          title="Feature Creep Warnings"',
+      '          items={featureCreepActionItems(result)}',
+      '          helperText="Each warning is phrased as a decision the customer-developer can hand to the agent."',
+      '          bulletColor={palette.success}',
+      '        />',
+    ],
+  },
+  'Prototype Plan': {
+    search: [
+      '        <DraftSectionCard',
+      '          title="Prototype Plan"',
+      "          items={sectionItems(result, 'Prototype Plan')}",
+      '          helperText="A small playable build plan, not a full production roadmap."',
+      '          tone="muted"',
+      '        />',
+    ],
+    replace: [
+      '        <DraftSectionCard',
+      '          title="Prototype Plan"',
+      "          items={sectionItems(result, 'Prototype Plan')}",
+      '          helperText="A small playable build plan, not a full production roadmap."',
+      '          bulletColor={palette.success}',
+      '          tone="muted"',
+      '        />',
+    ],
+  },
+};
+
+function greenSectionTarget(payload) {
+  const text = normalizeText(payload.content);
+  const mentionsGreen = text.includes('green') || text.includes('yesil') || text.includes('success');
+
+  if (!mentionsGreen) {
+    return null;
+  }
+
+  return Object.keys(greenSectionRecipes).find((title) => text.includes(normalizeText(title))) ?? null;
+}
+
+function greenSectionRecipeEdits(title) {
+  const recipe = greenSectionRecipes[title];
+
+  if (!recipe) {
+    return [];
+  }
+
+  return [
+    {
+      file: 'app/App.tsx',
+      search: recipe.search.join('\n'),
+      replace: recipe.replace.join('\n'),
+    },
+  ];
+}
+
 function greenReadinessRecipeEdits() {
   return [
     {
@@ -721,6 +857,20 @@ async function playerFantasyAlreadyApplied() {
     appSource.includes('title="Player Fantasy"') &&
     appSource.includes('bulletColor={palette.success}')
   );
+}
+
+async function greenSectionAlreadyApplied(title) {
+  const appSource = await fs.readFile(path.join(appRoot, 'App.tsx'), 'utf8');
+  const titleIndex = appSource.indexOf(`title="${title}"`);
+
+  if (titleIndex === -1) {
+    return false;
+  }
+
+  const closeIndex = appSource.indexOf('/>', titleIndex);
+  const block = closeIndex === -1 ? appSource.slice(titleIndex) : appSource.slice(titleIndex, closeIndex);
+
+  return block.includes('bulletColor={palette.success}');
 }
 
 async function restoreSearchReplaceBackups(touchedFiles, runDir) {
@@ -834,11 +984,31 @@ async function processAudit(payload, runId) {
   const screen = decision.screen || extractScreenName(payload.content);
   const kg = Number.isFinite(Number(decision.kg)) ? Math.max(0, Math.min(5, Number(decision.kg))) : 1;
   const reportName = path.relative(submissionRoot, reportPath).replace(/\\/g, '/');
+  const sectionTarget = greenSectionTarget(payload);
 
   if (shouldUsePlayerFantasyRecipe(payload) && await playerFantasyAlreadyApplied()) {
     await appendForgeRow({
       reportName,
       hypothesis: decision.hypothesis ?? 'Green Player Fantasy indicators should make the customer request visible.',
+      result: 'rollback',
+      changedFiles: 'none retained',
+      testResult: 'already satisfied before patch',
+      commitHash: 'rollback before commit',
+      kg: 0,
+      humanTouchPoints: 0,
+    });
+
+    if (autoCommit) {
+      await commitFiles(['FORGE.md'], '[FORGE: Ledger] Log already-satisfied audit -- 0kg');
+    }
+
+    return { status: 'rollback', reason: 'Audit request is already satisfied.' };
+  }
+
+  if (sectionTarget && await greenSectionAlreadyApplied(sectionTarget)) {
+    await appendForgeRow({
+      reportName,
+      hypothesis: decision.hypothesis ?? `Green ${sectionTarget} indicators should make the customer request visible.`,
       result: 'rollback',
       changedFiles: 'none retained',
       testResult: 'already satisfied before patch',
@@ -904,6 +1074,8 @@ async function processAudit(payload, runId) {
 
       if (shouldUsePlayerFantasyRecipe(payload)) {
         fallbackEdits = playerFantasyRecipeEdits();
+      } else if (sectionTarget) {
+        fallbackEdits = greenSectionRecipeEdits(sectionTarget);
       } else if (shouldUseGreenReadinessRecipe(payload, decision)) {
         fallbackEdits = greenReadinessRecipeEdits();
       }

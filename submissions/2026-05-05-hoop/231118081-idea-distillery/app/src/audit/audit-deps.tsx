@@ -10,6 +10,53 @@ const AUDIT_STORAGE_KEY = 'nokta-game-pitch-audit-notes-v1';
 const REPORT_DIR_NAME = 'nokta-game-pitch-audit/';
 const FORGE_ENDPOINT = process.env.EXPO_PUBLIC_FORGE_ENDPOINT?.trim();
 
+let resolveAuditTarget: ((note: unknown) => string | null) | undefined;
+
+function withResolvedAuditTargets(notes: unknown[]) {
+  const resolver = resolveAuditTarget;
+
+  if (!resolver) {
+    return notes;
+  }
+
+  return notes.map((note) => {
+    if (!note || typeof note !== 'object') {
+      return note;
+    }
+
+    const draft = note as { note?: unknown };
+
+    if (typeof draft.note !== 'string') {
+      return note;
+    }
+
+    const target = resolver(note);
+
+    if (!target || draft.note.toLowerCase().includes(target.toLowerCase())) {
+      return note;
+    }
+
+    const normalizedNote = draft.note.toLocaleLowerCase('tr-TR');
+    const isGenericChange =
+      normalizedNote.includes('değiştir') ||
+      normalizedNote.includes('degistir') ||
+      normalizedNote.includes('change');
+    const mentionsColor =
+      normalizedNote.includes('yeşil') ||
+      normalizedNote.includes('yesil') ||
+      normalizedNote.includes('green');
+    const resolvedNote =
+      isGenericChange && !mentionsColor
+        ? `${target}: ${draft.note} - selected section bullets should turn green`
+        : `${target}: ${draft.note}`;
+
+    return {
+      ...note,
+      note: resolvedNote,
+    };
+  });
+}
+
 const auditStorage: AuditStorage = {
   async loadNotes() {
     const raw = await AsyncStorage.getItem(AUDIT_STORAGE_KEY);
@@ -26,7 +73,7 @@ const auditStorage: AuditStorage = {
     }
   },
   async saveNotes(notes) {
-    await AsyncStorage.setItem(AUDIT_STORAGE_KEY, JSON.stringify(notes));
+    await AsyncStorage.setItem(AUDIT_STORAGE_KEY, JSON.stringify(withResolvedAuditTargets(notes)));
   },
 };
 
@@ -105,7 +152,12 @@ async function sendAuditReportToForge(filename: string, content: string, fileUri
   }
 }
 
-export function createAuditWidgetDeps(currentScreen: string): AuditWidgetDeps {
+export function createAuditWidgetDeps(
+  currentScreen: string,
+  targetResolver?: (note: unknown) => string | null
+): AuditWidgetDeps {
+  resolveAuditTarget = targetResolver;
+
   return {
     captureScreen: () => captureScreen({ format: 'png', quality: 0.92 }),
     captureRef: (ref) => captureRef(ref, { format: 'png', quality: 0.92 }),

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
 import {
@@ -13,6 +13,7 @@ import {
 } from '@expo-google-fonts/newsreader';
 import {
   Pressable,
+  LayoutChangeEvent,
   ScrollView,
   StyleSheet,
   Text,
@@ -53,6 +54,15 @@ import {
 } from './src/types/draft';
 
 type Screen = 'home' | 'user' | 'newBrief' | 'mentor' | 'savedBrief';
+type AuditCardLayout = { title: string; y: number; height: number };
+type AuditNoteWithBounds = {
+  highlightBounds?: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  } | null;
+};
 
 function getAuditScreenName(
   screen: Screen,
@@ -165,6 +175,9 @@ export default function App() {
   const [selectedDecisionOptions, setSelectedDecisionOptions] = useState<
     Record<string, string>
   >({});
+  const resultScrollYRef = useRef(0);
+  const resultViewportYRef = useRef(0);
+  const auditCardLayoutsRef = useRef<Record<string, AuditCardLayout>>({});
   const [fontsLoaded] = useFonts({
     Manrope_400Regular,
     Manrope_500Medium,
@@ -203,9 +216,46 @@ export default function App() {
     () => getAuditScreenName(screen, result, activeTicketId),
     [activeTicketId, result, screen]
   );
-  const auditWidgetDeps = useMemo(
-    () => createAuditWidgetDeps(auditScreenName),
+  const resolveAuditTarget = useCallback(
+    (note: unknown) => {
+      if (auditScreenName !== 'newBrief.result') {
+        return null;
+      }
+
+      const bounds = (note as AuditNoteWithBounds | null)?.highlightBounds;
+
+      if (!bounds) {
+        return null;
+      }
+
+      const centerY = bounds.y + bounds.height / 2;
+      const contentY = resultScrollYRef.current + centerY - resultViewportYRef.current;
+      const layouts = Object.values(auditCardLayoutsRef.current);
+      const directMatch = layouts.find(
+        (layout) => contentY >= layout.y - 48 && contentY <= layout.y + layout.height + 48
+      );
+
+      if (directMatch) {
+        return directMatch.title;
+      }
+
+      const nearest = layouts
+        .map((layout) => ({
+          layout,
+          distance: Math.min(
+            Math.abs(contentY - layout.y),
+            Math.abs(contentY - (layout.y + layout.height))
+          ),
+        }))
+        .sort((left, right) => left.distance - right.distance)[0];
+
+      return nearest && nearest.distance < 140 ? nearest.layout.title : null;
+    },
     [auditScreenName]
+  );
+  const auditWidgetDeps = useMemo(
+    () => createAuditWidgetDeps(auditScreenName, resolveAuditTarget),
+    [auditScreenName, resolveAuditTarget]
   );
 
   if (!fontsLoaded) {
@@ -451,6 +501,16 @@ export default function App() {
     );
   };
 
+  const registerAuditCard =
+    (title: string) =>
+    ({ nativeEvent }: LayoutChangeEvent) => {
+      auditCardLayoutsRef.current[title] = {
+        title,
+        y: nativeEvent.layout.y,
+        height: nativeEvent.layout.height,
+      };
+    };
+
   const renderHome = () => (
     <ScrollView contentContainerStyle={styles.homeContent} showsVerticalScrollIndicator={false}>
       <View style={styles.homeHero}>
@@ -516,6 +576,13 @@ export default function App() {
       <ScrollView
         contentContainerStyle={styles.resultContent}
         showsVerticalScrollIndicator={false}
+        onLayout={({ nativeEvent }) => {
+          resultViewportYRef.current = nativeEvent.layout.y;
+        }}
+        onScroll={({ nativeEvent }) => {
+          resultScrollYRef.current = nativeEvent.contentOffset.y;
+        }}
+        scrollEventThrottle={16}
       >
         {renderTopBar(
           'New Game Brief',
@@ -532,58 +599,74 @@ export default function App() {
           onBack={() => setResult(null)}
         />
 
-        <DraftSectionCard
-          title={`Prototype Readiness: ${result.readiness.status}`}
-          items={result.readiness.rationale}
-          helperText={`${result.readiness.mode} decides whether saving creates a mentor ticket.`}
-          bulletColor={palette.success}
-        />
+        <View onLayout={registerAuditCard('Prototype Readiness')}>
+          <DraftSectionCard
+            title={`Prototype Readiness: ${result.readiness.status}`}
+            items={result.readiness.rationale}
+            helperText={`${result.readiness.mode} decides whether saving creates a mentor ticket.`}
+            bulletColor={palette.success}
+          />
+        </View>
 
-        <DraftSectionCard
-          title="Game Summary"
-          items={sectionItems(result, 'Game Summary')}
-          helperText="The pitch compressed into a buildable game direction."
-        />
+        <View onLayout={registerAuditCard('Game Summary')}>
+          <DraftSectionCard
+            title="Game Summary"
+            items={sectionItems(result, 'Game Summary')}
+            helperText="The pitch compressed into a buildable game direction."
+          />
+        </View>
 
-        <DraftSectionCard
-          title="Core Loop"
-          items={sectionItems(result, 'Core Loop')}
-          helperText="The repeatable minute-to-minute player activity."
-        />
+        <View onLayout={registerAuditCard('Core Loop')}>
+          <DraftSectionCard
+            title="Core Loop"
+            items={sectionItems(result, 'Core Loop')}
+            helperText="The repeatable minute-to-minute player activity."
+          />
+        </View>
 
-        <DraftSectionCard
-          title="Player Fantasy"
-          items={sectionItems(result, 'Player Fantasy')}
-          helperText="What the player gets to feel or become."
-          bulletColor={palette.success}
-          tone="muted"
-        />
+        <View onLayout={registerAuditCard('Player Fantasy')}>
+          <DraftSectionCard
+            title="Player Fantasy"
+            items={sectionItems(result, 'Player Fantasy')}
+            helperText="What the player gets to feel or become."
+            bulletColor={palette.success}
+            tone="muted"
+          />
+        </View>
 
-        <DraftSectionCard
-          title="Core Mechanics"
-          items={sectionItems(result, 'Core Mechanics')}
-          helperText="Only the mechanics that support the first playable loop."
-        />
+        <View onLayout={registerAuditCard('Core Mechanics')}>
+          <DraftSectionCard
+            title="Core Mechanics"
+            items={sectionItems(result, 'Core Mechanics')}
+            helperText="Only the mechanics that support the first playable loop."
+          />
+        </View>
 
-        <DraftSectionCard
-          title="Scope Boundary"
-          items={sectionItems(result, 'Scope Boundary')}
-          helperText="The cut line between prototype and future wishlist."
-          tone="muted"
-        />
+        <View onLayout={registerAuditCard('Scope Boundary')}>
+          <DraftSectionCard
+            title="Scope Boundary"
+            items={sectionItems(result, 'Scope Boundary')}
+            helperText="The cut line between prototype and future wishlist."
+            tone="muted"
+          />
+        </View>
 
-        <DraftSectionCard
-          title="Feature Creep Warnings"
-          items={featureCreepActionItems(result)}
-          helperText="Each warning is phrased as a decision the customer-developer can hand to the agent."
-        />
+        <View onLayout={registerAuditCard('Feature Creep Warnings')}>
+          <DraftSectionCard
+            title="Feature Creep Warnings"
+            items={featureCreepActionItems(result)}
+            helperText="Each warning is phrased as a decision the customer-developer can hand to the agent."
+          />
+        </View>
 
-        <DraftSectionCard
-          title="Prototype Plan"
-          items={sectionItems(result, 'Prototype Plan')}
-          helperText="A small playable build plan, not a full production roadmap."
-          tone="muted"
-        />
+        <View onLayout={registerAuditCard('Prototype Plan')}>
+          <DraftSectionCard
+            title="Prototype Plan"
+            items={sectionItems(result, 'Prototype Plan')}
+            helperText="A small playable build plan, not a full production roadmap."
+            tone="muted"
+          />
+        </View>
 
         <View style={styles.diagnosticSection}>
           <Text style={styles.diagnosticTitle}>Game Design Tensions</Text>
