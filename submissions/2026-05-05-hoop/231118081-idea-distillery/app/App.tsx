@@ -621,6 +621,7 @@ export default function App() {
             title="Core Loop"
             items={sectionItems(result, 'Core Loop')}
             helperText="The repeatable minute-to-minute player activity."
+            bulletColor={palette.blue}
           />
         </View>
 
