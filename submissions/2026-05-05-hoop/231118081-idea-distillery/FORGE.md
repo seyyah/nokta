@@ -74,8 +74,8 @@ The optional local server is intentionally narrower than a free-form coding
 agent:
 
 - it accepts only `POST /audit` markdown input
-- it asks Ollama for JSON with a unified diff
-- it validates that diff paths stay under `app/App.tsx` or `app/src/`
+- it asks Ollama for JSON with exact edits or a unified diff
+- it validates that edit paths stay under `app/App.tsx` or `app/src/`
 - it runs `npm run typecheck`
 - it commits only after tests pass
 - it logs rollback when the model rejects the request or validation fails

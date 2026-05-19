@@ -9,10 +9,10 @@ AuditWidget export
 -> POST /audit
 -> save report under audit-reports/inbox/
 -> ask Ollama for a bounded JSON repair decision
--> validate the returned unified diff
--> apply patch only inside this submission app
+-> validate exact search/replace edits or a unified diff
+-> apply edits only inside this submission app
 -> npm run typecheck
--> commit on success or reverse-patch rollback on failure
+-> commit on success or restore rollback on failure
 -> append FORGE.md ledger row
 ```
 
@@ -96,9 +96,12 @@ The server rejects or rolls back unsafe work:
 - accepts patch paths only under `app/App.tsx` or `app/src/`
 - rejects root files, `.env`, package files, build config, and other submissions
 - asks the model for JSON, not free-form shell commands
-- applies patches through `git apply --check`
+- prefers exact search/replace edits copied from source context
+- falls back to `git apply --check` only when the model returns a diff
+- has a narrow recipe for the demo's green readiness indicator request when the
+  local model finds the right intent but produces a bad edit location
 - runs `npm run typecheck`
-- reverse-applies the patch if typecheck fails
+- restores backups or reverse-applies the patch if typecheck fails
 - logs success or rollback in `FORGE.md`
 
 Runtime outputs are ignored:
