@@ -260,11 +260,9 @@ async function buildPrompt(payload, reportPath) {
     .filter((file) => /\.(ts|tsx|json)$/.test(file))
     .slice(0, 80)
     .join('\n');
-  const appTsx = await readText('app/App.tsx', Number(process.env.FORGE_APP_CONTEXT_CHARS ?? 36000));
-  const types = await readText('app/src/types/draft.ts', 12000);
-  const componentContext = await readComponentContext();
+  const sourceContext = await readRepairContext(payload.content);
   const evalDoc = existsSync(path.join(submissionRoot, 'EVAL.md'))
-    ? await readText('EVAL.md', 9000)
+    ? await readText('EVAL.md', 4200)
     : '';
 
   return [
@@ -316,42 +314,79 @@ async function buildPrompt(payload, reportPath) {
     evalDoc,
     '```',
     '',
-    'app/src/types/draft.ts:',
-    '```ts',
-    types,
-    '```',
-    '',
-    'Component source context:',
+    'Relevant source context:',
     '```tsx',
-    componentContext,
-    '```',
-    '',
-    'app/App.tsx:',
-    '```tsx',
-    appTsx,
+    sourceContext,
     '```',
   ].join('\n');
 }
 
-async function readComponentContext() {
-  const componentDir = path.join(appRoot, 'src', 'components');
-
-  if (!existsSync(componentDir)) {
-    return '';
-  }
-
-  const files = (await fs.readdir(componentDir))
-    .filter((file) => file.endsWith('.tsx'))
-    .sort();
+async function readRepairContext(markdown) {
   const chunks = [];
+  const lower = markdown.toLowerCase();
+  const alwaysInclude = [
+    'app/src/theme.ts',
+    'app/src/components/DraftSectionCard.tsx',
+  ];
+  const conditionalFiles = [
+    ['mentor', 'app/src/components/LockedBriefCard.tsx'],
+    ['decision', 'app/src/components/NextDecisionCard.tsx'],
+    ['saved', 'app/src/components/LockedBriefCard.tsx'],
+  ];
+  const files = new Set(alwaysInclude);
 
-  for (const file of files) {
-    const relativePath = `app/src/components/${file}`;
+  conditionalFiles.forEach(([keyword, relativePath]) => {
+    if (lower.includes(keyword)) {
+      files.add(relativePath);
+    }
+  });
+
+  for (const relativePath of files) {
     chunks.push(`// ${relativePath}`);
-    chunks.push(await readText(relativePath, 9000));
+    chunks.push(await readText(relativePath, 6000));
   }
+
+  chunks.push('// app/App.tsx relevant snippets');
+  chunks.push(await readAppSnippets(markdown));
 
   return chunks.join('\n\n');
+}
+
+async function readAppSnippets(markdown) {
+  const appText = await readText('app/App.tsx', 60000);
+  const keywords = [
+    'Prototype Readiness',
+    'Feature Creep Warnings',
+    'renderSavedBriefCard',
+    'renderMentorTicketDetail',
+    'renderUserResult',
+  ].filter((keyword) => markdown.toLowerCase().includes(keyword.toLowerCase()) || keyword === 'renderUserResult');
+  const lines = appText.split(/\r?\n/);
+  const selected = new Set();
+
+  for (const keyword of keywords) {
+    const index = lines.findIndex((line) => line.includes(keyword));
+
+    if (index === -1) {
+      continue;
+    }
+
+    const start = Math.max(0, index - 30);
+    const end = Math.min(lines.length, index + 55);
+
+    for (let cursor = start; cursor < end; cursor += 1) {
+      selected.add(cursor);
+    }
+  }
+
+  if (selected.size === 0) {
+    return appText.slice(0, 9000);
+  }
+
+  return [...selected]
+    .sort((left, right) => left - right)
+    .map((lineNumber) => `${lineNumber + 1}: ${lines[lineNumber]}`)
+    .join('\n');
 }
 
 async function callOllama(prompt, runDir) {
@@ -372,6 +407,7 @@ async function callOllama(prompt, runDir) {
           content: prompt,
         },
       ],
+      format: 'json',
       options: {
         temperature: Number(process.env.OLLAMA_TEMPERATURE ?? 0.1),
       },
@@ -650,9 +686,12 @@ async function handleAudit(request, response) {
       return;
     }
 
+    console.log(`[Forge] ${runId} received ${payload.filename}`);
     const result = await processAudit(payload, runId);
+    console.log(`[Forge] ${runId} ${result.status}`);
     sendJson(response, 200, { runId, ...result });
   } catch (error) {
+    console.error(`[Forge] ${runId} failed`, error);
     sendJson(response, 500, {
       runId,
       error: error instanceof Error ? error.message : String(error),
