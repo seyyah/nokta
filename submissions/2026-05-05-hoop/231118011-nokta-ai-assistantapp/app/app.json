@@ -1,0 +1,50 @@
+{
+  "expo": {
+    "name": "Nokta AI Assistant",
+    "slug": "nokta-ai-assistant",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "scheme": "noktaai",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nokta.aiassistant",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Nokta AI Assistant sesli fikirlerinizi algılamak için mikrofon erişimi kullanır."
+      }
+    },
+    "android": {
+      "package": "com.nokta.aiassistant",
+      "permissions": [
+        "RECORD_AUDIO",
+        "INTERNET",
+        "VIBRATE"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Nokta AI Assistant sesli fikirlerinizi kaydetmek için mikrofon erişimi kullanır.",
+          "recordAudioAndroid": true
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 24
+          },
+          "ios": {
+            "deploymentTarget": "15.1"
+          }
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "4dc3844b-51fd-445c-b900-30469500e2e9"
+      }
+    }
+  }
+}

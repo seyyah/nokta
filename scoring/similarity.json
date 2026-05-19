@@ -1,0 +1,474 @@
+{
+  "threshold": 0.8,
+  "flags": [
+    {
+      "original": "231118004-dot-capture",
+      "copycat": "231118004-human-dot",
+      "similarity": 0.9119,
+      "penalty_percent": 35.0
+    },
+    {
+      "original": "231118009-track-a",
+      "copycat": "231118033-dot-capture-enrich",
+      "similarity": 0.8974,
+      "penalty_percent": 35.0
+    },
+    {
+      "original": "231118009-track-a",
+      "copycat": "231118052-spec-gen",
+      "similarity": 0.8078,
+      "penalty_percent": 35.0
+    },
+    {
+      "original": "231118009-track-a",
+      "copycat": "231118070-nokta-not-ayirici",
+      "similarity": 0.9027,
+      "penalty_percent": 35.0
+    },
+    {
+      "original": "241478009-nokta-capture",
+      "copycat": "231118009-track-a",
+      "similarity": 0.9008,
+      "penalty_percent": 35.0
+    },
+    {
+      "original": "231118009-track-a",
+      "copycat": "9221118085-notepoint",
+      "similarity": 0.8404,
+      "penalty_percent": 35.0
+    },
+    {
+      "original": "231118036-ali-nursin-karacan",
+      "copycat": "231118027-pitch-validator",
+      "similarity": 0.8024,
+      "penalty_percent": 35.0
+    },
+    {
+      "original": "231118027-pitch-validator",
+      "copycat": "231118052-spec-gen",
+      "similarity": 0.8875,
+      "penalty_percent": 35.0
+    },
+    {
+      "original": "231118027-pitch-validator",
+      "copycat": "241478013-nokta-engineer-ai",
+      "similarity": 0.8239,
+      "penalty_percent": 35.0
+    },
+    {
+      "original": "231118033-dot-capture-enrich",
+      "copycat": "231118052-spec-gen",
+      "similarity": 0.8158,
+      "penalty_percent": 35.0
+    },
+    {
+      "original": "231118070-nokta-not-ayirici",
+      "copycat": "231118033-dot-capture-enrich",
+      "similarity": 0.9503,
+      "penalty_percent": 35.0
+    },
+    {
+      "original": "241478009-nokta-capture",
+      "copycat": "231118033-dot-capture-enrich",
+      "similarity": 0.8892,
+      "penalty_percent": 35.0
+    },
+    {
+      "original": "9221118085-notepoint",
+      "copycat": "231118033-dot-capture-enrich",
+      "similarity": 0.8568,
+      "penalty_percent": 35.0
+    },
+    {
+      "original": "231118033-nokta-mascot-human-support",
+      "copycat": "231118045-patiler",
+      "similarity": 0.8104,
+      "penalty_percent": 35.0
+    },
+    {
+      "original": "231118036-ali-nursin-karacan",
+      "copycat": "231118052-spec-gen",
+      "similarity": 0.835,
+      "penalty_percent": 35.0
+    },
+    {
+      "original": "231118036-ali-nursin-karacan",
+      "copycat": "241478013-nokta-engineer-ai",
+      "similarity": 0.8279,
+      "penalty_percent": 35.0
+    },
+    {
+      "original": "231118070-nokta-not-ayirici",
+      "copycat": "231118052-spec-gen",
+      "similarity": 0.8111,
+      "penalty_percent": 35.0
+    },
+    {
+      "original": "241478009-nokta-capture",
+      "copycat": "231118052-spec-gen",
+      "similarity": 0.8057,
+      "penalty_percent": 35.0
+    },
+    {
+      "original": "241478013-nokta-engineer-ai",
+      "copycat": "231118052-spec-gen",
+      "similarity": 0.8543,
+      "penalty_percent": 35.0
+    },
+    {
+      "original": "241478009-nokta-capture",
+      "copycat": "231118070-nokta-not-ayirici",
+      "similarity": 0.9011,
+      "penalty_percent": 35.0
+    },
+    {
+      "original": "9221118085-notepoint",
+      "copycat": "231118070-nokta-not-ayirici",
+      "similarity": 0.8667,
+      "penalty_percent": 35.0
+    },
+    {
+      "original": "241478009-nokta-capture",
+      "copycat": "9221118085-notepoint",
+      "similarity": 0.835,
+      "penalty_percent": 35.0
+    }
+  ],
+  "scores": {
+    "191118022-prompt-perfecter": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "201118062-mergen-wolfscatt": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "2026-04-29_Challenge01": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "20260416-dot-capture": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "211118018-dot-capture": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "211118032-dot-support": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "211118068-nokta-dotcapture": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "211118085-RavzanurErdogan": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "221118014-slop-detector": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "221118054-idea-spec": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118003-nokta-capture": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118004-dot-capture": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118004-human-dot": {
+      "similarity_points": 20,
+      "penalty_applied": true,
+      "penalty_percent": 35
+    },
+    "231118006-nokta-nisa": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118009-track-a": {
+      "similarity_points": 20,
+      "penalty_applied": true,
+      "penalty_percent": 35
+    },
+    "231118011-faruk-emre-ok": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118011-nokta-ai-assistantapp": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118012-slop-detector": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118014-ahsen-ece-hanci": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118016-mert": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118017-busra-nokta": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118018-FitLoop": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118020-learndot": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118021-nokta-vision": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118023-storyforge": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118024-spec-builder": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118027-pitch-validator": {
+      "similarity_points": 20,
+      "penalty_applied": true,
+      "penalty_percent": 35
+    },
+    "231118031-nokta-app": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118031-zeynep-bakirman": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118032-idea-card-splitter": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118033-dot-capture-enrich": {
+      "similarity_points": 20,
+      "penalty_applied": true,
+      "penalty_percent": 35
+    },
+    "231118033-nokta-mascot-human-support": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118036-ali-nursin-karacan": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118037-psikolojik-destek": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118040-nokta-human-support": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118043-dot-capture": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118044-slopdetec": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118045-nokta-slop-radar": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118045-patiler": {
+      "similarity_points": 20,
+      "penalty_applied": true,
+      "penalty_percent": 35
+    },
+    "231118046-nokta-spec-builder": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118052-spec-gen": {
+      "similarity_points": 20,
+      "penalty_applied": true,
+      "penalty_percent": 35
+    },
+    "231118053-nokta-sengk": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118059-nokta-radar": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118061-fikir-asistani": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118063-idea-processing": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118063-nokta-health-assistant": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118064-dot-capture": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118065-pitchsieve": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118070-nokta-not-ayirici": {
+      "similarity_points": 20,
+      "penalty_applied": true,
+      "penalty_percent": 35
+    },
+    "231118071-nokta-sudenuryazici": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118072-idea-tracker": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118081-idea-distillery": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118098-tohum": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "241478009-nokta-capture": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "241478013-nokta-engineer-ai": {
+      "similarity_points": 20,
+      "penalty_applied": true,
+      "penalty_percent": 35
+    },
+    "241478055-yigit-ozdemir": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "241478058-sueda-nokta-solo": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "241478074-nokta": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "241478077-migration-dedup": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "241478088-spec-architect-Abdulkahhar": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "9211118091-mohammed-almashhor": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "9221118084-nokta-spec": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "9221118085-nokta-uzman": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "9221118085-notepoint": {
+      "similarity_points": 20,
+      "penalty_applied": true,
+      "penalty_percent": 35
+    },
+    "9221118087-nokta-b": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "9221118097-note-migrator": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "9231118009-nokta-capture": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    }
+  }
+}

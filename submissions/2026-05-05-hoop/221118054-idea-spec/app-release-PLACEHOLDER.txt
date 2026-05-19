@@ -1,0 +1,9 @@
+Bu dosya APK build sonrası yerini alacak.
+
+EAS build komutuyla oluşturulacak:
+  cd app
+  npm install
+  npx eas build --platform android --profile preview
+
+Build tamamlandığında indirilen .apk dosyasını bu klasöre koy
+ve bu txt dosyasını sil.
