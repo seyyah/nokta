@@ -59,7 +59,7 @@ export default function HomeScreen({ navigation }) {
 
       <KeyboardAvoidingView
         style={styles.inner}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         {/* Logo + top buttons */}
         <View style={styles.topRow}>

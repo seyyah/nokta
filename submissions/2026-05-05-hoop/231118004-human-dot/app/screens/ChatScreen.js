@@ -198,7 +198,7 @@ export default function ChatScreen({ navigation, route }) {
 
           {error && <Text style={styles.errorText}>{error}</Text>}
 
-          {questions.map((q, i) => (
+          {questions.slice(0, answers.length + 1).map((q, i) => (
             <View key={q.id}>
               <View style={styles.dimensionRow}>
                 <View style={styles.dimensionBadge}>
