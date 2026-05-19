@@ -1,0 +1,12 @@
+/* ================================================
+   Nokta Mascot — Global Styles (No Tailwind/PostCSS)
+   ================================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: #eef2ff;
+}

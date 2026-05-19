@@ -32,7 +32,7 @@ jobs:
           HEAD_SHA="${{ github.event.pull_request.head.sha }}"
           DIRS=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" | grep '^submissions/' | cut -d/ -f2 | sort -u)
           for DIR in $DIRS; do
-            if ! echo "$DIR" | grep -qE '^[0-9]{6,}-[a-z0-9-]+$'; then
+            if ! echo "$DIR" | grep -qE '^[0-9]{6,}-[A-Za-z0-9-]+$'; then
               echo "::error::Klasör adı formatı yanlış: $DIR"
               echo "Beklenen: <öğrenci-no>-<slug>, örn: 20210123-kuantum-seyyah"
               exit 1

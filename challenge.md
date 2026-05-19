@@ -27,6 +27,7 @@ Track seçimi README'ye yaz.
 
 Klasörün içinde zorunlu:
 - `README.md` — track seçimi, Expo QR kodu (linki), 60 sn demo video linki, decision log
+- idea.md  — seçtiğin track için hazırladığın özelleşmiş fikir dosyan
 - `app/` — Expo projesi (veya senin kullandığın framework çıktısı)
 - `app-release.apk` — APK dosyası (zorunlu; yoksa ceza)
 

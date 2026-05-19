@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "NotePoint",
+    "slug": "notepoint",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#FFFFFF"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.student9221118085.notepoint"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.student9221118085.notepoint"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "924774be-ff17-4ea3-adeb-226ac6cb7e24"
+      }
+    }
+  }
+}
