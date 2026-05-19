@@ -1,0 +1,51 @@
+{
+  "expo": {
+    "name": "Spec Architect",
+    "slug": "spec-architect",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0A0A0F",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0A0A0F"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.specarchitect.app",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Spec Architect needs microphone access to let you describe your ideas using voice input."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0A0A0F"
+      },
+      "package": "com.specarchitect.app",
+      "permissions": [
+        "RECORD_AUDIO",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Spec Architect needs microphone access to let you describe your ideas using voice input."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "6e0909e0-79f0-4ab5-991e-380ab6f854b1"
+      }
+    }
+  }
+}
