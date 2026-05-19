@@ -82,6 +82,31 @@ function sectionItems(result: DistillationResult, title: DraftSection['title']) 
   return getSection(result, title)?.items ?? [];
 }
 
+function getFeatureCreepActionLabel(warning: string) {
+  const normalized = warning.toLowerCase();
+
+  if (normalized.includes('unless') || normalized.includes('main loop')) {
+    return 'Keep only if core';
+  }
+
+  if (normalized.includes('wait') || normalized.includes('after')) {
+    return 'Move later';
+  }
+
+  if (normalized.includes('no major')) {
+    return 'Keep';
+  }
+
+  return 'Cut for v1';
+}
+
+function featureCreepActionItems(result: DistillationResult) {
+  return sectionItems(result, 'Feature Creep Warnings').map((warning) => {
+    const action = getFeatureCreepActionLabel(warning);
+    return `${action}: ${warning}`;
+  });
+}
+
 function createId(prefix: string) {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
@@ -534,8 +559,8 @@ export default function App() {
 
         <DraftSectionCard
           title="Feature Creep Warnings"
-          items={sectionItems(result, 'Feature Creep Warnings')}
-          helperText="Large systems that can break a solo indie prototype."
+          items={featureCreepActionItems(result)}
+          helperText="Each warning is phrased as a decision the customer-developer can hand to the agent."
         />
 
         <DraftSectionCard
