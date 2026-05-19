@@ -13,10 +13,10 @@ Agent: Codex
 
 | # | Ekran | Rapor | Hipotez | Sonuc | Degisen dosyalar | Test sonucu | Commit | kg | Human touch |
 |---|---|---|---|---|---|---|---|---:|---:|
-| 1 | / | audit-reports/report-01-yellow-button.md | Ana buton amber yapilirsa istek karsilanir ve kontrast korunur | success | app/app/(tabs)/index.tsx | `tsc`, `lint` pass | teslim commit'i | 1kg | 1 |
-| 2 | / | audit-reports/report-02-title-name.md | Baslik Nokta Fikir olursa urun baglami netlesir | success | app/app/(tabs)/index.tsx | `tsc`, `lint` pass | teslim commit'i | 1kg | 1 |
-| 3 | / | audit-reports/report-03-button-label.md | Buton label'i Fikri Analiz Et olursa aksiyon netlesir | success | app/app/(tabs)/index.tsx | `tsc`, `lint` pass | teslim commit'i | 1kg | 1 |
-| 4 | / | audit-reports/report-04-rollback.md | Neon yesil dikkat ceker ama sadeligi bozabilir | rollback | - | heuristic verify pass | - | 0kg | 1 |
+| 1 | / | audit-reports/report-01-yellow-button.md | Ana buton amber yapilirsa istek karsilanir ve kontrast korunur | success | app/app/(tabs)/index.tsx | `tsc`, `lint` pass | 87a812f | 1kg | 1 |
+| 2 | / | audit-reports/report-02-title-name.md | Baslik Nokta Fikir olursa urun baglami netlesir | success | app/app/(tabs)/index.tsx | `tsc`, `lint` pass | a038f0f | 1kg | 1 |
+| 3 | / | audit-reports/report-03-button-label.md | Buton label'i Fikri Analiz Et olursa aksiyon netlesir | success | app/app/(tabs)/index.tsx | `tsc`, `lint` pass | 5b7d880 | 1kg | 1 |
+| 4 | / | audit-reports/report-04-rollback.md | Neon yesil dikkat ceker ama sadeligi bozabilir | rollback | - | heuristic verify pass | d69981f | 0kg | 1 |
 
 Toplam: 3 basarili + 1 geri alma + 4 cycle + 40dk toplam sure + 3kg ratchet.
 
@@ -58,7 +58,7 @@ Secilen ana aksiyon butonu artik mavi degil, sari/amber tonda gorunuyor.
 
 ### COMMIT / ROLLBACK
 
-Basarili. Commit hash teslim commit'i olustugunda yazilacak. Mesaj formati: `[FORGE: /] Home ana butonu sari yapildi - 1kg`.
+Basarili. Commit: 87a812f. Mesaj formati: `[FORGE: /] Home ana butonu sari yapildi - 1kg`.
 
 ---
 
@@ -98,7 +98,7 @@ Home ve rapor ekran basliklari ayni urun adini kullaniyor. Ingilizce `Powered by
 
 ### COMMIT / ROLLBACK
 
-Basarili. Commit hash teslim commit'i olustugunda yazilacak. Mesaj formati: `[FORGE: /] Home basligi Nokta Fikir yapildi - 1kg`.
+Basarili. Commit: a038f0f. Mesaj formati: `[FORGE: /] Home basligi Nokta Fikir yapildi - 1kg`.
 
 ---
 
@@ -138,7 +138,7 @@ Buton metni artik kullanici niyetini daha net anlatiyor. Button style'i degismed
 
 ### COMMIT / ROLLBACK
 
-Basarili. Commit hash teslim commit'i olustugunda yazilacak. Mesaj formati: `[FORGE: /] Ana buton metni netlestirildi - 1kg`.
+Basarili. Commit: 5b7d880. Mesaj formati: `[FORGE: /] Ana buton metni netlestirildi - 1kg`.
 
 ---
 
@@ -178,7 +178,7 @@ Neon yesil uygulama diline gereksiz gorsel gurultu ekleyecegi icin reddedildi. S
 
 ### COMMIT / ROLLBACK
 
-Rollback. Commit yok.
+Rollback. Log commit: d69981f.
 
 ---
 

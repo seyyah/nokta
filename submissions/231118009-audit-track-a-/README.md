@@ -14,7 +14,8 @@ npx expo start --web --port 8081
 
 Expo web linki: `http://localhost:8081`  
 Expo Go linki: Metro calisirken terminaldeki QR kodu kullanilir.  
-Demo video: teslimden once kisa ekran kaydi linki eklenecek.  
+EAS Build (APK) Linki: https://expo.dev/accounts/huseyinyagmur/projects/app/builds/21e7e255-4a57-48dd-bf60-f3e2d41419d0
+Demo video: https://youtube.com/shorts/Tv0i1yw-ZQ0?si=zoOw4qBkHVkPaikx  
 APK: `app-release.apk` bu klasorde yoksa rubric'e gore -5 riskidir.
 
 ## Audit Entegrasyonu
