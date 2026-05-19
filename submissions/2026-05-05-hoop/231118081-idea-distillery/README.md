@@ -220,7 +220,7 @@ https://expo.dev/artifacts/eas/h2YtVctehFqg89a4Bzcbeo.apk
 ## 60 Second Demo
 
 Demo video link:
-https://youtube.com/shorts/jtwFCBSASho?feature=share
+https://youtube.com/shorts/SQF166ex9W8?feature=share
 
 ## APK
 
