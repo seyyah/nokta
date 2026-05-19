@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { COLORS, SPACING, RADIUS, SHADOWS } from '../theme';
 import { generateQuestions } from '../services/aiService';
 import { startRecording, stopRecording, transcribeAudio } from '../services/audioService';
@@ -16,6 +17,7 @@ export default function HomeScreen({ navigation }) {
     const [isRecording, setIsRecording] = useState(false);
     const [recordingRef, setRecordingRef] = useState(null);
     const [recordingSeconds, setRecordingSeconds] = useState(0);
+    const [pastIdeas, setPastIdeas] = useState([]);
 
     const pulseAnim = useRef(new Animated.Value(1)).current;
     const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -28,6 +30,15 @@ export default function HomeScreen({ navigation }) {
             Animated.timing(fadeAnim, { toValue: 1, duration: 800, useNativeDriver: true }),
             Animated.timing(slideAnim, { toValue: 0, duration: 800, useNativeDriver: true }),
         ]).start();
+        
+        const loadHistory = async () => {
+            try {
+                const history = await AsyncStorage.getItem('spec_history_full');
+                if (history) setPastIdeas(JSON.parse(history));
+            } catch (e) { console.error('History load error:', e); }
+        };
+        loadHistory();
+
         return () => { if (timerRef.current) clearInterval(timerRef.current); };
     }, []);
 
@@ -79,8 +90,15 @@ export default function HomeScreen({ navigation }) {
         }
         setIsLoading(true);
         try {
-            const questions = await generateQuestions(idea.trim());
-            navigation.navigate('Questions', { idea: idea.trim(), questions });
+            const cleanIdea = idea.trim();
+            const questions = await generateQuestions(cleanIdea);
+            
+            // Temporary save to history just the idea if not full yet
+            const newHistory = [{ idea: cleanIdea, questions }, ...pastIdeas.filter(i => i.idea !== cleanIdea)].slice(0, 10);
+            setPastIdeas(newHistory);
+            AsyncStorage.setItem('spec_history_full', JSON.stringify(newHistory)).catch(e => console.error(e));
+
+            navigation.navigate('Questions', { idea: cleanIdea, questions });
         } catch (e) {
             Alert.alert('AI Hatası', e.message || 'Bir hata oluştu. Tekrar deneyin.');
         } finally {
@@ -169,6 +187,32 @@ export default function HomeScreen({ navigation }) {
                     </TouchableOpacity>
 
                     <Text style={styles.poweredBy}>Gemini AI ile çalışır · Track A</Text>
+
+                    {/* History Section */}
+                    {pastIdeas.length > 0 && (
+                        <Animated.View style={[styles.historyContainer, { opacity: fadeAnim }]}>
+                            <View style={styles.historyHeader}>
+                                <Ionicons name="time-outline" size={16} color={COLORS.textSecondary} />
+                                <Text style={styles.historyTitle}>Geçmiş Fikirler</Text>
+                            </View>
+                            {pastIdeas.map((pastIdea, index) => (
+                                <TouchableOpacity 
+                                    key={index} 
+                                    style={styles.historyItem}
+                                    onPress={() => {
+                                        if (pastIdea.specMarkdown) {
+                                            navigation.navigate('SpecSheet', { idea: pastIdea.idea, specMarkdown: pastIdea.specMarkdown });
+                                        } else {
+                                            setIdea(pastIdea.idea);
+                                        }
+                                    }}
+                                >
+                                    <Text style={styles.historyItemText} numberOfLines={1}>{pastIdea.idea}</Text>
+                                    <Ionicons name="document-text-outline" size={14} color={COLORS.accent} />
+                                </TouchableOpacity>
+                            ))}
+                        </Animated.View>
+                    )}
                 </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>
@@ -225,5 +269,10 @@ const styles = StyleSheet.create({
     analyzeBtnDisabled: { opacity: 0.6 },
     analyzeBtnText: { color: COLORS.textOnAccent, fontSize: 16, fontWeight: '700', letterSpacing: 0.3 },
     btnRow: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm },
-    poweredBy: { textAlign: 'center', fontSize: 11, color: COLORS.textMuted, letterSpacing: 0.5 },
+    poweredBy: { textAlign: 'center', fontSize: 11, color: COLORS.textMuted, letterSpacing: 0.5, marginBottom: SPACING.xl },
+    historyContainer: { marginTop: SPACING.lg },
+    historyHeader: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginBottom: SPACING.sm, paddingHorizontal: SPACING.xs },
+    historyTitle: { fontSize: 13, fontWeight: '600', color: COLORS.textSecondary },
+    historyItem: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: COLORS.bgElevated, padding: SPACING.md, borderRadius: RADIUS.md, marginBottom: SPACING.xs, borderWidth: 1, borderColor: COLORS.borderSubtle },
+    historyItemText: { fontSize: 13, color: COLORS.textPrimary, flex: 1, paddingRight: SPACING.md },
 });

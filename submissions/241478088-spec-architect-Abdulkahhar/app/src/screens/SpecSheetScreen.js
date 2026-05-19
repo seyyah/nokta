@@ -8,7 +8,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Markdown from 'react-native-markdown-display';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, RADIUS, SHADOWS } from '../theme';
-import { generateExpertReview } from '../services/aiService';
 
 const mdStyles = {
     body: { color: COLORS.textPrimary, fontSize: 14, lineHeight: 22, backgroundColor: 'transparent' },
@@ -39,9 +38,6 @@ export default function SpecSheetScreen({ route, navigation }) {
     const { idea, specMarkdown } = route.params;
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const slideAnim = useRef(new Animated.Value(20)).current;
-    const [expertReview, setExpertReview] = useState(null);
-    const [isReviewing, setIsReviewing] = useState(false);
-
     useEffect(() => {
         Animated.parallel([
             Animated.timing(fadeAnim, { toValue: 1, duration: 600, useNativeDriver: true }),
@@ -57,16 +53,8 @@ export default function SpecSheetScreen({ route, navigation }) {
         }
     };
 
-    const handleRequestReview = async () => {
-        setIsReviewing(true);
-        try {
-            const review = await generateExpertReview(specMarkdown);
-            setExpertReview(review);
-        } catch (e) {
-            Alert.alert('Hata', e.message);
-        } finally {
-            setIsReviewing(false);
-        }
+    const handleRequestReview = () => {
+        navigation.navigate('Expert', { idea, specMarkdown });
     };
 
     return (
@@ -101,34 +89,42 @@ export default function SpecSheetScreen({ route, navigation }) {
 
                     {/* Markdown Content */}
                     <View style={styles.markdownCard}>
-                        <Markdown style={mdStyles}>{specMarkdown}</Markdown>
+                        {(() => {
+                            const parts = specMarkdown.split('\n## ');
+                            const renderedParts = [];
+                            let chartRendered = false;
+                            parts.forEach((part, index) => {
+                                if (index === 0) {
+                                    renderedParts.push(<Markdown key={`md-${index}`} style={mdStyles}>{part}</Markdown>);
+                                    return;
+                                }
+                                
+                                const fullPart = '\n## ' + part;
+                                const lowerPart = part.toLowerCase();
+                                if (!chartRendered && (lowerPart.includes('zaman') || lowerPart.includes('timeline') || lowerPart.includes('tahmin') || lowerPart.includes('takvim'))) {
+                                    chartRendered = true;
+                                    // Insert chart before this section
+                                    renderedParts.push(
+                                        <View key={`chart-${index}`} style={styles.chartContainer}>
+                                            <Text style={styles.chartTitle}>Proje Aşamaları (Tahmini Dağılım)</Text>
+                                            <View style={styles.chartBarRow}>
+                                                <View style={[styles.chartBar, { flex: 3, backgroundColor: COLORS.teal }]}><Text style={styles.chartText}>Tasarım</Text></View>
+                                                <View style={[styles.chartBar, { flex: 5, backgroundColor: COLORS.accent }]}><Text style={styles.chartText}>Geliştirme</Text></View>
+                                                <View style={[styles.chartBar, { flex: 2, backgroundColor: COLORS.warning }]}><Text style={styles.chartText}>Test</Text></View>
+                                            </View>
+                                        </View>
+                                    );
+                                }
+                                renderedParts.push(<Markdown key={`md-${index}`} style={mdStyles}>{fullPart}</Markdown>);
+                            });
+                            return renderedParts.length > 0 ? renderedParts : <Markdown style={mdStyles}>{specMarkdown}</Markdown>;
+                        })()}
                     </View>
 
-                    {/* Expert Review Card */}
-                    {expertReview && (
-                        <View style={styles.expertCard}>
-                            <View style={styles.expertHeader}>
-                                <Ionicons name="glasses" size={20} color={COLORS.warning} />
-                                <Text style={styles.expertTitle}>Uzman Notu</Text>
-                            </View>
-                            <Markdown style={expertMdStyles}>{expertReview}</Markdown>
-                        </View>
-                    )}
-
-                    {/* Actions */}
-                    {!expertReview && !isReviewing && (
-                        <TouchableOpacity style={styles.expertBtn} onPress={handleRequestReview}>
-                            <Ionicons name="people-outline" size={18} color={COLORS.warning} />
-                            <Text style={styles.expertBtnText}>Uzmana Gönder (Eskalasyon)</Text>
-                        </TouchableOpacity>
-                    )}
-
-                    {isReviewing && (
-                        <View style={styles.loadingContainer}>
-                            <ActivityIndicator size="small" color={COLORS.warning} />
-                            <Text style={styles.loadingText}>Uzman inceliyor...</Text>
-                        </View>
-                    )}
+                    <TouchableOpacity style={styles.expertBtn} onPress={handleRequestReview}>
+                        <Ionicons name="people-outline" size={18} color={COLORS.warning} />
+                        <Text style={styles.expertBtnText}>Canlı Uzman (Eskalasyon)</Text>
+                    </TouchableOpacity>
 
                     <TouchableOpacity style={styles.shareBtn} onPress={handleShare}>
                         <Ionicons name="share-social-outline" size={18} color="#fff" />
@@ -169,4 +165,9 @@ const styles = StyleSheet.create({
     shareBtnText: { color: '#fff', fontSize: 15, fontWeight: '700' },
     newIdeaBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SPACING.sm, backgroundColor: COLORS.bgCard, borderRadius: RADIUS.lg, paddingVertical: SPACING.md, borderWidth: 1, borderColor: COLORS.border },
     newIdeaBtnText: { color: COLORS.accent, fontSize: 15, fontWeight: '600' },
+    chartContainer: { backgroundColor: COLORS.bgElevated, borderRadius: RADIUS.md, padding: SPACING.md, marginVertical: SPACING.md, borderWidth: 1, borderColor: COLORS.borderSubtle },
+    chartTitle: { fontSize: 13, fontWeight: '700', color: COLORS.textSecondary, marginBottom: SPACING.sm },
+    chartBarRow: { flexDirection: 'row', height: 28, borderRadius: RADIUS.sm, overflow: 'hidden' },
+    chartBar: { justifyContent: 'center', alignItems: 'center' },
+    chartText: { fontSize: 11, fontWeight: '700', color: '#fff' },
 });

@@ -8,6 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, RADIUS, SHADOWS } from '../theme';
 import { generateSpecSheet } from '../services/aiService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function QuestionsScreen({ route, navigation }) {
     const { idea, questions } = route.params;
@@ -46,6 +47,15 @@ export default function QuestionsScreen({ route, navigation }) {
         try {
             const qa = questions.map((q, i) => ({ question: q, answer: answers[i] }));
             const specMarkdown = await generateSpecSheet(idea, qa);
+            
+            // Save full history
+            try {
+                const historyStr = await AsyncStorage.getItem('spec_history_full');
+                const historyArr = historyStr ? JSON.parse(historyStr) : [];
+                const newHistory = [{ idea, questions, specMarkdown }, ...historyArr.filter(h => h.idea !== idea)].slice(0, 10);
+                await AsyncStorage.setItem('spec_history_full', JSON.stringify(newHistory));
+            } catch (err) { console.error('Full history save error', err); }
+
             navigation.navigate('SpecSheet', { idea, specMarkdown });
         } catch (e) {
             Alert.alert('Oluşturma Hatası', e.message || 'Spec oluşturulamadı. Tekrar deneyin.');
@@ -75,10 +85,15 @@ export default function QuestionsScreen({ route, navigation }) {
                         </View>
 
                         {/* Progress */}
-                        <View style={styles.progressBar}>
-                            <Animated.View style={[styles.progressFill, {
-                                width: progressAnim.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] }),
-                            }]} />
+                        <View style={styles.progressRow}>
+                            <View style={styles.progressBar}>
+                                <Animated.View style={[styles.progressFill, {
+                                    width: progressAnim.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] }),
+                                }]} />
+                            </View>
+                            <Text style={styles.progressText}>
+                                {Math.round((answeredCount / questions.length) * 100)}%
+                            </Text>
                         </View>
 
                         {/* Idea preview */}
@@ -159,8 +174,10 @@ const styles = StyleSheet.create({
     headerCenter: { flex: 1, alignItems: 'center' },
     headerTitle: { fontSize: 17, fontWeight: '700', color: COLORS.textPrimary },
     headerStep: { fontSize: 12, color: COLORS.textSecondary, marginTop: 2 },
-    progressBar: { height: 3, backgroundColor: COLORS.bgElevated, borderRadius: RADIUS.full, marginBottom: SPACING.lg, overflow: 'hidden' },
+    progressRow: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginBottom: SPACING.lg },
+    progressBar: { flex: 1, height: 4, backgroundColor: COLORS.bgElevated, borderRadius: RADIUS.full, overflow: 'hidden' },
     progressFill: { height: '100%', backgroundColor: COLORS.accent, borderRadius: RADIUS.full },
+    progressText: { fontSize: 12, fontWeight: '700', color: COLORS.accent },
     ideaCard: { backgroundColor: COLORS.accentGlow, borderRadius: RADIUS.md, padding: SPACING.md, borderWidth: 1, borderColor: COLORS.border, marginBottom: SPACING.md },
     ideaIconRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 },
     ideaLabel: { fontSize: 11, fontWeight: '600', color: COLORS.accentLight, letterSpacing: 0.5 },
