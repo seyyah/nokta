@@ -161,8 +161,9 @@ function StackSection({ stackData }) {
 }
 
 export default function SpecScreen({ navigation, route }) {
-  const { idea, questionsAndAnswers, spec: cachedSpec, score: cachedScore, stack: cachedStack, fromHistory } = route.params || {};
+  const { idea, questionsAndAnswers, spec: cachedSpec, score: cachedScore, stack: cachedStack, expertRequestId: cachedExpertReqId, fromHistory } = route.params || {};
   const [spec, setSpec] = useState(cachedSpec || null);
+  const [expertRequestId, setExpertRequestId] = useState(cachedExpertReqId || null);
   const [noktaScore, setNoktaScore] = useState(cachedScore || null);
   const [stackData, setStackData] = useState(cachedStack || null);
   const [loading, setLoading] = useState(!cachedSpec);
@@ -205,21 +206,25 @@ export default function SpecScreen({ navigation, route }) {
 
       // Auto-save to history
       if (!fromHistory) {
+        let expertReqId = null;
+        // Auto-submit to Firebase expert queue
+        try {
+          const expertRef = await submitToExpert(idea, specData, score);
+          expertReqId = expertRef.key;
+          setExpertRequestId(expertReqId);
+        } catch (e) {
+          console.warn('Expert auto-submit failed (offline?):', e.message);
+        }
+
         const id = await saveAnalysis({
           idea,
           answers: questionsAndAnswers,
           spec: specData,
           score,
           stack,
+          expertRequestId: expertReqId,
         });
         setSavedId(id);
-
-        // Auto-submit to Firebase expert queue
-        try {
-          await submitToExpert(idea, specData, score);
-        } catch (e) {
-          console.warn('Expert auto-submit failed (offline?):', e.message);
-        }
       }
     } catch (e) {
       setError('Spec üretilemedi. Lütfen tekrar dene.');
@@ -369,7 +374,7 @@ export default function SpecScreen({ navigation, route }) {
           <View style={styles.bottomRow}>
             <TouchableOpacity
               style={styles.expertBtn}
-              onPress={() => navigation.navigate('Expert', { idea, spec, score: noktaScore })}
+              onPress={() => navigation.navigate('Expert', { idea, spec, score: noktaScore, expertRequestId })}
             >
               <Text style={styles.expertBtnText}>👨‍🔬 Uzman Görüşü İste</Text>
             </TouchableOpacity>

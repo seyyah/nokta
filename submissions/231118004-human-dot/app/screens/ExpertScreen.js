@@ -190,8 +190,8 @@ function ExpertMode({ navigation }) {
 
 // ── ÖĞRENCİ MODU ─────────────────────────────────────────────────────────────
 function StudentMode({ navigation, route }) {
-  const { idea, spec, score } = route.params || {};
-  const [requestId, setRequestId] = useState(null);
+  const { idea, spec, score, expertRequestId } = route.params || {};
+  const [requestId, setRequestId] = useState(expertRequestId || null);
   const [requestData, setRequestData] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [autoSubmitted, setAutoSubmitted] = useState(false);
@@ -201,13 +201,15 @@ function StudentMode({ navigation, route }) {
     return () => { if (unsubRef.current) unsubRef.current(); };
   }, []);
 
-  // Spec varsa ekran açılınca otomatik gönder
+  // Spec varsa ekran açılınca otomatik gönder (eğer expertRequestId yoksa)
   useEffect(() => {
-    if (spec && !autoSubmitted) {
+    if (expertRequestId) {
+      unsubRef.current = listenToRequest(expertRequestId, (data) => setRequestData(data));
+    } else if (spec && !autoSubmitted) {
       setAutoSubmitted(true);
       handleSubmit();
     }
-  }, [spec]);
+  }, [spec, expertRequestId]);
 
   const handleSubmit = async () => {
     if (!spec) return;

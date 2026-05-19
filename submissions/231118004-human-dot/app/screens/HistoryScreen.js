@@ -87,6 +87,7 @@ export default function HistoryScreen({ navigation }) {
                   spec: item.spec,
                   score: item.score,
                   stack: item.stack,
+                  expertRequestId: item.expertRequestId,
                   fromHistory: true,
                 })}
                 onLongPress={() => handleDelete(item.id, item.spec?.title || item.idea)}
