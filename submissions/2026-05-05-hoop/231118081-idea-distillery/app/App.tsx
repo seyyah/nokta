@@ -45,6 +45,7 @@ import {
   DistillationResult,
   DraftSection,
   DraftSectionTitle,
+  BriefStatus,
   GamePitchStore,
   NextDecision,
   ReviewTicket,
@@ -83,6 +84,33 @@ function sectionItems(result: DistillationResult, title: DraftSection['title']) 
 
 function createId(prefix: string) {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function getBriefStatusMeta(status: BriefStatus) {
+  if (status === 'mentor_review') {
+    return {
+      label: 'Waiting Review',
+      description: 'A mentor ticket is open. Open the brief to see the current plan.',
+      actionLabel: 'Open Waiting Brief',
+      tone: 'warning',
+    } as const;
+  }
+
+  if (status === 'reviewed') {
+    return {
+      label: 'Reviewed',
+      description: 'Mentor feedback has been written back into the future plan.',
+      actionLabel: 'Open Future Plan',
+      tone: 'success',
+    } as const;
+  }
+
+  return {
+    label: 'Saved',
+    description: 'This brief is stable enough to continue without mentor review.',
+    actionLabel: 'Open Saved Brief',
+    tone: 'default',
+  } as const;
 }
 
 export default function App() {
@@ -342,29 +370,48 @@ export default function App() {
     </View>
   );
 
-  const renderSavedBriefCard = (brief: SavedGameBrief) => (
-    <View key={brief.id} style={styles.savedCard}>
-      <View style={styles.savedHeader}>
-        <Text style={styles.savedTitle}>{brief.title}</Text>
-        <View style={styles.statusPill}>
-          <Text style={styles.statusText}>{brief.status.replace('_', ' ')}</Text>
+  const renderSavedBriefCard = (brief: SavedGameBrief) => {
+    const statusMeta = getBriefStatusMeta(brief.status);
+
+    return (
+      <View key={brief.id} style={styles.savedCard}>
+        <View style={styles.savedHeader}>
+          <Text style={styles.savedTitle}>{brief.title}</Text>
+          <View
+            style={[
+              styles.statusPill,
+              statusMeta.tone === 'warning' ? styles.statusPillWarning : undefined,
+              statusMeta.tone === 'success' ? styles.statusPillSuccess : undefined,
+            ]}
+          >
+            <Text
+              style={[
+                styles.statusText,
+                statusMeta.tone === 'warning' ? styles.statusTextWarning : undefined,
+                statusMeta.tone === 'success' ? styles.statusTextSuccess : undefined,
+              ]}
+            >
+              {statusMeta.label}
+            </Text>
+          </View>
         </View>
+        <Text style={styles.savedMeta}>
+          {brief.result.readiness.mode} / {brief.result.readiness.score} readiness
+        </Text>
+        <Text style={styles.savedSummary}>{brief.finalBrief.lockedSummary}</Text>
+        <Text style={styles.savedActionHint}>{statusMeta.description}</Text>
+        <Pressable
+          style={styles.secondaryButton}
+          onPress={() => {
+            setActiveBriefId(brief.id);
+            setScreen('savedBrief');
+          }}
+        >
+          <Text style={styles.secondaryButtonText}>{statusMeta.actionLabel}</Text>
+        </Pressable>
       </View>
-      <Text style={styles.savedMeta}>
-        {brief.result.readiness.mode} / {brief.result.readiness.score} readiness
-      </Text>
-      <Text style={styles.savedSummary}>{brief.finalBrief.lockedSummary}</Text>
-      <Pressable
-        style={styles.secondaryButton}
-        onPress={() => {
-          setActiveBriefId(brief.id);
-          setScreen('savedBrief');
-        }}
-      >
-        <Text style={styles.secondaryButtonText}>Open Saved Brief</Text>
-      </Pressable>
-    </View>
-  );
+    );
+  };
 
   const renderHome = () => (
     <ScrollView contentContainerStyle={styles.homeContent} showsVerticalScrollIndicator={false}>
@@ -920,11 +967,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 6,
   },
+  statusPillWarning: {
+    backgroundColor: palette.amberSoft,
+  },
+  statusPillSuccess: {
+    backgroundColor: palette.successSoft,
+  },
   statusText: {
     fontFamily: 'Manrope_700Bold',
     fontSize: 10,
     color: palette.blueDeep,
     textTransform: 'uppercase',
+  },
+  statusTextWarning: {
+    color: palette.rust,
+  },
+  statusTextSuccess: {
+    color: palette.success,
   },
   savedMeta: {
     fontFamily: 'Manrope_700Bold',
@@ -937,6 +996,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 22,
     color: palette.inkSoft,
+  },
+  savedActionHint: {
+    fontFamily: 'Manrope_600SemiBold',
+    fontSize: 12,
+    lineHeight: 18,
+    color: palette.muted,
   },
   emptyCard: {
     backgroundColor: palette.surfaceMuted,
