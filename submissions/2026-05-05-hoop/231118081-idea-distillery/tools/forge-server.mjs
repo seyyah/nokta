@@ -551,11 +551,18 @@ async function applySearchReplaceEdits(edits, runDir) {
       pending.next = pending.original;
     }
 
-    if (!pending.next.includes(search)) {
+    const actualSearch = pending.next.includes(search)
+      ? search
+      : search.includes('\n') && pending.next.includes(search.replace(/\n/g, '\r\n'))
+        ? search.replace(/\n/g, '\r\n')
+        : '';
+
+    if (!actualSearch) {
       throw new Error(`Search text was not found in ${relativePath}.`);
     }
 
-    pending.next = pending.next.replace(search, replace);
+    const actualReplace = actualSearch.includes('\r\n') ? replace.replace(/\n/g, '\r\n') : replace;
+    pending.next = pending.next.replace(actualSearch, actualReplace);
     pendingFiles.set(relativePath, pending);
   }
 
@@ -588,7 +595,11 @@ function shouldUseGreenReadinessRecipe(payload, decision) {
 
   const mentionsReadiness = text.includes('prototype readiness') || text.includes('readiness');
   const mentionsGreen = text.includes('green') || text.includes('yesil') || text.includes('success');
-  const mentionsIndicator = text.includes('dot') || text.includes('bullet') || text.includes('nokta');
+  const mentionsIndicator =
+    text.includes('dot') ||
+    text.includes('bullet') ||
+    text.includes('nokta') ||
+    text.includes('indicat');
 
   return mentionsReadiness && mentionsGreen && mentionsIndicator;
 }
