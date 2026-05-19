@@ -1,0 +1,51 @@
+{
+  "expo": {
+    "name": "nokta-app",
+    "slug": "nokta-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/hero.png",
+    "scheme": "noktaapp",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/hero.png"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "package": "com.zeynepbakirman.noktaapp"
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/hero.png"
+    },
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/hero.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff",
+          "dark": {
+            "backgroundColor": "#000000"
+          }
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "5e23ad5b-5c7b-48db-9161-ce2e58f28998"
+      }
+    }
+  }
+}

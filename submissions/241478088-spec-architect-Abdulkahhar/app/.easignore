@@ -1,9 +1,0 @@
-node_modules/
-.expo/
-android/
-ios/
-dist/
-web-build/
-*.apk
-*.aab
-.git/
