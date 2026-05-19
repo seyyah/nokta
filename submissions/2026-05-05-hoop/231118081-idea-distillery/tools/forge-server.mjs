@@ -726,9 +726,17 @@ async function appendForgeRow(entry) {
 
 async function changedFiles() {
   const status = await run(gitCommand, ['status', '--porcelain', '--', '.'], { cwd: submissionRoot });
+  const prefixResult = await run(gitCommand, ['rev-parse', '--show-prefix'], { cwd: submissionRoot });
+  const submissionPrefix = prefixResult.stdout.trim().replace(/\\/g, '/');
+
   return status.stdout
     .split(/\r?\n/)
-    .map((line) => line.slice(3).trim())
+    .map((line) => {
+      const filePath = line.slice(3).trim().replace(/\\/g, '/');
+      return submissionPrefix && filePath.startsWith(submissionPrefix)
+        ? filePath.slice(submissionPrefix.length)
+        : filePath;
+    })
     .filter(Boolean);
 }
 
