@@ -301,9 +301,9 @@ async function buildPrompt(payload, reportPath) {
     '',
     'Use action "rollback" with empty edits when the request should not be applied.',
     'Do not infer a visual target from the screenshot rectangle; the local text model can only use markdown text.',
-    'If the markdown only says "make it green" without naming the target section, return rollback and ask for the section name.',
-    'When the audit asks for green Prototype Readiness bullets, pass palette.success only for the Prototype Readiness card.',
-    'When the audit asks for green Player Fantasy bullets, pass palette.success only for the Player Fantasy card.',
+    'If the markdown names a section and a color, change only that section bullet color.',
+    'If the markdown does not include a color name, return rollback and ask for the desired color.',
+    'Supported bullet colors: green/yesil, red/kirmizi, blue/mavi, yellow/sari.',
     '',
     `Saved audit report path: ${path.relative(submissionRoot, reportPath).replace(/\\/g, '/')}`,
     `Detected screen: ${extractScreenName(payload.content)}`,
@@ -587,6 +587,18 @@ function normalizeText(value) {
     .replace(/\p{Diacritic}/gu, '');
 }
 
+function requestedBulletColor(payload) {
+  const text = normalizeText(payload.content);
+  const options = [
+    { label: 'green', prop: 'palette.success', words: ['green', 'yesil', 'success'] },
+    { label: 'red', prop: 'palette.rust', words: ['red', 'kirmizi', 'rust'] },
+    { label: 'blue', prop: 'palette.blue', words: ['blue', 'mavi'] },
+    { label: 'yellow', prop: 'palette.amber', words: ['yellow', 'sari', 'amber'] },
+  ];
+
+  return options.find((option) => option.words.some((word) => text.includes(word))) ?? null;
+}
+
 function shouldUseGreenReadinessRecipe(payload, decision) {
   const text = normalizeText(payload.content);
 
@@ -727,27 +739,32 @@ const greenSectionRecipes = {
 
 function greenSectionTarget(payload) {
   const text = normalizeText(payload.content);
-  const mentionsGreen = text.includes('green') || text.includes('yesil') || text.includes('success');
 
-  if (!mentionsGreen) {
+  if (!requestedBulletColor(payload)) {
     return null;
   }
 
   return Object.keys(greenSectionRecipes).find((title) => text.includes(normalizeText(title))) ?? null;
 }
 
-function greenSectionRecipeEdits(title) {
+function greenSectionRecipeEdits(title, colorProp = 'palette.success') {
   const recipe = greenSectionRecipes[title];
 
   if (!recipe) {
     return [];
   }
 
+  const replace = recipe.replace.map((line) =>
+    line.includes('bulletColor={palette.success}')
+      ? `          bulletColor={${colorProp}}`
+      : line
+  );
+
   return [
     {
       file: 'app/App.tsx',
       search: recipe.search.join('\n'),
-      replace: recipe.replace.join('\n'),
+      replace: replace.join('\n'),
     },
   ];
 }
@@ -859,7 +876,7 @@ async function playerFantasyAlreadyApplied() {
   );
 }
 
-async function greenSectionAlreadyApplied(title) {
+async function greenSectionAlreadyApplied(title, colorProp = 'palette.success') {
   const appSource = await fs.readFile(path.join(appRoot, 'App.tsx'), 'utf8');
   const titleIndex = appSource.indexOf(`title="${title}"`);
 
@@ -870,7 +887,7 @@ async function greenSectionAlreadyApplied(title) {
   const closeIndex = appSource.indexOf('/>', titleIndex);
   const block = closeIndex === -1 ? appSource.slice(titleIndex) : appSource.slice(titleIndex, closeIndex);
 
-  return block.includes('bulletColor={palette.success}');
+  return block.includes(`bulletColor={${colorProp}}`);
 }
 
 async function restoreSearchReplaceBackups(touchedFiles, runDir) {
@@ -976,16 +993,17 @@ async function processAudit(payload, runId) {
 
   const reportPath = await saveAuditReport(payload, runId);
   const deterministicTarget = greenSectionTarget(payload);
+  const deterministicColor = requestedBulletColor(payload);
   const decision =
-    deterministicTarget && !(await greenSectionAlreadyApplied(deterministicTarget))
+    deterministicTarget && deterministicColor && !(await greenSectionAlreadyApplied(deterministicTarget, deterministicColor.prop))
       ? {
           action: 'repair',
           screen: extractScreenName(payload.content),
-          summary: `Apply green ${deterministicTarget} bullets`,
-          hypothesis: `The selected ${deterministicTarget} card should show the customer-developer change immediately.`,
+          summary: `Apply ${deterministicColor.label} ${deterministicTarget} bullets`,
+          hypothesis: `The selected ${deterministicTarget} card should show the requested ${deterministicColor.label} bullet color immediately.`,
           kg: 1,
           testCommand: 'npm run typecheck',
-          edits: greenSectionRecipeEdits(deterministicTarget),
+          edits: greenSectionRecipeEdits(deterministicTarget, deterministicColor.prop),
           diff: '',
           rollbackReason: '',
         }
@@ -1001,6 +1019,7 @@ async function processAudit(payload, runId) {
   const kg = Number.isFinite(Number(decision.kg)) ? Math.max(0, Math.min(5, Number(decision.kg))) : 1;
   const reportName = path.relative(submissionRoot, reportPath).replace(/\\/g, '/');
   const sectionTarget = greenSectionTarget(payload);
+  const requestedColor = requestedBulletColor(payload);
 
   if (shouldUsePlayerFantasyRecipe(payload) && await playerFantasyAlreadyApplied()) {
     await appendForgeRow({
@@ -1021,10 +1040,10 @@ async function processAudit(payload, runId) {
     return { status: 'rollback', reason: 'Audit request is already satisfied.' };
   }
 
-  if (sectionTarget && await greenSectionAlreadyApplied(sectionTarget)) {
+  if (sectionTarget && requestedColor && await greenSectionAlreadyApplied(sectionTarget, requestedColor.prop)) {
     await appendForgeRow({
       reportName,
-      hypothesis: decision.hypothesis ?? `Green ${sectionTarget} indicators should make the customer request visible.`,
+      hypothesis: decision.hypothesis ?? `${requestedColor.label} ${sectionTarget} indicators should make the customer request visible.`,
       result: 'rollback',
       changedFiles: 'none retained',
       testResult: 'already satisfied before patch',
@@ -1090,8 +1109,8 @@ async function processAudit(payload, runId) {
 
       if (shouldUsePlayerFantasyRecipe(payload)) {
         fallbackEdits = playerFantasyRecipeEdits();
-      } else if (sectionTarget) {
-        fallbackEdits = greenSectionRecipeEdits(sectionTarget);
+      } else if (sectionTarget && requestedColor) {
+        fallbackEdits = greenSectionRecipeEdits(sectionTarget, requestedColor.prop);
       } else if (shouldUseGreenReadinessRecipe(payload, decision)) {
         fallbackEdits = greenReadinessRecipeEdits();
       }

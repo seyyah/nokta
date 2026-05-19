@@ -36,23 +36,9 @@ function withResolvedAuditTargets(notes: unknown[]) {
       return note;
     }
 
-    const normalizedNote = draft.note.toLocaleLowerCase('tr-TR');
-    const isGenericChange =
-      normalizedNote.includes('değiştir') ||
-      normalizedNote.includes('degistir') ||
-      normalizedNote.includes('change');
-    const mentionsColor =
-      normalizedNote.includes('yeşil') ||
-      normalizedNote.includes('yesil') ||
-      normalizedNote.includes('green');
-    const resolvedNote =
-      isGenericChange && !mentionsColor
-        ? `${target}: ${draft.note} - selected section bullets should turn green`
-        : `${target}: ${draft.note}`;
-
     return {
       ...note,
-      note: resolvedNote,
+      note: `${target}: ${draft.note}`,
     };
   });
 }
