@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Animated, LayoutAnimation } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { captureScreen, captureRef } from 'react-native-view-shot';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import { AuditWidget } from './nokta-audit';
 import { auditStorage } from './auditStorage';
+import NoktaMascot, { MascotEmotion } from './NoktaMascot';
 
 const fs = FileSystem as any;
 type Phase = 'DOT_CAPTURE' | 'SLOP_CHECK' | 'ENGINEERING_PROBE' | 'ARTIFACT' | 'HISTORY';
@@ -169,12 +170,18 @@ Example format: [{"id": "problem", "label": "💥 CORE FRICTION", "hint": "Why d
     setSlopMetric(0);
   };
 
+  const getMascotEmotion = (): MascotEmotion => {
+    if (phase === 'SLOP_CHECK') return 'thinking';
+    if (phase === 'ARTIFACT') return 'done';
+    return isLlmLoading ? 'thinking' : 'idle';
+  };
+
   return (
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
       {/* HEADER SECTION */}
       <View style={styles.header}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={styles.mascot}>🤖</Text>
+          <NoktaMascot emotion={getMascotEmotion()} size={28} />
           <Text style={styles.logo}>NOKTA_</Text>
         </View>
         <TouchableOpacity onPress={() => { LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut); setPhase(phase === 'HISTORY' ? 'DOT_CAPTURE' : 'HISTORY'); }}>
@@ -425,7 +432,6 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0F0F14' },
   header: { paddingTop: 60, paddingBottom: 15, paddingHorizontal: 20, borderBottomWidth: 1, borderColor: 'rgba(255,255,255,0.05)', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', backgroundColor: '#0F0F14' },
   logo: { fontSize: 24, fontWeight: '700', color: '#DCDCE0', letterSpacing: -0.5 },
-  mascot: { fontSize: 28, marginRight: 8 },
   statusLabel: { fontSize: 11, color: '#A882FF', fontWeight: '600', letterSpacing: 1 },
   
   contentCore: { flex: 1, padding: 25, justifyContent: 'center' },
