@@ -40,7 +40,7 @@ model.
 From the submission folder:
 
 ```powershell
-cd submissions/2026-05-05-hoop/231118081-idea-distillery
+cd submissions/231118081-idea-distillery
 node tools/forge-server.mjs --self-check
 node tools/forge-server.mjs
 ```

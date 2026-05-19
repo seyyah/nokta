@@ -49,7 +49,7 @@ This scenario is the rollback ratchet from cycle 4.
 ## Verification Command
 
 ```bash
-cd submissions/2026-05-05-hoop/231118081-idea-distillery/app
+cd submissions/231118081-idea-distillery/app
 npm run typecheck
 ```
 

@@ -89,7 +89,7 @@ rollback. Full instructions are in `FORGE_AUTOMATION.md`.
 Example:
 
 ```powershell
-cd submissions/2026-05-05-hoop/231118081-idea-distillery
+cd submissions/231118081-idea-distillery
 $env:OLLAMA_MODEL="your-installed-model"
 node tools/forge-server.mjs
 ```
@@ -158,7 +158,7 @@ Total human touch points: **4**.
 From repo root:
 
 ```bash
-cd submissions/2026-05-05-hoop/231118081-idea-distillery/app
+cd submissions/231118081-idea-distillery/app
 copy .env.example .env
 ```
 
@@ -176,7 +176,7 @@ fallback when no key or server endpoint is present.
 ## Run
 
 ```bash
-cd submissions/2026-05-05-hoop/231118081-idea-distillery/app
+cd submissions/231118081-idea-distillery/app
 npm install
 npm run start
 ```
@@ -226,7 +226,7 @@ https://youtube.com/shorts/SQF166ex9W8?feature=share
 
 APK file in submission:
 
-`submissions/2026-05-05-hoop/231118081-idea-distillery/app-release.apk`
+`submissions/231118081-idea-distillery/app-release.apk`
 
 This APK was rebuilt on 2026-05-19 after adding the audit native dependencies.
 
