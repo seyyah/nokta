@@ -1,0 +1,16 @@
+export const sampleInput = `Moon Orchard rough game notes
+- cozy farming game but with quiet horror under the surface
+- player explores a small island at night and gathers strange fruit
+- Stardew Valley + Dredge vibe, but smaller and more prototype friendly
+- core loop maybe explore -> collect fruit -> return to lighthouse -> upgrade lantern
+- no combat in v1, but maybe a boss fight later?
+- solo developer, two week prototype
+- PC first, maybe mobile later
+- crafting, fishing, pets, base building, weather, and multiplayer could be cool
+- multiplayer later would be nice but not in first demo
+- the first playable version should feel mysterious in two minutes
+- avoid huge open world, one handcrafted island is enough
+- player fantasy: a careful night gardener uncovering what the island is hiding
+- need a mentor to help decide what to cut from v1
+- prototype should have one resource, one upgrade, one ending condition
+- art can be simple 2D with strong lighting`;
