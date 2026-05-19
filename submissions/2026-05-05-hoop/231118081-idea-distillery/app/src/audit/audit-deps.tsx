@@ -1,0 +1,99 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as FileSystem from 'expo-file-system/legacy';
+import * as Sharing from 'expo-sharing';
+import React from 'react';
+import { StyleSheet, Text } from 'react-native';
+import { captureRef, captureScreen } from 'react-native-view-shot';
+import { AuditStorage, AuditWidgetDeps } from './AuditWidgetHost';
+
+const AUDIT_STORAGE_KEY = 'nokta-game-pitch-audit-notes-v1';
+const REPORT_DIR_NAME = 'nokta-game-pitch-audit/';
+
+const auditStorage: AuditStorage = {
+  async loadNotes() {
+    const raw = await AsyncStorage.getItem(AUDIT_STORAGE_KEY);
+
+    if (!raw) {
+      return [];
+    }
+
+    try {
+      const parsed: unknown = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  },
+  async saveNotes(notes) {
+    await AsyncStorage.setItem(AUDIT_STORAGE_KEY, JSON.stringify(notes));
+  },
+};
+
+function sanitizeFileName(filename: string) {
+  return filename.replace(/[^a-zA-Z0-9._-]/g, '-');
+}
+
+async function ensureReportDirectory() {
+  const baseDirectory = FileSystem.documentDirectory ?? FileSystem.cacheDirectory;
+
+  if (!baseDirectory) {
+    throw new Error('No writable file-system directory is available for audit export.');
+  }
+
+  const reportDirectory = `${baseDirectory}${REPORT_DIR_NAME}`;
+  await FileSystem.makeDirectoryAsync(reportDirectory, { intermediates: true }).catch(() => {});
+  return reportDirectory;
+}
+
+async function writeAuditFile(filename: string, content: string) {
+  const reportDirectory = await ensureReportDirectory();
+  const fileUri = `${reportDirectory}${sanitizeFileName(filename)}`;
+  await FileSystem.writeAsStringAsync(fileUri, content, {
+    encoding: FileSystem.EncodingType.UTF8,
+  });
+  return fileUri;
+}
+
+async function writeAuditBinaryFile(filename: string, base64: string) {
+  const reportDirectory = await ensureReportDirectory();
+  const fileUri = `${reportDirectory}${sanitizeFileName(filename)}`;
+  await FileSystem.writeAsStringAsync(fileUri, base64, {
+    encoding: FileSystem.EncodingType.Base64,
+  });
+  return fileUri;
+}
+
+async function shareAuditFile(uri: string) {
+  const canShare = await Sharing.isAvailableAsync();
+
+  if (!canShare) {
+    return;
+  }
+
+  await Sharing.shareAsync(uri, {
+    dialogTitle: 'Share Nokta Game Pitch audit report',
+  });
+}
+
+export function createAuditWidgetDeps(currentScreen: string): AuditWidgetDeps {
+  return {
+    captureScreen: () => captureScreen({ format: 'png', quality: 0.92 }),
+    captureRef: (ref) => captureRef(ref, { format: 'png', quality: 0.92 }),
+    writeFile: writeAuditFile,
+    writeFileBinary: writeAuditBinaryFile,
+    shareFile: shareAuditFile,
+    storage: auditStorage,
+    currentScreen,
+    reporterId: 'customer-developer',
+    BugIcon: <Text style={styles.auditIcon}>!</Text>,
+  };
+}
+
+const styles = StyleSheet.create({
+  auditIcon: {
+    color: '#FFFFFF',
+    fontFamily: 'Manrope_700Bold',
+    fontSize: 28,
+    lineHeight: 30,
+  },
+});

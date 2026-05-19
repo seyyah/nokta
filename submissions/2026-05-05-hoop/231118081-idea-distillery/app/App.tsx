@@ -27,6 +27,8 @@ import { LockedBriefCard } from './src/components/LockedBriefCard';
 import { NextDecisionCard } from './src/components/NextDecisionCard';
 import { ResultHeader } from './src/components/ResultHeader';
 import { UndefinedAreaCard } from './src/components/UndefinedAreaCard';
+import { AuditWidgetHost } from './src/audit/AuditWidgetHost';
+import { createAuditWidgetDeps } from './src/audit/audit-deps';
 import { sampleInput } from './src/data/sampleInput';
 import {
   buildLockedBrief,
@@ -50,6 +52,26 @@ import {
 } from './src/types/draft';
 
 type Screen = 'home' | 'user' | 'newBrief' | 'mentor' | 'savedBrief';
+
+function getAuditScreenName(
+  screen: Screen,
+  result: DistillationResult | null,
+  activeTicketId: string | null
+) {
+  if (screen === 'newBrief' && result) {
+    return 'newBrief.result';
+  }
+
+  if (screen === 'mentor' && activeTicketId) {
+    return 'mentor.ticketDetail';
+  }
+
+  if (screen === 'savedBrief') {
+    return 'savedBrief.detail';
+  }
+
+  return screen;
+}
 
 function getSection(result: DistillationResult, title: DraftSectionTitle) {
   return result.sections.find((section) => section.title === title);
@@ -110,6 +132,14 @@ export default function App() {
   const lockedBrief = useMemo(
     () => (result ? buildLockedBrief(result, selectedDecisionOptions) : null),
     [selectedDecisionOptions, result]
+  );
+  const auditScreenName = useMemo(
+    () => getAuditScreenName(screen, result, activeTicketId),
+    [activeTicketId, result, screen]
+  );
+  const auditWidgetDeps = useMemo(
+    () => createAuditWidgetDeps(auditScreenName),
+    [auditScreenName]
   );
 
   if (!fontsLoaded) {
@@ -750,6 +780,11 @@ export default function App() {
         {screen === 'newBrief' ? renderNewBriefFlow() : null}
         {screen === 'mentor' ? renderMentorFlow() : null}
         {screen === 'savedBrief' ? renderSavedBrief() : null}
+        <AuditWidgetHost
+          deps={auditWidgetDeps}
+          appName="Nokta Game Pitch"
+          initialPosition={{ bottom: 94, right: 18 }}
+        />
       </SafeAreaView>
     </SafeAreaProvider>
   );
