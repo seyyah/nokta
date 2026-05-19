@@ -658,6 +658,7 @@ export default function App() {
             title="Feature Creep Warnings"
             items={featureCreepActionItems(result)}
             helperText="Each warning is phrased as a decision the customer-developer can hand to the agent."
+            bulletColor={palette.success}
           />
         </View>
 
