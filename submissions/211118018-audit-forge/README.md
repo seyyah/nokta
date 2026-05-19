@@ -13,9 +13,15 @@ Audit-Forge Mission (Track A — Sadelik): Dot Capture host uygulamasına [`@xta
 
 ## Expo (QR / link)
 
-- **Expo Go linki:** `exp://10.229.111.249:8081` (LAN; `npx expo start` ile güncel oturumdan alın)
-- **QR:** Expo terminal çıktısındaki QR ile aynı oturum
+- **Expo Go linki:** `npx expo start` çıktısındaki `exp://…` (LAN IP değişebilir)
+- **QR:** Aynı oturumdaki terminal QR
 - Okul ağında sorun: `npx expo start --tunnel`
+
+### Audit FAB hızlı test
+
+1. Ham fikir → scroll → **Sorulara geç** FAB altında kalmamalı (forge cycle 1).
+2. Sağ alttaki audit FAB → ekran görüntüsü + not → rapor dışa aktar.
+3. Mühendislik sorularında chip helper metni okunur olmalı (forge cycle 2).
 
 ```bash
 cd submissions/211118018-audit-forge/app
