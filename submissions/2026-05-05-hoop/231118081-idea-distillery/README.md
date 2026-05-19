@@ -212,10 +212,10 @@ The Expo slug stays `nokta-draft-231118081` to keep the existing EAS project id.
 The visible app name is **Nokta Game Pitch**.
 
 Latest Android EAS build:
-https://expo.dev/accounts/samsun081/projects/nokta-draft-231118081/builds/2f148b4b-fb2b-4f63-ad15-fb9b9c65ee2f
+https://expo.dev/accounts/samsun081/projects/nokta-draft-231118081/builds/81d8c52a-f728-41b2-a2d8-9cf7027e4558
 
 Latest APK artifact:
-https://expo.dev/artifacts/eas/6PcbMPpqVnkvEdx6fqiddx.apk
+https://expo.dev/artifacts/eas/h2YtVctehFqg89a4Bzcbeo.apk
 
 ## 60 Second Demo
 
