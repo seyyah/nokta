@@ -536,6 +536,7 @@ export default function App() {
           title={`Prototype Readiness: ${result.readiness.status}`}
           items={result.readiness.rationale}
           helperText={`${result.readiness.mode} decides whether saving creates a mentor ticket.`}
+          bulletColor={palette.success}
         />
 
         <DraftSectionCard

@@ -9,6 +9,7 @@ type DraftSectionCardProps = {
   actionLabel?: string;
   onAction?: () => void;
   tone?: SectionTone;
+  bulletColor?: string;
   compact?: boolean;
 };
 
@@ -19,6 +20,7 @@ export function DraftSectionCard({
   actionLabel,
   onAction,
   tone = 'default',
+  bulletColor,
   compact = false,
 }: DraftSectionCardProps) {
   return (
@@ -41,7 +43,7 @@ export function DraftSectionCard({
       <View style={styles.list}>
         {items.map((item) => (
           <View key={item} style={styles.itemRow}>
-            <View style={styles.bullet} />
+            <View style={[styles.bullet, bulletColor ? { backgroundColor: bulletColor } : undefined]} />
             <Text style={styles.itemText}>{item}</Text>
           </View>
         ))}
