@@ -647,6 +647,7 @@ export default function App() {
             title="Scope Boundary"
             items={sectionItems(result, 'Scope Boundary')}
             helperText="The cut line between prototype and future wishlist."
+            bulletColor={palette.rust}
             tone="muted"
           />
         </View>
