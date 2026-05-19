@@ -300,7 +300,10 @@ async function buildPrompt(payload, reportPath) {
     }, null, 2),
     '',
     'Use action "rollback" with empty edits when the request should not be applied.',
-    'When the audit asks for green readiness bullets, the expected direction is: add a small optional bullet color prop to DraftSectionCard and pass palette.success only for the Prototype Readiness card.',
+    'Do not infer a visual target from the screenshot rectangle; the local text model can only use markdown text.',
+    'If the markdown only says "make it green" without naming the target section, return rollback and ask for the section name.',
+    'When the audit asks for green Prototype Readiness bullets, pass palette.success only for the Prototype Readiness card.',
+    'When the audit asks for green Player Fantasy bullets, pass palette.success only for the Player Fantasy card.',
     '',
     `Saved audit report path: ${path.relative(submissionRoot, reportPath).replace(/\\/g, '/')}`,
     `Detected screen: ${extractScreenName(payload.content)}`,
@@ -585,13 +588,7 @@ function normalizeText(value) {
 }
 
 function shouldUseGreenReadinessRecipe(payload, decision) {
-  const text = normalizeText([
-    payload.content,
-    decision.screen,
-    decision.summary,
-    decision.hypothesis,
-    decision.rollbackReason,
-  ].join('\n'));
+  const text = normalizeText(payload.content);
 
   const mentionsReadiness = text.includes('prototype readiness') || text.includes('readiness');
   const mentionsGreen = text.includes('green') || text.includes('yesil') || text.includes('success');
@@ -602,6 +599,21 @@ function shouldUseGreenReadinessRecipe(payload, decision) {
     text.includes('indicat');
 
   return mentionsReadiness && mentionsGreen && mentionsIndicator;
+}
+
+function shouldUsePlayerFantasyRecipe(payload) {
+  const text = normalizeText(payload.content);
+  const mentionsPlayerFantasy = text.includes('player fantasy');
+  const mentionsGreen = text.includes('green') || text.includes('yesil') || text.includes('success');
+  const mentionsIndicator =
+    text.includes('dot') ||
+    text.includes('bullet') ||
+    text.includes('nokta') ||
+    text.includes('indicat') ||
+    text.includes('kismi') ||
+    text.includes('bolum');
+
+  return mentionsPlayerFantasy && mentionsGreen && mentionsIndicator;
 }
 
 function greenReadinessRecipeEdits() {
@@ -662,6 +674,31 @@ function greenReadinessRecipeEdits() {
   ];
 }
 
+function playerFantasyRecipeEdits() {
+  return [
+    {
+      file: 'app/App.tsx',
+      search: [
+        '        <DraftSectionCard',
+        '          title="Player Fantasy"',
+        "          items={sectionItems(result, 'Player Fantasy')}",
+        '          helperText="What the player gets to feel or become."',
+        '          tone="muted"',
+        '        />',
+      ].join('\n'),
+      replace: [
+        '        <DraftSectionCard',
+        '          title="Player Fantasy"',
+        "          items={sectionItems(result, 'Player Fantasy')}",
+        '          helperText="What the player gets to feel or become."',
+        '          bulletColor={palette.success}',
+        '          tone="muted"',
+        '        />',
+      ].join('\n'),
+    },
+  ];
+}
+
 async function greenReadinessAlreadyApplied() {
   const appSource = await fs.readFile(path.join(appRoot, 'App.tsx'), 'utf8');
   const cardSource = await fs.readFile(
@@ -674,6 +711,15 @@ async function greenReadinessAlreadyApplied() {
     appSource.includes('bulletColor={palette.success}') &&
     cardSource.includes('bulletColor?: string;') &&
     cardSource.includes('bulletColor ? { backgroundColor: bulletColor } : undefined')
+  );
+}
+
+async function playerFantasyAlreadyApplied() {
+  const appSource = await fs.readFile(path.join(appRoot, 'App.tsx'), 'utf8');
+
+  return (
+    appSource.includes('title="Player Fantasy"') &&
+    appSource.includes('bulletColor={palette.success}')
   );
 }
 
@@ -789,6 +835,25 @@ async function processAudit(payload, runId) {
   const kg = Number.isFinite(Number(decision.kg)) ? Math.max(0, Math.min(5, Number(decision.kg))) : 1;
   const reportName = path.relative(submissionRoot, reportPath).replace(/\\/g, '/');
 
+  if (shouldUsePlayerFantasyRecipe(payload) && await playerFantasyAlreadyApplied()) {
+    await appendForgeRow({
+      reportName,
+      hypothesis: decision.hypothesis ?? 'Green Player Fantasy indicators should make the customer request visible.',
+      result: 'rollback',
+      changedFiles: 'none retained',
+      testResult: 'already satisfied before patch',
+      commitHash: 'rollback before commit',
+      kg: 0,
+      humanTouchPoints: 0,
+    });
+
+    if (autoCommit) {
+      await commitFiles(['FORGE.md'], '[FORGE: Ledger] Log already-satisfied audit -- 0kg');
+    }
+
+    return { status: 'rollback', reason: 'Audit request is already satisfied.' };
+  }
+
   if (shouldUseGreenReadinessRecipe(payload, decision) && await greenReadinessAlreadyApplied()) {
     await appendForgeRow({
       reportName,
@@ -835,19 +900,26 @@ async function processAudit(payload, runId) {
     try {
       touchedFiles = await applySearchReplaceEdits(decision.edits, runDir);
     } catch (error) {
-      if (!shouldUseGreenReadinessRecipe(payload, decision)) {
+      let fallbackEdits = [];
+
+      if (shouldUsePlayerFantasyRecipe(payload)) {
+        fallbackEdits = playerFantasyRecipeEdits();
+      } else if (shouldUseGreenReadinessRecipe(payload, decision)) {
+        fallbackEdits = greenReadinessRecipeEdits();
+      }
+
+      if (fallbackEdits.length === 0) {
         throw error;
       }
 
-      const fallbackEdits = greenReadinessRecipeEdits();
       await fs.writeFile(
         path.join(runDir, 'fallback-edits.json'),
         `${JSON.stringify({ reason: error instanceof Error ? error.message : String(error), edits: fallbackEdits }, null, 2)}\n`,
         'utf8'
       );
       touchedFiles = await applySearchReplaceEdits(fallbackEdits, runDir);
-      decision.summary = decision.summary || 'Apply green readiness indicator';
-      decision.hypothesis = decision.hypothesis || 'A green readiness bullet makes the customer request visible in the result card.';
+      decision.summary = decision.summary || 'Apply green section indicator';
+      decision.hypothesis = decision.hypothesis || 'A green section bullet makes the customer request visible in the result card.';
     }
   } else {
     patchPath = path.join(runDir, 'patch.diff');

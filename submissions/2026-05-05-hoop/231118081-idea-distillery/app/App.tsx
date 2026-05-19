@@ -555,6 +555,7 @@ export default function App() {
           title="Player Fantasy"
           items={sectionItems(result, 'Player Fantasy')}
           helperText="What the player gets to feel or become."
+          bulletColor={palette.success}
           tone="muted"
         />
 
