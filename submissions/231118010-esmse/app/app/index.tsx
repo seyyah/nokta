@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Dimensions, ActivityIndicator, ScrollView } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Dimensions, ActivityIndicator, ScrollView, SafeAreaView } from 'react-native';
+import * as Speech from 'expo-speech';
+import NoktaAvatar, { MascotState } from '../components/NoktaAvatar';
 
 const { width, height } = Dimensions.get('window');
 
@@ -13,6 +15,26 @@ export default function MindSynapse() {
   const [nodes, setNodes] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+
+  const [mascotState, setMascotState] = useState<MascotState>('idle');
+  const idleTimer = useRef<NodeJS.Timeout | null>(null);
+
+  const resetIdleTimer = () => {
+    if (idleTimer.current) clearTimeout(idleTimer.current);
+    if (mascotState === 'sleep') setMascotState('idle');
+    
+    idleTimer.current = setTimeout(() => {
+      setMascotState('sleep');
+    }, 10000);
+  };
+
+  useEffect(() => {
+    resetIdleTimer();
+    return () => {
+      if (idleTimer.current) clearTimeout(idleTimer.current);
+      Speech.stop();
+    };
+  }, []);
 
   // ADIM 1: Fikri alıp AI'dan 5 spesifik soru istemek
   const askContextualQuestion = async () => {
@@ -50,6 +72,11 @@ Bu fikri geliştirmek ve sağlam bir zihin haritası oluşturmak için kullanıc
         setAiQuestions(parsed.slice(0, 5));
         setUserAnswers(['', '', '', '', '']);
         setStep(2);
+        
+        Speech.stop();
+        setMascotState('idle');
+        const questionText = "Harika fikir! Senin için 5 kritik soru hazırladım. " + parsed.slice(0, 5).join(". ");
+        Speech.speak(questionText, { language: 'tr-TR' });
       } else {
         throw new Error("Yapay zeka geçerli bir 5'li soru formatı üretemedi.");
       }
@@ -69,6 +96,12 @@ Bu fikri geliştirmek ve sağlam bir zihin haritası oluşturmak için kullanıc
     const newAnswers = [...userAnswers];
     newAnswers[index] = text;
     setUserAnswers(newAnswers);
+    resetIdleTimer();
+  };
+
+  const handleMainNodeChange = (text: string) => {
+    setMainNode(text);
+    resetIdleTimer();
   };
 
   // ADIM 2: Kullanıcının cevaplarına göre haritayı (Sinir Ağını) üretmek
@@ -115,6 +148,10 @@ Lütfen SADECE bu bağlama ve kullanıcının cevaplarına GÖRE fikri çok daha
       if (Array.isArray(parsedNodes) && parsedNodes.length >= 5) {
         setNodes(parsedNodes.slice(0, 5));
         setStep(3);
+        
+        Speech.stop();
+        setMascotState('love');
+        Speech.speak("Sinir ağı başarıyla kuruldu. Fikrin artık çok daha güçlü!", { language: 'tr-TR', onDone: () => setMascotState('idle') });
       } else {
         throw new Error("Yapay zeka geçerli bir 5'li harita formatı üretemedi.");
       }
@@ -178,7 +215,10 @@ Lütfen SADECE bu bağlama ve kullanıcının cevaplarına GÖRE fikri çok daha
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.avatarWrapper}>
+        <NoktaAvatar state={mascotState} onStateChange={setMascotState} />
+      </View>
       {loading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#A855F7" />
@@ -207,7 +247,7 @@ Lütfen SADECE bu bağlama ve kullanıcının cevaplarına GÖRE fikri çok daha
                 placeholder="Aklındaki kök fikri yaz (Örn: Yürüyen Uçak)"
                 placeholderTextColor="rgba(255,255,255,0.4)"
                 value={mainNode}
-                onChangeText={setMainNode}
+                onChangeText={handleMainNodeChange}
               />
               <TouchableOpacity style={styles.button} onPress={askContextualQuestion}>
                 <Text style={styles.buttonText}>FİKRİ SORGULA</Text>
@@ -258,7 +298,7 @@ Lütfen SADECE bu bağlama ve kullanıcının cevaplarına GÖRE fikri çok daha
           )}
         </>
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -266,8 +306,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#0B0B13',
-    justifyContent: 'center',
     alignItems: 'center',
+  },
+  avatarWrapper: {
+    marginTop: 20,
+    marginBottom: 20,
+    height: 120,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10,
   },
   loadingContainer: {
     justifyContent: 'center',
