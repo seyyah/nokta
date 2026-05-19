@@ -43,6 +43,45 @@ function withResolvedAuditTargets(notes: unknown[]) {
   });
 }
 
+function inlineNoteText(value: unknown) {
+  return typeof value === 'string' ? value.replace(/\s*\n\s*/g, ' ').trim() : '';
+}
+
+async function withResolvedMarkdownTargets(content: string) {
+  if (!resolveAuditTarget) {
+    return content;
+  }
+
+  const raw = await AsyncStorage.getItem(AUDIT_STORAGE_KEY);
+
+  if (!raw) {
+    return content;
+  }
+
+  try {
+    const parsed: unknown = JSON.parse(raw);
+
+    if (!Array.isArray(parsed)) {
+      return content;
+    }
+
+    const resolved = withResolvedAuditTargets(parsed);
+
+    return parsed.reduce((markdown, note, index) => {
+      const originalNote = inlineNoteText((note as { note?: unknown } | null)?.note);
+      const resolvedNote = inlineNoteText((resolved[index] as { note?: unknown } | null)?.note);
+
+      if (!originalNote || !resolvedNote || originalNote === resolvedNote) {
+        return markdown;
+      }
+
+      return markdown.replace(`— ${originalNote}`, `— ${resolvedNote}`);
+    }, content);
+  } catch {
+    return content;
+  }
+}
+
 const auditStorage: AuditStorage = {
   async loadNotes() {
     const raw = await AsyncStorage.getItem(AUDIT_STORAGE_KEY);
@@ -82,12 +121,16 @@ async function ensureReportDirectory() {
 async function writeAuditFile(filename: string, content: string) {
   const reportDirectory = await ensureReportDirectory();
   const fileUri = `${reportDirectory}${sanitizeFileName(filename)}`;
-  await FileSystem.writeAsStringAsync(fileUri, content, {
+  const finalContent = filename.toLowerCase().endsWith('.md')
+    ? await withResolvedMarkdownTargets(content)
+    : content;
+
+  await FileSystem.writeAsStringAsync(fileUri, finalContent, {
     encoding: FileSystem.EncodingType.UTF8,
   });
 
   if (filename.toLowerCase().endsWith('.md')) {
-    void sendAuditReportToForge(filename, content, fileUri);
+    void sendAuditReportToForge(filename, finalContent, fileUri);
   }
 
   return fileUri;

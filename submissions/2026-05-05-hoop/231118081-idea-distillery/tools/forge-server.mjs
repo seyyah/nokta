@@ -1007,6 +1007,18 @@ async function processAudit(payload, runId) {
           diff: '',
           rollbackReason: '',
         }
+      : deterministicColor && !deterministicTarget
+        ? {
+            action: 'rollback',
+            screen: extractScreenName(payload.content),
+            summary: `Missing section target for ${deterministicColor.label} color change`,
+            hypothesis: 'A color change needs a named or resolved target section before code can be changed safely.',
+            kg: 0,
+            testCommand: 'npm run typecheck',
+            edits: [],
+            diff: '',
+            rollbackReason: 'Color was requested, but the audit report did not include a target section.',
+          }
       : await (async () => {
           const prompt = await buildPrompt(payload, reportPath);
           await fs.writeFile(path.join(runDir, 'prompt.txt'), prompt, 'utf8');
