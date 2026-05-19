@@ -49,8 +49,8 @@ Widget kaldırıldığında uygulama akışı (idea → questions → spec) çal
 
 ## Human touch points
 
-- **Toplam: 4** (FORGE.md cycle tablosunda döküldü)
-- Scroll/buton doğrulama, helper metin onayı, rollback kararı, demo kaydı
+- **Toplam: 5** (FORGE.md cycle tablosunda döküldü)
+- Scroll/buton doğrulama, helper metin onayı, rollback kararı, spec CTA kontrast doğrulama, demo kaydı
 
 ## AI tool log
 

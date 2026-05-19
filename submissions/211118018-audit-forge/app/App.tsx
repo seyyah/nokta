@@ -543,7 +543,7 @@ export default function App() {
                 </TouchableOpacity>
               </View>
             )}
-            <View style={styles.footerActions}>
+            <View style={[styles.footerActions, styles.specFooterActions]}>
               <TouchableOpacity style={styles.secondaryButton} onPress={() => setScreen("questions")} activeOpacity={0.9}>
                 <Text style={styles.secondaryButtonText}>Geri</Text>
               </TouchableOpacity>
@@ -562,9 +562,10 @@ export default function App() {
                 }}
                 activeOpacity={0.9}
               >
-                <Text style={styles.buttonText}>Yeni fikir</Text>
+                <Text style={styles.specPrimaryButtonText}>Yeni fikir</Text>
               </TouchableOpacity>
             </View>
+            <View style={styles.specScrollSpacer} />
           </View>
         )}
 
@@ -860,5 +861,16 @@ const styles = StyleSheet.create({
     color: "rgba(255,255,255,0.72)",
     fontSize: 14,
     fontWeight: "700",
+  },
+  specFooterActions: {
+    marginTop: 10,
+  },
+  specScrollSpacer: {
+    height: 20,
+  },
+  specPrimaryButtonText: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "800",
   },
 });
