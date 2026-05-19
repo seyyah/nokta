@@ -94,6 +94,6 @@ EAS artifact linki: *(build sonrası eklenecek)*
 - [x] `app/` altında çalışır Expo projesi + audit widget mount
 - [x] `audit-reports/` altında 3 burn-in'li `.md` rapor
 - [x] `FORGE.md` ledger: 3 başarılı + 1 rollback cycle
-- [ ] `app-release.apk` — EAS build gerekiyor (bkz. yukarıdaki adımlar)
+- [x] `app-release.apk` — EAS build `ed7eec96` (62.8 MB)
 - [x] Decision log + human touch points + AI tool log README'de
 - [x] Root dizine dokunulmadı
