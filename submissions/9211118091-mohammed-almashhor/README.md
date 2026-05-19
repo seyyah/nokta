@@ -1,7 +1,7 @@
-Track: A
+Track: B
 # Nokta: Dot Capture & Enrich 🚀
 
-Nokta Dot Capture & Enrich, yazılımcıların ve vizyonerlerin rastgele fikirlerini ("noktalarını") alıp, akıllı mühendislik sorularıyla besleyerek profesyonel bir ürün spesifikasyonuna (Artifact) dönüştürdüğü **Track A** teslimatımdır.
+Nokta Dot Capture & Enrich, yazılımcıların ve vizyonerlerin rastgele fikirlerini ("noktalarını") alıp, akıllı mühendislik sorularıyla besleyerek profesyonel bir ürün spesifikasyonuna dönüştürdüğü ve ardından interaktif maskot ile sohbet edilebilen **Track B** teslimatımdır.
 
 ## 🚀 Teknolojiler ve Mimari
 Projemiz tepeden tırnağa modern standartlarda, profesyonel bir altyapı ile geliştirilmiştir:
@@ -16,17 +16,17 @@ Projenin temel amacı, "fikrin değersizleşmesi enflasyonu" problemine karşı 
 
 **Özellikler:**
 - **Fikir Yakalama (Dot Capture):** Aklınıza gelen ham fikri tek kelime ile sisteme girin.
-- **AI Engineering Soruları:** Sistem size anında "Problem nedir?", "Kullanıcı kimdir?", "Kapsam nedir?" gibi kritik doneler sorar.
-- **Otomatik Spesifikasyon Çıktısı (Spec Artifact):** Verdiğiniz yanıtlara göre `idea.md` felsefesine sıkı sıkıya bağlı kalarak tek sayfalık bir ürün şablonu (Golden Spec) üretir.
-- **Mascot Entegrasyonu 🤖:** Kullanıcıyı yönlendiren sevimli bir robot maskot arayüze entegre edildi.
-- **Audit Özelliği 👾:** Geliştirici ve testçi arasındaki köprüyü kuran, `nokta-audit` tabanlı ekran görüntüsü ve hata raporlama aracı (AuditWidget) eklendi.
+- **AI Engineering Soruları:** Sistem size anında kritik doneler sorar.
+- **Otomatik Spesifikasyon Çıktısı (Spec Artifact):** Tek sayfalık bir ürün şablonu üretir.
+- **Mascot & Sohbet (Track B Özelliği) 🤖:** Custom animasyonlu maskot ve Spec sonrası Grok destekli Q&A modülü eklendi (`IDEA.md`).
+- **Audit Özelliği 👾:** `nokta-audit` tabanlı ekran görüntüsü ve hata raporlama aracı.
 
 ## ⚙️ Nasıl Çalıştırılır? (Installation & Run)
 Projeyi yerel ortamınızda çalıştırmak için aşağıdaki adımları izleyin:
 
 ### 1. Gereksinimler
 - Node.js (LTS sürümü önerilir)
-- Expo Go (Mobil cihazınızda, SDK 55 uyumlu)
+- Expo Go veya https://expo.dev (Mobil cihazınızda test etmek için)
 
 ### 2. Kurulum
 ```bash

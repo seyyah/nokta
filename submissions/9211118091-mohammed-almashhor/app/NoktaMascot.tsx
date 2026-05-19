@@ -1,14 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, StyleSheet, Text, View } from 'react-native';
+import { Animated, StyleSheet, View } from 'react-native';
 
-export type MascotEmotion = 'idle' | 'thinking' | 'done' | 'error';
-
-const EMOTIONS: Record<MascotEmotion, { emoji: string; label?: string; color: string }> = {
-  idle:     { emoji: '🤖', color: '#6c47ff' },
-  thinking: { emoji: '🤔', color: '#4a9eff' },
-  done:     { emoji: '🎉', color: '#4caf50' },
-  error:    { emoji: '😰', color: '#ff6b6b' },
-};
+export type MascotEmotion = 'idle' | 'thinking' | 'done' | 'error' | 'speaking';
 
 interface Props {
   emotion: MascotEmotion;
@@ -17,53 +10,47 @@ interface Props {
 
 export default function NoktaMascot({ emotion, size = 28 }: Props) {
   const translateY = useRef(new Animated.Value(0)).current;
-  const opacity    = useRef(new Animated.Value(1)).current;
-  const scale      = useRef(new Animated.Value(1)).current;
-  const translateX = useRef(new Animated.Value(0)).current;
+  const mouthScaleY = useRef(new Animated.Value(1)).current;
+  const eyeScaleY = useRef(new Animated.Value(1)).current;
 
   const animRef = useRef<Animated.CompositeAnimation | null>(null);
+  const speakRef = useRef<Animated.CompositeAnimation | null>(null);
 
+  // Main body animation
   useEffect(() => {
     animRef.current?.stop();
+    translateY.setValue(0);
+    eyeScaleY.setValue(1);
 
-    if (emotion === 'idle') {
+    if (emotion === 'idle' || emotion === 'speaking') {
       animRef.current = Animated.loop(
         Animated.sequence([
-          Animated.timing(translateY, { toValue: -4, duration: 900, useNativeDriver: true }),
-          Animated.timing(translateY, { toValue:  4, duration: 900, useNativeDriver: true }),
+          Animated.timing(translateY, { toValue: -2, duration: 1000, useNativeDriver: true }),
+          Animated.timing(translateY, { toValue: 2, duration: 1000, useNativeDriver: true }),
         ])
       );
       animRef.current.start();
-
     } else if (emotion === 'thinking') {
-      translateY.setValue(0);
+      // Squint eyes
+      eyeScaleY.setValue(0.2);
       animRef.current = Animated.loop(
         Animated.sequence([
-          Animated.timing(opacity, { toValue: 0.4, duration: 500, useNativeDriver: true }),
-          Animated.timing(opacity, { toValue: 1.0, duration: 500, useNativeDriver: true }),
+          Animated.timing(translateY, { toValue: -1, duration: 400, useNativeDriver: true }),
+          Animated.timing(translateY, { toValue: 1, duration: 400, useNativeDriver: true }),
         ])
       );
       animRef.current.start();
-
     } else if (emotion === 'done') {
-      translateY.setValue(0);
-      opacity.setValue(1);
       animRef.current = Animated.sequence([
-        Animated.timing(scale, { toValue: 1.35, duration: 180, useNativeDriver: true }),
-        Animated.timing(scale, { toValue: 0.90, duration: 120, useNativeDriver: true }),
-        Animated.timing(scale, { toValue: 1.10, duration: 100, useNativeDriver: true }),
-        Animated.timing(scale, { toValue: 1.00, duration: 80,  useNativeDriver: true }),
+        Animated.timing(translateY, { toValue: -8, duration: 200, useNativeDriver: true }),
+        Animated.timing(translateY, { toValue: 0, duration: 200, useNativeDriver: true }),
       ]);
       animRef.current.start();
-
     } else if (emotion === 'error') {
-      translateY.setValue(0);
-      opacity.setValue(1);
-      scale.setValue(1);
-      const shake = (val: number) =>
-        Animated.timing(translateX, { toValue: val, duration: 60, useNativeDriver: true });
       animRef.current = Animated.sequence([
-        shake(6), shake(-6), shake(4), shake(-4), shake(2), shake(-2), shake(0),
+        Animated.timing(translateY, { toValue: 5, duration: 100, useNativeDriver: true }),
+        Animated.timing(translateY, { toValue: -5, duration: 100, useNativeDriver: true }),
+        Animated.timing(translateY, { toValue: 0, duration: 100, useNativeDriver: true }),
       ]);
       animRef.current.start();
     }
@@ -71,22 +58,75 @@ export default function NoktaMascot({ emotion, size = 28 }: Props) {
     return () => { animRef.current?.stop(); };
   }, [emotion]);
 
-  const { emoji, color } = EMOTIONS[emotion];
+  // Mouth animation
+  useEffect(() => {
+    speakRef.current?.stop();
+    if (emotion === 'speaking') {
+      speakRef.current = Animated.loop(
+        Animated.sequence([
+          Animated.timing(mouthScaleY, { toValue: 3.5, duration: 150, useNativeDriver: true }),
+          Animated.timing(mouthScaleY, { toValue: 0.5, duration: 150, useNativeDriver: true }),
+          Animated.timing(mouthScaleY, { toValue: 2, duration: 100, useNativeDriver: true }),
+          Animated.timing(mouthScaleY, { toValue: 1, duration: 150, useNativeDriver: true }),
+        ])
+      );
+      speakRef.current.start();
+    } else if (emotion === 'thinking') {
+      mouthScaleY.setValue(0.3);
+    } else if (emotion === 'done') {
+      mouthScaleY.setValue(2);
+    } else {
+      mouthScaleY.setValue(1);
+    }
+    return () => { speakRef.current?.stop(); };
+  }, [emotion]);
+
+  const primaryColor = emotion === 'error' ? '#ff6b6b' : (emotion === 'done' ? '#4caf50' : '#A882FF');
+  const headSize = size * 1.2;
 
   return (
-    <View style={styles.wrapper}>
-      <Animated.Text
-        style={[
-          { fontSize: size, marginRight: 8 },
-          { transform: [{ translateY }, { scale }, { translateX }], opacity },
-        ]}
-      >
-        {emoji}
-      </Animated.Text>
+    <View style={[styles.wrapper, { width: headSize, height: headSize, marginRight: 8 }]}>
+      <Animated.View style={[styles.head, { backgroundColor: primaryColor, transform: [{ translateY }] }]}>
+        <View style={styles.eyesRow}>
+          <Animated.View style={[styles.eye, { transform: [{ scaleY: eyeScaleY }] }]} />
+          <Animated.View style={[styles.eye, { transform: [{ scaleY: eyeScaleY }] }]} />
+        </View>
+        <Animated.View style={[styles.mouth, { transform: [{ scaleY: mouthScaleY }] }]} />
+      </Animated.View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   wrapper: { alignItems: 'center', justifyContent: 'center' },
+  head: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: '15%',
+    shadowColor: '#A882FF',
+    shadowOpacity: 0.6,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  eyesRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '50%',
+    marginBottom: '15%',
+  },
+  eye: {
+    width: '25%',
+    aspectRatio: 1,
+    backgroundColor: '#0F0F14',
+    borderRadius: 10,
+  },
+  mouth: {
+    width: '40%',
+    height: '10%',
+    backgroundColor: '#0F0F14',
+    borderRadius: 5,
+  },
 });

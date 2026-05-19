@@ -12,6 +12,7 @@ const fs = FileSystem as any;
 type Phase = 'DOT_CAPTURE' | 'SLOP_CHECK' | 'ENGINEERING_PROBE' | 'ARTIFACT' | 'HISTORY';
 
 interface HistoryItem { id: string; idea: string; score: number; date: string; }
+interface ChatMessage { role: 'user' | 'ai'; text: string; }
 
 const getScoreColor = (score: number) => {
   if (score >= 80) return '#00FF9D'; // Neon Green
@@ -33,6 +34,9 @@ export default function App() {
   const [probes, setProbes] = useState<Array<{id: string, label: string, hint: string}>>([]);
   const [groqKey, setGroqKey] = useState('');
   const [isLlmLoading, setIsLlmLoading] = useState(false);
+  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
+  const [chatInput, setChatInput] = useState('');
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
   useEffect(() => {
     try {
@@ -168,11 +172,53 @@ Example format: [{"id": "problem", "label": "💥 CORE FRICTION", "hint": "Why d
     setProbeIndex(0);
     setAnswers({});
     setSlopMetric(0);
+    setChatHistory([]);
+  };
+
+  const handleChatSubmit = async () => {
+    if (!chatInput.trim()) return;
+    const userQ = chatInput.trim();
+    setChatInput('');
+    const newHistory: ChatMessage[] = [...chatHistory, { role: 'user', text: userQ }];
+    setChatHistory(newHistory);
+    
+    setIsSpeaking(true);
+    try {
+      if (groqKey) {
+        const context = `You are Nokta, a brutal engineering architect. Idea: "${ideaDot}". Context constraints: ${JSON.stringify(answers)}. Answer the question briefly and technically. Keep it under 2 paragraphs.`;
+        const messages = [
+          { role: 'system', content: context },
+          ...newHistory.map(m => ({ role: m.role === 'ai' ? 'assistant' : 'user', content: m.text }))
+        ];
+        
+        const response = await fetch('https://api.x.ai/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${groqKey}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ model: 'grok-beta', messages, temperature: 0.7 })
+        });
+        const data = await response.json();
+        if (data.choices && data.choices[0] && data.choices[0].message) {
+           setChatHistory([...newHistory, { role: 'ai', text: data.choices[0].message.content.trim() }]);
+        } else {
+           setChatHistory([...newHistory, { role: 'ai', text: "API Error. Check key or rate limits." }]);
+        }
+      } else {
+         setTimeout(() => {
+           setChatHistory([...newHistory, { role: 'ai', text: "Please enter your xAI Grok Key on the first screen to enable Live AI Q&A." }]);
+         }, 800);
+      }
+    } catch(e) {
+      setChatHistory([...newHistory, { role: 'ai', text: "Connection error." }]);
+    }
+    
+    setTimeout(() => setIsSpeaking(false), 3000);
   };
 
   const getMascotEmotion = (): MascotEmotion => {
+    if (isSpeaking) return 'speaking';
     if (phase === 'SLOP_CHECK') return 'thinking';
-    if (phase === 'ARTIFACT') return 'done';
+    if (phase === 'ARTIFACT' && chatHistory.length === 0) return 'done';
+    if (phase === 'ARTIFACT') return 'idle';
     return isLlmLoading ? 'thinking' : 'idle';
   };
 
@@ -393,6 +439,28 @@ Example format: [{"id": "problem", "label": "💥 CORE FRICTION", "hint": "Why d
             </View>
           </View>
 
+          <View style={styles.artifactSection}>
+            <Text style={styles.artifactSecLabel}>[5] Q&A WITH NOKTA</Text>
+            {chatHistory.map((msg, i) => (
+              <View key={i} style={[styles.chatBubble, msg.role === 'user' ? styles.chatUser : styles.chatAi]}>
+                <Text style={{color: '#fff', fontSize: 13}}>{msg.text}</Text>
+              </View>
+            ))}
+            {isSpeaking && <Text style={{color: '#A882FF', fontSize: 12, marginBottom: 10, fontStyle: 'italic'}}>Nokta is speaking...</Text>}
+            <View style={{flexDirection: 'row', marginTop: 10}}>
+              <TextInput 
+                style={[styles.probeInput, {flex: 1, minHeight: 50, marginBottom: 0, padding: 10, paddingVertical: 10}]}
+                placeholder="Ask about architecture..."
+                placeholderTextColor="#666"
+                value={chatInput}
+                onChangeText={setChatInput}
+              />
+              <TouchableOpacity style={[styles.btnTrigger, {paddingVertical: 0, paddingHorizontal: 20, marginLeft: 10, justifyContent: 'center'}]} onPress={handleChatSubmit}>
+                <Text style={styles.btnText}>ASK</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
           <TouchableOpacity style={styles.btnOutline} onPress={restartProcess}>
             <Text style={styles.btnOutlineText}>COMMENCE NEW CYCLE</Text>
           </TouchableOpacity>
@@ -491,4 +559,8 @@ const styles = StyleSheet.create({
   mindmapTextNode: { color: '#E0E0E5', fontWeight: '600', fontSize: 10, letterSpacing: 0.5, marginBottom: 4 },
   mindmapTextAction: { color: '#A882FF', fontWeight: '600', fontSize: 10, letterSpacing: 0.5 },
   mindmapDescNode: { color: '#888896', fontSize: 10, textAlign: 'center' },
+  
+  chatBubble: { padding: 12, borderRadius: 12, marginBottom: 10, maxWidth: '90%' },
+  chatUser: { backgroundColor: '#3A3A4A', alignSelf: 'flex-end', borderBottomRightRadius: 2 },
+  chatAi: { backgroundColor: '#7A32DD', alignSelf: 'flex-start', borderBottomLeftRadius: 2 }
 });
