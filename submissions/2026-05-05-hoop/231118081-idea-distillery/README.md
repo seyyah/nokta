@@ -170,11 +170,11 @@ https://expo.dev/accounts/samsun081/projects/nokta-draft-231118081
 The Expo slug stays `nokta-draft-231118081` to keep the existing EAS project id.
 The visible app name is **Nokta Game Pitch**.
 
-Last Android EAS build from the previous app version:
-https://expo.dev/accounts/samsun081/projects/nokta-draft-231118081/builds/97fccce6-b3a6-4b04-9ce6-95e642046dbb
+Latest Android EAS build:
+https://expo.dev/accounts/samsun081/projects/nokta-draft-231118081/builds/2f148b4b-fb2b-4f63-ad15-fb9b9c65ee2f
 
-Last APK artifact:
-https://expo.dev/artifacts/eas/jLxLCw4QzEcd9LhktoM1Pe.apk
+Latest APK artifact:
+https://expo.dev/artifacts/eas/6PcbMPpqVnkvEdx6fqiddx.apk
 
 ## 60 Second Demo
 
@@ -186,6 +186,8 @@ https://youtube.com/shorts/jtwFCBSASho?feature=share
 APK file in submission:
 
 `submissions/2026-05-05-hoop/231118081-idea-distillery/app-release.apk`
+
+This APK was rebuilt on 2026-05-19 after adding the audit native dependencies.
 
 ## Decision Log
 
@@ -212,5 +214,5 @@ APK file in submission:
 
 - Audit exports are local files shared from the device; there is no backend.
 - Mentor connection is an in-app review queue, not a real video call.
-- The committed APK path exists, but a fresh EAS build should be produced after
-  native audit dependencies are added.
+- The EAS build was run from an app-only temporary copy so the monorepo's other
+  submission folders were not uploaded into the build archive.
