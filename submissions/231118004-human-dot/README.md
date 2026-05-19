@@ -79,12 +79,14 @@ Bu hafta eklenen **Human-in-the-Loop** mimarisiyle spec tamamlanınca gerçek bi
 
 ---
 
-## Checklist
+## Teslim Öncesi Self-Check (Checklist)
 
-- [x] Yalnızca `submissions/231118004-human-dot/` altında değişiklik yaptım
-- [x] README'de Expo QR link var
-- [x] README'de 60 sn demo video linki var
-- [x] `app-release.apk` klasörde mevcut
-- [x] README'de decision log yazdım
-- [x] Track seçimim README'de net
-- [x] `audit-reports` klasöründe en az 3 adet `.md` formatında hata raporu bulunuyor
+- [x] `README.md` ilk satırında Track: B var
+- [x] `app/` altında çalışır Expo projesi + audit widget mount edildi
+- [x] `audit-reports/` altında ≥3 burn-in'li .md rapor mevcut
+- [x] `FORGE.md` ledger: 3 başarılı + 1 rollback cycle yazıldı
+- [x] `app-release.apk` var (EAS Build alındı)
+- [x] Decision log + human touch points + AI tool log README'de bulunuyor
+- [x] Root dizine dokunulmamış (sadece `submissions/231118004-human-dot/` altı commit'li)
+- [x] (Track B) `IDEA.md` dosyası eklendi (Müşteri Geliştirici Use Case'i)
+- [x] Demo video linki eklendi
