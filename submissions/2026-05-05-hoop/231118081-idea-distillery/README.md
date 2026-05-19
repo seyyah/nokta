@@ -1,156 +1,216 @@
-# Nokta Game Pitch
+Track: C
+
+# Nokta Game Pitch Audit-Forge
 
 ## Submission
 
 - **Ogrenci no:** 231118081
 - **Slug:** idea-distillery
-- **Track:** C - Migration & Dedup
+- **Track:** C - Otonomi / ratchet discipline
 
-## Secilen Track
+## Goal
 
-**Track C - Migration & Dedup**
+This submission turns the old Nokta Game Pitch app into an Audit-Forge host.
+The user is no longer only someone who asks a developer for changes. The user
+becomes a customer-developer: they capture the screen, mark the problem, write a
+short note, and produce a markdown report that Codex can repair against.
 
-## Yeni Tema
+The app theme stays specific: solo indie game developers paste messy game notes
+and receive a scoped GDD-lite brief with mentor review when needed.
 
-Nokta Game Pitch, solo indie oyun gelistiricilerinin daginik oyun fikri
-notlarini scope kontrollu bir **GDD-lite** brief'ine donusturen mobil
-uygulamadir.
+## Customer-Developer Loop
 
-Onceki Nokta Draft genel proje notlarini temizliyordu. Bu upgrade ile uygulama
-artik belirli bir alan icin calisir: oyun fikirleri, mekanik listeleri,
-referans oyunlar, prototype kisitlari, feature creep ve mentor feedback'i.
+```txt
+User sees a problem or feature opportunity
+-> Audit widget captures the screen and note
+-> Markdown report becomes forge input
+-> Codex reads, locates, repairs, tests, and verifies
+-> The accepted behavior is added to EVAL.md as a ratchet
+```
 
-## Uygulama Ne Yapar
+The Codex iterative repair notebook was used only as methodology. I did not add
+the notebook, Python runner, or heavy automation files to this submission. The
+notebook's `Review -> Repair -> Validate` loop maps to this app as
+`Audit report -> Codex repair -> Typecheck/manual verify -> FORGE.md`.
 
-- Karisik indie oyun notlarini alir.
-- Groq API varsa structured game pitch analizi yapar.
-- Groq API yoksa veya hata verirse deterministic local fallback motoruna doner.
-- Oyun fikrini GDD-lite bolumlerine ayirir:
-  - Game Summary
-  - Core Loop
-  - Player Fantasy
-  - Core Mechanics
-  - Scope Boundary
-  - Feature Creep Warnings
-  - Prototype Plan
-- Solo developer / kisa prototype / buyuk sistem istekleri gibi scope risklerini yakalar.
-- Oyun tasarimi celiskilerini gorunur kilar:
-  - cozy + horror ton gerilimi
-  - no combat + boss fight
-  - solo dev + open world / multiplayer
-  - offline + multiplayer
-- Prototype readiness skoru uretir:
-  - HOOTL: devam edilebilir
-  - HOTL: mentor onerilir
-  - HITL: mentor gereklidir
-- Mentor handoff packet uretir:
-  - recommended mentor
-  - neden mentor gerekli
-  - mentora sorulacak 3 soru
-- User ve Mentor girisleri ayridir.
-- User workspace basinda yeni not/fikir ekleme girisi gosterir.
-- Saved brief listesi user workspace icindedir.
-- User brief'i kaydedince gerekiyorsa mentor review ticket'i olusur.
-- Mentor sadece pending review ticket'larini gorur.
-- Mentor feedback veya transcript yapistirinca ilgili saved brief guncellenir ve future plan olusur.
+## What The App Does
 
-## Groq Kurulumu
+- User and Mentor enter through separate role screens.
+- User pastes game notes and distills them into a GDD-lite brief.
+- Groq can produce structured analysis when `EXPO_PUBLIC_GROQ_API_KEY` exists.
+- If Groq is missing or fails, the deterministic local distiller still works.
+- User selects game decisions before saving.
+- HOTL/HITL briefs create mentor review tickets.
+- Mentor sees only pending tickets.
+- Mentor feedback writes back into the saved brief as future plan.
+- Audit FAB is mounted as a drop-in widget and can export markdown reports.
 
-Repo kokunden:
+## Audit Integration
+
+Package:
+
+```txt
+@xtatistix/mobile-audit
+```
+
+Host boundary:
+
+- `captureScreen` and `captureRef` come from `react-native-view-shot`.
+- file writing comes from `expo-file-system`.
+- sharing comes from `expo-sharing`.
+- audit note storage comes from `AsyncStorage`.
+- the widget receives dynamic `currentScreen` from app state.
+
+The widget is mounted in `app/App.tsx`. Native packages stay in the host adapter
+under `app/src/audit/`, not inside the widget package.
+
+## Audit Reports
+
+Committed reports:
+
+- `audit-reports/report-01-user-workspace-status.md`
+- `audit-reports/report-02-new-brief-creep-actions.md`
+- `audit-reports/report-03-mentor-decision-context.md`
+- `audit-reports/report-04-rollback-home-ticket.md`
+
+The first three reports produced accepted repairs. The fourth is the rollback:
+creating mentor tickets directly from Home was rejected because a valid ticket
+needs a saved brief, readiness review, mentor packet, and user decisions.
+
+## Forge Summary
+
+Full ledger: `FORGE.md`
+
+| Cycle | Result | Commit |
+|---|---|---|
+| Audit mount | success | `e945e9b` |
+| User workspace status actions | success | `ceb23fb` |
+| Feature creep action labels | success | `9521a0c` |
+| Mentor user decision context | success | `7804aad` |
+| Direct Home mentor ticket | rollback | no retained commit |
+
+Accepted kg ratchet:
+
+```txt
+2kg -> 5kg -> 9kg
+```
+
+Rollback keeps the cumulative kg at `9kg`.
+
+## Human Touch Points
+
+Total human touch points: **4**.
+
+- One customer note per audit report.
+- No extra human correction was needed during the three accepted repairs.
+- The rollback was stopped at hypothesis/verification before retained code.
+
+## EVAL Ratchet
+
+`EVAL.md` contains the Track C golden scenarios:
+
+- saved brief status must be actionable
+- feature creep warnings must become decisions
+- mentor must see locked user decisions
+- Home must not create context-free mentor tickets
+
+## Groq Setup
+
+From repo root:
 
 ```bash
-cd submissions/231118081-idea-distillery/app
+cd submissions/2026-05-05-hoop/231118081-idea-distillery/app
 copy .env.example .env
 ```
 
-`.env` icine:
+`.env`:
 
 ```env
 EXPO_PUBLIC_GROQ_API_KEY=your_groq_key
 EXPO_PUBLIC_GROQ_MODEL=llama-3.3-70b-versatile
 ```
 
-Groq key zorunlu degildir. Key yoksa app local fallback ile calisir.
+Groq is optional. The app works with local fallback when no key is present.
 
-## Calistirma
+## Run
 
 ```bash
-cd submissions/231118081-idea-distillery/app
+cd submissions/2026-05-05-hoop/231118081-idea-distillery/app
 npm install
 npm run start
 ```
 
-Kontroller:
+Verification:
 
 ```bash
 npm run typecheck
+npx expo install --check
 ```
 
-## Demo Akisi
+## Demo Flow
 
-1. Acilista **User Login** ve **Mentor Login** girislerini gor.
-2. **User Login** ile kullanici workspace'ine gir.
-3. Workspace'in basinda yeni not/fikir ekleme alani, altinda **Saved Briefs** listesi gorunur.
-4. **Add Notes / Idea** ile yeni brief akisini ac.
-5. Load Sample ile "Moon Orchard" oyun notlarini yukle.
-6. Distill Game Pitch butonuna bas.
-7. App core loop, player fantasy, mechanics ve scope boundary uretir.
-8. User game decisions alaninda bazi secenekleri secer.
-9. Save Brief butonuna basar.
-10. Readiness HOOTL degilse mentor review ticket otomatik olusur.
-11. Brief kaydedilince kullanici workspace'indeki **Saved Briefs** listesine doner.
-12. Home'a don, **Mentor Login** ile gir.
-13. Mentor sadece pending ticket'lari gorur.
-14. Mentor feedback yapistirir ve ticket'i resolve eder.
-15. User workspace'teki Saved Briefs bolumunde brief `reviewed` olur ve future plan mentor feedback ile guncellenir.
+1. Open **User Login**.
+2. Select **Add Notes / Idea**.
+3. Load sample game notes.
+4. Distill the game pitch.
+5. Select game decisions.
+6. Save the brief and create a mentor ticket when readiness requires it.
+7. Open **Mentor Login**.
+8. Review the pending ticket, including locked user decisions.
+9. Paste mentor feedback.
+10. Resolve the ticket and return to the user workspace.
+11. Open the reviewed saved brief and inspect the future plan.
+12. Use the audit FAB to capture any screen and export a markdown report.
 
 ## Expo QR Link
 
-Expo proje / QR sayfasi:
+Expo project / QR page:
 https://expo.dev/accounts/samsun081/projects/nokta-draft-231118081
 
-Bu surum mevcut Expo projesi uzerinden devam eder. App adi **Nokta Game Pitch**
-olarak guncellendi; Expo proje slug'i EAS projectId ile uyumlu kalmasi icin
-`nokta-draft-231118081` olarak korunur.
+The Expo slug stays `nokta-draft-231118081` to keep the existing EAS project id.
+The visible app name is **Nokta Game Pitch**.
 
-Son Android EAS build:
+Last Android EAS build from the previous app version:
 https://expo.dev/accounts/samsun081/projects/nokta-draft-231118081/builds/97fccce6-b3a6-4b04-9ce6-95e642046dbb
 
-Son APK artifact:
+Last APK artifact:
 https://expo.dev/artifacts/eas/jLxLCw4QzEcd9LhktoM1Pe.apk
 
-## 60 Saniyelik Demo
+## 60 Second Demo
 
-Demo video linki:
+Demo video link:
 https://youtube.com/shorts/jtwFCBSASho?feature=share
 
 ## APK
 
-Teslim APK dosyasi:
+APK file in submission:
 
-`submissions/231118081-idea-distillery/app-release.apk`
+`submissions/2026-05-05-hoop/231118081-idea-distillery/app-release.apk`
 
-Bu APK 12 Mayis 2026 tarihinde EAS build `97fccce6-b3a6-4b04-9ce6-95e642046dbb`
-artifact'indan guncellendi.
+## Decision Log
 
-## Karar Gunlugu
-
-- Uygulamanin temasi genel project distillation yerine indie game pitch distillation olarak degistirildi.
-- Steam pitch ozelligi scope disina alindi; final artifact GDD-lite brief olarak belirlendi.
-- Groq API eklendi, fakat demo guvenilirligi icin local deterministic fallback korundu.
-- Full nokta-hoop video/TTS entegrasyonu yerine mentor handoff mantigi alindi.
-- Mentor connection ilk surumde role-based queue + in-app ticket + feedback writeback olarak tasarlandi.
-- Feature creep detection, oyun fikirleri icin ana farklastirici capability yapildi.
-- Decision locking sistemi oyun kararlarina uyarlandi: tone, core loop, combat, multiplayer, platform, scope.
-- AsyncStorage eklendi; saved brief ve mentor ticket'lari cihazda kalici tutulur.
+- Kept Track C because the assignment rewards autonomy, ratchet logs, and low
+  human touch points.
+- Reused the existing Game Pitch app instead of creating a new minimal app.
+- Mounted `nokta-audit` as a drop-in widget through a host adapter.
+- Did not import native modules from the widget package.
+- Used the Codex repair notebook only as methodology, not as repo artifact.
+- Added audit reports as the input surface for forge cycles.
+- Accepted three small user-facing repairs.
+- Rejected direct Home mentor ticket creation because it breaks the saved brief
+  lifecycle.
+- Added `EVAL.md` so future cycles cannot regress accepted behavior.
 
 ## AI Tool Log
 
-- ChatGPT Codex: repo inceleme, fikir/theme karari, React Native akisi, Groq entegrasyonu, mentor ticket sistemi, AsyncStorage kayit akisi, README/checklist guncellemesi.
-- Groq API: opsiyonel runtime game pitch analizi icin kullanilir; API key yoksa local fallback devreye girer.
+- Codex: read active mission, inspected the existing app, integrated audit host
+  deps, ran forge repair cycles, updated README/FORGE/EVAL, and ran typecheck.
+- Groq API: optional runtime analyst for game pitch distillation; local fallback
+  is used when no API key is configured.
 
-## Bilinen Sinirlar
+## Known Limits
 
-- Groq cevabi structured JSON bekler; bozuk cevapta local fallback kullanilir.
-- Mentor baglantisi gercek video call degildir; mentor queue ve feedback writeback seklinde calisir.
-- Export akisi henuz yoktur.
+- Audit exports are local files shared from the device; there is no backend.
+- Mentor connection is an in-app review queue, not a real video call.
+- The committed APK path exists, but a fresh EAS build should be produced after
+  native audit dependencies are added.

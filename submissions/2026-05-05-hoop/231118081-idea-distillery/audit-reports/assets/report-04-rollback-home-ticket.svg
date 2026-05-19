@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="780" viewBox="0 0 390 780">
+  <rect width="390" height="780" fill="#F5F5F2"/>
+  <rect x="22" y="72" width="346" height="336" rx="30" fill="#FFFFFF"/>
+  <text x="44" y="124" font-family="Arial" font-size="12" font-weight="700" fill="#003DB3">NOKTA GAME PITCH</text>
+  <text x="44" y="174" font-family="Arial" font-size="36" font-weight="700" fill="#1A1C1B">Indie game ideas, reviewed into buildable briefs.</text>
+  <text x="44" y="244" font-family="Arial" font-size="15" fill="#293340">Choose User to create briefs, or Mentor to review tickets.</text>
+  <rect x="44" y="284" width="260" height="42" rx="21" fill="#0055FF"/>
+  <text x="72" y="311" font-family="Arial" font-size="14" font-weight="700" fill="#FFFFFF">User Login</text>
+  <rect x="44" y="340" width="260" height="42" rx="21" fill="#DCE4FF"/>
+  <text x="72" y="367" font-family="Arial" font-size="14" font-weight="700" fill="#003DB3">Mentor Login (0)</text>
+  <rect x="38" y="274" width="278" height="120" rx="20" fill="none" stroke="#FFD938" stroke-width="6"/>
+  <rect x="44" y="438" width="302" height="92" rx="16" fill="#FFD938"/>
+  <text x="64" y="466" font-family="Arial" font-size="14" font-weight="700" fill="#1A1C1B">Rollback audit note</text>
+  <text x="64" y="488" font-family="Arial" font-size="13" fill="#1A1C1B">Do not add a direct Home ticket button.</text>
+  <text x="64" y="510" font-family="Arial" font-size="13" fill="#1A1C1B">A ticket needs a saved brief and user decisions.</text>
+</svg>
