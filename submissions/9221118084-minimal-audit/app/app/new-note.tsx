@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { router } from 'expo-router';
 import { addNote } from '../lib/notes';
 
 export default function NewNoteScreen() {
@@ -8,9 +9,11 @@ export default function NewNoteScreen() {
 
   async function handleSave() {
     await addNote(title, body);
-    // INTENTIONAL UX BUG (NewNoteScreen):
-    // The note is saved, but nothing happens afterwards — no toast, no alert,
-    // and no navigation back. The user has no idea whether the save worked.
+    // FORGE Cycle 2: confirm the save and return to the list so the user
+    // knows it worked.
+    Alert.alert('Kaydedildi', 'Notunuz kaydedildi.', [
+      { text: 'Tamam', onPress: () => router.back() },
+    ]);
   }
 
   return (
