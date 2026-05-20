@@ -35,8 +35,18 @@ export default function HomeScreen() {
         style={styles.container}
       >
         <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
-          <View style={styles.header}>
+          <View style={styles.topRow}>
             <Text style={styles.logo}>🚀 NOKTA</Text>
+            <TouchableOpacity
+              onPress={() => router.push('/onboarding')}
+              style={styles.helpBtn}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="help-circle-outline" size={24} color="#1A73E8" />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.header}>
             <Text style={styles.title}>Spec Generator</Text>
             <Text style={styles.subtitle}>
               Ham fikirlerinizi sorgular, yapılandırır ve tek sayfalık net bir ürün spesifikasyonuna dönüştürür.
@@ -99,9 +109,21 @@ const styles = StyleSheet.create({
     padding: 24,
     justifyContent: 'center',
   },
+  topRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 10,
+    marginBottom: 20,
+  },
+  helpBtn: {
+    padding: 6,
+    borderRadius: 20,
+    backgroundColor: '#F1F3F4',
+  },
   header: {
     alignItems: 'center',
-    marginTop: 40,
+    marginTop: 10,
     marginBottom: 32,
   },
   logo: {
@@ -109,7 +131,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#1A73E8',
     letterSpacing: 2,
-    marginBottom: 8,
   },
   title: {
     fontSize: 32,

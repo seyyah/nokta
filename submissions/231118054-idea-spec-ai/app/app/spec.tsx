@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   SafeAreaView,
+  Share,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -39,6 +40,18 @@ export default function SpecScreen() {
     }
   };
 
+  const handleShare = async () => {
+    try {
+      const shareText = `🚀 ${spec.title}\n\nProblem:\n${spec.problem}\n\nHedef Kullanıcı:\n${spec.user}\n\nÇözüm:\n${spec.solution}\n\nMVP Kapsamı:\n${spec.scope}\n\nKısıtlar:\n${spec.constraints}`;
+      await Share.share({
+        message: shareText,
+        title: spec.title,
+      });
+    } catch (error) {
+      console.error('Paylaşım hatası:', error);
+    }
+  };
+
   const formatDate = (isoString: string) => {
     try {
       const date = new Date(isoString);
@@ -62,7 +75,9 @@ export default function SpecScreen() {
           <Text style={styles.closeBtnText}>Geri</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle} numberOfLines={1}>Spec Görünümü</Text>
-        <View style={styles.headerSpacer} />
+        <TouchableOpacity onPress={handleShare} style={styles.shareBtn} activeOpacity={0.7}>
+          <Ionicons name="share-social-outline" size={22} color="#1A73E8" />
+        </TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -181,8 +196,10 @@ const styles = StyleSheet.create({
     color: '#202124',
     maxWidth: 150,
   },
-  headerSpacer: {
-    width: 60,
+  shareBtn: {
+    padding: 6,
+    borderRadius: 8,
+    backgroundColor: '#F1F3F4',
   },
   scrollContent: {
     padding: 20,

@@ -1,32 +1,31 @@
-# Nokta Idea: Spec Generator (Track A)
+# Nokta Fikir İnkübasyon Sistemi & Mobil Denetim Vizyonu
 
-## 1. Tez
-Fikirlerin hayata geçirilmesindeki en büyük engel fikir yokluğu değil, "fikrin kaotik yapısıdır". Nokta — Spec Generator, dağınık, ham ve yapılandırılmamış düşünceleri alarak onları mühendislik disipliniyle sorgular ve tek sayfalık net bir ürün blueprint'ine (spesifikasyona) dönüştürür.
+Bu doküman, Nokta projesinin gelecekteki gelişim aşamaları ve `@xtatistix/mobile-audit` entegrasyonu ile mobil geliştirme süreçlerinde yaratılabilecek yenilikçi fikirleri ve kullanım senaryolarını özetlemektedir.
 
-## 2. Problem
-Girişimciler ve geliştiriciler yeni bir fikre sahip olduklarında nereden başlayacaklarını bilemezler. Bu kaos genellikle iki sonuca yol açar:
-- **Aşırı Kapsam (Scope Creep):** MVP'ye gereksiz özellikler eklemek.
-- **Slop (Gürültü):** AI tarafından üretilen içi boş, jenerik ve uygulanabilir olmayan spesifikasyonlar.
+---
 
-## 3. Nasıl Çalışır
-Uygulama 3 temel aşamadan oluşur:
-1. **Idea Input (Fikir Girişi):** Kullanıcı aklındaki ham fikri serbest metin olarak yazar.
-2. **Question Engine (Sorgu Motoru):** AI, girilen fikri analiz eder ve problem, hedef kitle, kapsam, kısıtlar ve gerekçe odaklı 5 kritik mühendislik sorusu üretir. Kullanıcı bu soruları adım adım cevaplar.
-3. **Spec Generator (Spec Üretici):** AI tüm cevapları harmanlayarak slop'tan arınmış, net, tek sayfalık bir ürün blueprint'i oluşturur.
+## 💡 Nokta Uygulaması İçin Yaratıcı Fikirler
 
-## 4. Ne Yapmaz
-- Açık uçlu, serbest sohbet chatbotu görevi görmez.
-- Çok kullanıcılı yetkilendirme veya bulut senkronizasyonu içermez.
-- Teknoloji yığını (React, Node, vb.) seçimi yapmaz; tamamen fikir ve ürün odaklıdır.
-- Karmaşık grafikler veya animasyonlar içermez.
+### 1. Ses Tabanlı Fikir Girişi ve AI Yapılandırma (Voice to Spec)
+* **Senaryo:** Kullanıcılar yolda yürürken veya akıllarına anlık bir fikir geldiğinde uzun uzun yazmak yerine tek tuşla ses kaydı alırlar.
+* **Nasıl Çalışır:** Ses kaydı Whisper API benzeri bir araçla metne dökülür (transcribe). AI, ses tonundan ve vurgulardan heyecan düzeyini veya öncelikli kısımları analiz eder, ardından ses girdisine dayalı 5 kritik soruyu üretir.
+* **Katkısı:** Fikir giriş bariyerini neredeyse sıfıra indirir ve fikirlerin anında kayda geçmesini kolaylaştırır.
 
-## 5. Neden Şimdi
-Günümüzde AI araçları hızlıca içerik üretebiliyor ancak bu içerikler genellikle derinlikten yoksun ("slop"). Nokta, AI'ı doğrudan üretici değil, yönlendirici ve sorgulayıcı bir mühendislik ortağı olarak konumlandırarak bu sorunu çözer.
+### 2. Akıllı Pazar ve Rakip Analizi Entegrasyonu
+* **Senaryo:** Spec oluşturulduktan hemen sonra AI, pazar araştırması yaparak benzer kulvardaki rakipleri listeler.
+* **Nasıl Çalışır:** Üretilen MVP kapsamı ve hedeflere göre web aramaları yapılarak (Search API) App Store / Google Play üzerindeki doğrudan ve dolaylı rakipler, güçlü/zayıf yönleriyle birlikte spec dokümanının sonuna otomatik eklenir.
+* **Katkısı:** Girişimcinin fikrini doğrulamasına (validation) ve pazardaki boşlukları görmesine yardım eder.
 
-## 6. Kim Fayda Sağlar
-- Fikrini doğrulamak ve netleştirmek isteyen girişimciler.
-- MVP kapsamını daraltmak isteyen ürün yöneticileri.
-- Fikir aşamasındaki projelerine disiplinli bir başlangıç yapmak isteyen yazılım geliştiricileri.
+---
 
-## 7. Özet
-Nokta, ham düşünceleri mühendislik disipliniyle süzerek uygulanabilir bir ürün yol haritasına dönüştüren minimal ve keskin bir üründür.
+## 🛠️ `@xtatistix/mobile-audit` İçin Gelişmiş Kullanım Senaryoları
+
+### 1. Gerçek Zamanlı Video Kaydı ve HITL İşbirliği (HITL Integration)
+* **Senaryo:** Statik ekran görüntüleri (screenshot) bazen animasyon, geçiş veya dokunma duyarlılığı gibi hareketli sorunları aktarmak için yetersiz kalır.
+* **Nasıl Çalışır:** Widget, kullanıcının ekranında yüzen bir "Kayıt" butonu sunar. Ekran kaydedilirken kullanıcı sesli olarak sorunu açıklar. Kayıt durdurulduğunda video otomatik olarak sıkıştırılır ve debug ledger dosyasına eklenir.
+* **Katkısı:** Hareketli arayüz hatalarının ve UX akışlarındaki takılmaların (jank) çok daha hızlı çözülmesini sağlar.
+
+### 2. Otomatik GitHub Issue / Jira Ticket Oluşturma
+* **Senaryo:** Test ekibinin veya mentorların bulduğu bug'ları manuel olarak sistemlere girmesi süreci yavaşlatır.
+* **Nasıl Çalışır:** Widget üzerinden audit raporu (.md veya .docx) dışa aktarıldığında veya paylaşıldığında, doğrudan GitHub API / Jira API kullanılarak ilgili repository altında başlık, açıklama, cihaz bilgileri ve ekran görüntüsüyle birlikte otomatik bir bug issue'su açılır.
+* **Katkısı:** Geliştiriciler ve test ekibi arasındaki kopukluğu gidererek tam bir CI/CD ve test otomasyon köprüsü kurar.
