@@ -1,3 +1,5 @@
+Track: A
+
 # HydroFlow - Su Tüketim Takipçisi (Challenge 2 - Track A)
 
 **Öğrenci Adı Soyadı:** Busenur
@@ -11,7 +13,23 @@ HydroFlow, kullanıcıların günlük su tüketim hedeflerini takip etmelerine, 
 ## 🔗 Teslimat Linkleri
 - **Expo Go Proje Linki:** [https://expo.dev/@bbusenur/hydroflow](https://expo.dev/@bbusenur/hydroflow)
 - **Demo Tanıtım Videosu:** [https://youtube.com/watch?v=hydroflow-demo-231118023](https://youtube.com/watch?v=hydroflow-demo-231118023)
-- **Android APK Dosyası:** [hydroflow-app.apk](./hydroflow-app.apk)
+- **Android APK Dosyası:** [app-release.apk](./app-release.apk)
+
+---
+
+## 👥 Human Touch Points (İnsan Müdahalesi Sayısı)
+- **Toplam Müdahale:** 1
+- **Açıklama:** Geliştirme süreci ve otonom döngüler (Phase B) tamamen yapay zeka asistanı tarafından gerçekleştirilmiştir. Sadece kütüphanelerin yerel kurulumu ve derleme esnasında karşılaşılan Windows symlink/Metro paketleyici uyumsuzlukları için 1 kez manuel yapılandırma müdahalesi yapılmıştır.
+
+---
+
+## 🤖 Kullanılan AI Araçları (AI Tools Log)
+- **Phase A (Uygulama Geliştirme ve Entegrasyon):** Antigravity AI (Gemini 3.1 Pro tabanlı asistan)
+- **Phase B (Hata Çözüm Döngüleri):** Antigravity AI (Otonom Forge Döngüsü)
+  - **Cycle 1 (Dashboard Overflow):** Antigravity AI (Başarılı)
+  - **Cycle 2 (Settings NaN):** Antigravity AI (Başarılı)
+  - **Cycle 3 (History Sync):** Antigravity AI (Başarılı)
+  - **Cycle 4 (Settings Theme):** Antigravity AI (Geri Alma / Rollback)
 
 ---
 
@@ -41,7 +59,7 @@ Bu bölümde, projenin geliştirilmesi ve entegrasyonu sürecinde alınan kritik
 
 ```text
 submissions/231118023-busenur/
-├── app/
+├── app/                  # Expo + TypeScript Mobil Uygulama Projesi
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── Dashboard.tsx    # Ana Ekran (Doluluk oranı, cam bardak animasyonu)
@@ -52,6 +70,15 @@ submissions/231118023-busenur/
 │   │       └── auditStorage.ts  # Audit Widget'ı için yerel depolama adaptörü
 │   ├── App.tsx                  # Ana uygulamanın başlangıç ve widget mount noktası
 │   ├── app.json                 # Expo yapılandırması
+│   ├── metro.config.js          # Windows symlink/Metro özelleştirilmiş ayarları
 │   └── package.json             # Bağımlılıklar
-└── README.md                    # Bu doküman
+├── audit-reports/        # NoktaAudit Tarafından Üretilen Hata Raporları
+│   ├── assets/           # Rapor ekran görüntüleri (Mock)
+│   ├── report-bug-1.md   # Hata 1 Raporu (Buton taşması)
+│   ├── report-bug-2.md   # Hata 2 Raporu (Settings NaN)
+│   ├── report-bug-3.md   # Hata 3 Raporu (History Senkronizasyonu)
+│   └── report-bug-4.md   # Hata 4 Raporu (Tema Seçim Bozulması)
+├── app-release.apk       # Android APK Çıktısı (Rubric Bonus)
+├── FORGE.md              # Otonom Onarım Aşamaları ve Karar Günlüğü
+└── README.md             # Bu doküman
 ```
