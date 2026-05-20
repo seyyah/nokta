@@ -26,6 +26,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "292d44c1-7391-4819-b529-d3a89c833c40"
+      }
+    },
+    "owner": "erenn.altay1"
   }
 }
