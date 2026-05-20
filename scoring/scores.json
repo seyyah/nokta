@@ -1,0 +1,79 @@
+{
+  "count": 2,
+  "results": [
+    {
+      "submission": "231118043-audit-forge",
+      "base_score": 100,
+      "apk_adjustment": 3,
+      "final_auto": 103,
+      "manual_craziness_bonus_pending": "demo day +0..+10",
+      "breakdown": {
+        "delivery": {
+          "points": 35,
+          "max": 35,
+          "readme": true,
+          "expo_link": true,
+          "demo_video": true,
+          "apk": true,
+          "app_json": true
+        },
+        "scope": {
+          "points": 25,
+          "max": 25,
+          "track": "A",
+          "decision_log": true,
+          "readme_length": 2460
+        },
+        "antislop": {
+          "points": 20,
+          "max": 20,
+          "flagged": false
+        },
+        "trace": {
+          "points": 20,
+          "max": 20,
+          "total_commits": 7,
+          "meaningful_commits": 7
+        }
+      },
+      "penalties": []
+    },
+    {
+      "submission": "231118043-dot-capture",
+      "base_score": 100,
+      "apk_adjustment": 3,
+      "final_auto": 103,
+      "manual_craziness_bonus_pending": "demo day +0..+10",
+      "breakdown": {
+        "delivery": {
+          "points": 35,
+          "max": 35,
+          "readme": true,
+          "expo_link": true,
+          "demo_video": true,
+          "apk": true,
+          "app_json": true
+        },
+        "scope": {
+          "points": 25,
+          "max": 25,
+          "track": "A",
+          "decision_log": true,
+          "readme_length": 2991
+        },
+        "antislop": {
+          "points": 20,
+          "max": 20,
+          "flagged": false
+        },
+        "trace": {
+          "points": 20,
+          "max": 20,
+          "total_commits": 15,
+          "meaningful_commits": 15
+        }
+      },
+      "penalties": []
+    }
+  ]
+}
