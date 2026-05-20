@@ -1,6 +1,6 @@
 Track: A
 
-# Nokta Audit-Forge — 231118054
+# Nokta Audit-Forge — 231118054-idea-spec-ai
 
 Nokta, ham fikirlerinizi yapılandırılmış mühendislik sorularıyla rafine eden ve yerel olarak slop-free spesifikasyon dokümanları üreten akıllı bir mobil asistandır.
 
