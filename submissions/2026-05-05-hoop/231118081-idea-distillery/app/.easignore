@@ -1,0 +1,8 @@
+.env
+.env.local
+.env.*.local
+.expo/
+dist/
+node_modules/
+eas-build-*.log
+eas-build-*.txt

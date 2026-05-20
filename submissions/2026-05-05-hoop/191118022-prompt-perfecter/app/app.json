@@ -1,0 +1,48 @@
+{
+  "expo": {
+    "name": "Prompt Perfecter",
+    "slug": "prompt-perfecter",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0a0a1a"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.bahri.promptperfecter"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0a0a1a"
+      },
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.bahri.promptperfecter"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Allow Prompt Perfecter to use the microphone for voice idea capture.",
+          "speechRecognitionPermission": "Allow Prompt Perfecter to turn speech into text for Track A idea capture."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "bda83090-c89d-42c8-aa80-f45f67f16fbe"
+      }
+    }
+  }
+}
