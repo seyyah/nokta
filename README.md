@@ -7,7 +7,7 @@ Track: B
 
 ## Proje Bilgileri
 - **Expo QR / Link:** [https://expo.dev/accounts/ruthlesscat/projects/app/updates/6e788084-60d6-4f51-a979-5e8eb61a0396](https://expo.dev/accounts/ruthlesscat/projects/app/updates/6e788084-60d6-4f51-a979-5e8eb61a0396)
-- **Demo Video:** [https://youtube.com/shorts/jiBsw8_ekiU?si=OeiK9MbthMDIs9V5](https://youtube.com/shorts/jiBsw8_ekiU?si=OeiK9MbthMDIs9V5)
+- **Demo Video:** [https://youtube.com/shorts/OVveTBha4zY?feature=share](https://youtube.com/shorts/OVveTBha4zY?feature=share)
 - **Kullanılan AI Tool:** Groq API (llama-3.3-70b-versatile — Forge server / LLM repair), Gemini CLI (Gemini 2.5 Flash — mimari tasarım), Kilo (Code Assistant — dosya yapısı, ledger, teslimat)
 - **Human Touch Points:** 3
   - Cycle 2'de glow yoğunluğu onayı
