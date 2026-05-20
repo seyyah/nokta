@@ -1,0 +1,9 @@
+.env
+node_modules/
+.expo/
+dist/
+*.log
+test-groq.js
+test-forge.js
+server.log
+.DS_Store
