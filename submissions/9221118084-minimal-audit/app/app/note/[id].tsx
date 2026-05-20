@@ -13,12 +13,19 @@ export default function DetailScreen() {
     }, [id])
   );
 
-  async function handleDelete() {
-    // INTENTIONAL UX BUG (DetailScreen):
-    // Delete fires immediately with no "Are you sure?" confirmation, and it sits
-    // right next to Edit at the same size — trivial to tap by accident.
-    if (id) await deleteNote(id);
-    router.back();
+  function handleDelete() {
+    // FORGE Cycle 4: require confirmation before destroying the note.
+    Alert.alert('Notu sil', 'Bu notu silmek istediğinize emin misiniz?', [
+      { text: 'İptal', style: 'cancel' },
+      {
+        text: 'Sil',
+        style: 'destructive',
+        onPress: async () => {
+          if (id) await deleteNote(id);
+          router.back();
+        },
+      },
+    ]);
   }
 
   if (!note) {
