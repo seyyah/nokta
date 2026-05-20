@@ -1,98 +1,93 @@
-# Nokta Final Submission 231118054: HITL System Integration
+# Nokta — Spec Generator (Track A)
 
-This absolute production-ready MVP demonstrates the Nokta Ecosystem enhanced with a **Human-in-the-Loop** expert fallback system, leveraging modern Server-Side decision engines and Client-Side video infrastructure.
+**Öğrenci No:** 231118054  
+**Slug:** `idea-spec-ai`  
+**Track Seçimi:** Track A — Dot Capture / Spec Generator
 
----
-
-## Technical Overview
-The system isolates functionality precisely to maintain Security, Maintainability, and separation of Concerns (SoC).
-
-### Architecture Map
-```text
-submissions/231118054/
-├── server/                 # Safe API Backend (Express + Stream Node SDK)
-│   ├── .env.example
-│   ├── index.js            # Queue, Groq routing, Transcript extraction
-│   └── package.json
-└── app/                    # Scalable Mobile UI (Expo + Stream React Native SDK)
-    ├── App.js              # Native Stack Navigation
-    ├── app.json         
-    └── src/
-        ├── screens/        # Separated Interface views (Mascot vs Mentor)
-        │   ├── HomeScreen.js
-        │   ├── ChatScreen.js
-        │   └── MentorDashboard.js
-        └── services/       # Decoupled HTTP API layers (Axios)
-            └── api.js
-```
+Nokta, ham fikirleri alır, onları akıllı mühendislik sorularıyla sorgular, parçalar ve tek sayfalık net bir ürün spesifikasyonuna dönüştürür. “Fikir var ama nereden başlayacağım?” kaosunu mühendislik disiplinine çevirir.
 
 ---
 
-## 1. Environment variables & Setup
+## 🎬 Demo & Çalıştırma
 
-### A. Stream Setup
-You must have a Stream Video (Stream.io) account. Set up a project and grab the keys.
+| Detay | Bağlantı / Komut |
+|---|---|
+| **60 sn Demo Video** | [https://www.youtube.com/shorts/1rog89oFXA8](https://www.youtube.com/shorts/1rog89oFXA8) |
+| **Uygulama APK Dosyası** | [`./app-release.apk`](./app-release.apk) |
 
-1. Create `server/.env` based on `server/.env.example`.
-```env
-PORT=3000
-STREAM_API_KEY=your_stream_api_key
-STREAM_API_SECRET=your_stream_api_secret
-GROQ_API_KEY=your_groq_api_key
-```
+### Yerel Çalıştırma Talimatları
 
-2. The Mobile App relies on `.env` fallback or standard variables for testing. Ensure your Android emulator networking points correctly (`10.0.2.2`).
-
-### B. Backend Initialization (Run this First)
-```bash
-cd server
-npm install
-npm run start
-```
-*This binds your logic router onto `localhost:3000` handling escalating and AI.*
-
-### C. Frontend Initialization 
-```bash
-cd app
-npm install
-npx expo start --clear
-```
-
-*(Note: Because this utilizes Stream Video native WebRTC capabilities, you must construct an Expo Dev Client (`npm run android` / `npx expo run:android`) if you wish to run the stream perfectly on physical hardware. Pure Expo Go has limited WebRTC backing.)*
+1. Uygulama klasörüne gidin:
+   ```bash
+   cd app
+   ```
+2. Bağımlılıkları yükleyin:
+   ```bash
+   npm install
+   ```
+3. API anahtarlarınızı `.env` dosyasına yerleştirin (Gemini veya Groq key'lerinden en az birini girmeniz yeterlidir. Key girilmediğinde uygulama **Mock Demo Modu** ile simüle edilebilir):
+   ```env
+   EXPO_PUBLIC_GEMINI_API_KEY=your_gemini_key
+   EXPO_PUBLIC_GROQ_API_KEY=your_groq_key
+   ```
+4. Uygulamayı başlatın:
+   ```bash
+   npx expo start
+   ```
+5. Telefonunuzdaki **Expo Go** uygulaması ile ekrandaki QR kodu taratın.
 
 ---
 
-## 2. The Features Explained (Flow)
+## ⚙️ Ana Akış
 
-### 1. Mascot Escalation (AI Trigger)
-The user inputs text in the `ChatScreen`. The prompt shoots to the backend, which forwards it to `Groq` through a custom system wrapper. If the LLM identifies that specialized, non-hallucinated human analysis is needed, it toggles `escalation_needed: true`.
-
-### 2. Escalation Hand-off Queue
-The App prompts the User. If they Accept, the backend registers a `pending` escalation ticket. 
-On the flip-side, the `MentorDashboard` polls the `/escalations` backend array. 
-
-### 3. Stream Setup & Acceptance
-The Mentor hits "Accept" and the ticket turns `accepted`. The backend immediately vends two Video Tokens utilizing the Stream IO Node SDK (one to User, one to Mentor).
-
-### 4. Video UI Render
-Both User and Mentor `StreamCall` interfaces mount dynamically. The AI interface freezes dynamically avoiding confusion while Mentor takes over to guide the user.
-
-### 5. Transcript Writeback
-Once the call hangs up, the React Native app dials `GET /calls/.../transcript`. The token server calls the Stream `/transcriptions` API, pulling the exact verbal log of the interaction, which then populates directly back into the Nokta User text-log.
+1. **🟦 Idea Input:** Kullanıcı ham fikrini serbest metin olarak girer.
+2. **🟨 Question Engine:** AI, fikri yüzeyden kurtarıp derine çeker ve 5 kritik mühendislik sorusu sorar:
+   - Problem ne?
+   - Hedef kullanıcı kim?
+   - Scope ne?
+   - Constraint’ler ne?
+   - Bu çözüm neden gerekli?
+3. **🟩 Spec Generator:** Tüm girdileri harmanlar ve tek sayfa net bir doküman üretir (Problem, Kullanıcı, Çözüm, Kapsam, Kısıtlar).
+4. **🧾 Final Output:** Uygulanabilir bir ürün blueprint'i oluşturulur ve `AsyncStorage` ile yerel olarak kaydedilir.
 
 ---
 
-## 3. Building the APK (Cloud EAS)
+## 🎨 Görsel Dil
 
-Since the local Windows environment lacks a configured Java compilation kit (JDK), the most reliable way to generate the standalone Android APK `app-release.apk` is using the Expo Application Services (EAS) cloud builder.
+- **Açık Arka Plan / Sade UI:** Kullanıcı dikkatini içeriğe odaklayan minimal arayüz.
+- **Kart Bazlı Çıktı Yapısı:** Bilgileri gruplandıran ve okumayı kolaylaştıran modern kartlar.
+- **Okunabilir Tipografi:** Gürültüsüz, net bilgi akışı sağlayan yazı tipleri.
+- **Amaç:** Fikri değil, düşünceyi parlatmak.
 
-1. Ensure the Expo CLI is logged in:
-```bash
-npx expo login
-```
-2. Trigger the cloud compilation (this will yield an APK link instead of an AAB):
-```bash
-cd app
-eas build -p android --profile preview
-```
-3. Once the dashboard compilation finishes, download the `.apk` and place it in `submissions/231118054/builds/app-release.apk` for evaluator testing.
+---
+
+## 🧱 Teknik Stack
+
+- **React Native + Expo** (Expo Router, Expo SDK 54)
+- **TypeScript**
+- **AI Text Generation API** (Google Gemini & Groq direct integration)
+- **AsyncStorage** (Lokal veri saklama)
+
+---
+
+## 🧠 Decision Log
+
+| # | Karar | Gerekçe |
+|---|---|---|
+| **1** | **Track A seçildi** | Fikir → ürün dönüşümünü en net gösteren akış. |
+| **2** | **Soru üretimi zorunlu** | Direkt output yerine düşünceyi derinleştirmek. |
+| **3** | **Tek sayfa spec** | Fazla detay yerine uygulanabilir netlik. |
+| **4** | **Yapılandırılmış çıktı** | AI kaosunu azaltmak, tutarlılık sağlamak. |
+| **5** | **Minimal UI** | Kullanıcı dikkatini içeriğe odaklamak. |
+| **6** | **Lokal veri saklama** | Kullanıcı fikirlerinin gizliliği ve internet bağımsızlığı. |
+| **7** | **Chatbot yerine akış** | Açık uçlu sohbet yerine hedef odaklı deneyim. |
+
+---
+
+## ❌ Scope Dışı Bırakılanlar
+
+- Açık uçlu chatbot (odak dağıtmamak adına)
+- Multi-user / auth sistemi
+- Cloud sync (veri gizliliği ve basitlik)
+- Gereksiz UI animasyonları
+- **Amaç:** Küçük ama keskin bir ürün üretmek.
