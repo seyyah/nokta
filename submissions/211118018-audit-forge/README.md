@@ -13,8 +13,9 @@ Audit-Forge Mission (Track A — Sadelik): Dot Capture host uygulamasına [`@xta
 
 ## Expo (QR / link)
 
-- **Expo Go linki:** `npx expo start` çıktısındaki `exp://…` (LAN IP değişebilir)
-- **QR:** Aynı oturumdaki terminal QR
+- **Expo Go linki:** `exp://10.142.115.249:8081` (LAN; oturum kapandığında `npx expo start` ile yenilenir)
+- **Expo Go test:** Telefonda **expo-go** uygulaması ile QR okutun veya bu linki açın
+- **QR:** `npx expo start` terminal çıktısındaki QR ile aynı oturum
 - Okul ağında sorun: `npx expo start --tunnel`
 
 ### Audit FAB hızlı test
@@ -31,7 +32,7 @@ npx expo start
 
 ## Demo video (≤60 sn)
 
-- **Video linki:** `TODO: YouTube/Drive linki (audit FAB + 1 forge fix gösterimi)`
+- **Video linki:** https://youtube.com/shorts/l8pP4TRfEuE?si=1K8U3IvgIR0DDBY3 (audit FAB + forge fix gösterimi)
 
 ## APK
 
@@ -59,6 +60,8 @@ Widget kaldırıldığında uygulama akışı (idea → questions → spec) çal
 | Audit rapor metinleri | Manuel (müşteri/tester rolü) |
 | Forge cycle 1–2 repair | Cursor Agent |
 | Forge cycle 3 rollback kararı | Cursor Agent (refactor reddedildi) |
+| Forge cycle 4 repair | Cursor Agent |
+| Demo video kaydı | Manuel |
 
 ## Decision log
 
@@ -67,7 +70,7 @@ Widget kaldırıldığında uygulama akışı (idea → questions → spec) çal
 3. `deps` injection: capture/write/share/storage host’ta; widget native import etmiyor.
 4. `currentScreen` state’ten besleniyor (`HamFikir`, `MuhendislikSorulari`, …).
 5. Audit raporları `audit-reports/` altında git’lendi (≥3).
-6. `FORGE.md`: 2 success + 1 rollback; başarısız hipotez silinmedi.
+6. `FORGE.md`: 3 success + 1 rollback; başarısız hipotez silinmedi.
 7. Canlı video/Stream mentor kapsam dışı (önceki ödev HITL MVP ile uyumlu).
 
 ## Dosya yapısı

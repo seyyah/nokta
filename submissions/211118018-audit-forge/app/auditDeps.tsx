@@ -1,6 +1,6 @@
 import { Text } from "react-native";
 import { captureRef, captureScreen } from "react-native-view-shot";
-import * as FileSystem from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
 import * as Sharing from "expo-sharing";
 import type { AuditWidgetDeps } from "@xtatistix/mobile-audit";
 import { auditStorage } from "./auditStorage";

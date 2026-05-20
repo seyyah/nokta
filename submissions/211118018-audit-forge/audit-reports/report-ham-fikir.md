@@ -1,18 +1,18 @@
 # Bug Raporu — Nokta Audit-Forge
 
-**Tarih:** 14.05.2026 18:30:00  
-**Toplam:** 1 not · 🔴 1 açık
+**Tarih:** 19.05.2026 02:30:00  
+**Toplam:** 1 not · ✅ 1 kapalı (FORGE cycle 1)
 
 ---
 
 ## Ekran: HamFikir
 
-### 🔴 #1 — Birincil buton audit FAB ile çakışıyor; alt padding yetersiz
+### ✅ #1 — Birincil buton audit FAB ile çakışıyor; alt padding yetersiz
 
-![Screenshot](file:///audit-reports/assets/ham-fikir-burnin.png)
+![Screenshot](assets/ham-fikir-burnin.png)
 
-- **Durum:** Açık
-- **Zaman:** 14.05.2026 18:30:00
+- **Durum:** Kapalı (FORGE cycle 1 — `contentWithFabPad`)
+- **Zaman:** 19.05.2026 02:30:00
 - **Raporlayan:** 211118018
 
 ---

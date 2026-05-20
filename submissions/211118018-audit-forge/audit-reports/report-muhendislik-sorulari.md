@@ -1,18 +1,18 @@
 # Bug Raporu — Nokta Audit-Forge
 
-**Tarih:** 14.05.2026 18:35:00  
-**Toplam:** 1 not · 🔴 1 açık
+**Tarih:** 19.05.2026 02:35:00  
+**Toplam:** 1 not · ✅ 1 kapalı (FORGE cycle 2)
 
 ---
 
 ## Ekran: MuhendislikSorulari
 
-### 🔴 #1 — Engineering soruları ekranında chip açıklaması görünmüyor; kullanıcı önerilerin ne işe yaradığını anlamıyor
+### ✅ #1 — Chip açıklaması belirsiz; kullanıcı önerilerin ne işe yaradığını anlamıyor
 
-![Screenshot](file:///audit-reports/assets/muhendislik-burnin.png)
+![Screenshot](assets/muhendislik-burnin.png)
 
-- **Durum:** Açık
-- **Zaman:** 14.05.2026 18:35:00
+- **Durum:** Kapalı (FORGE cycle 2 — helperText güncellendi)
+- **Zaman:** 19.05.2026 02:35:00
 - **Raporlayan:** 211118018
 
 ---
