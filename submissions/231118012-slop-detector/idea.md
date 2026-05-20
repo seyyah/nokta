@@ -104,4 +104,3 @@ Yapay zeka analizinin ardından kritik eşikte kalan veya itiraz edilen fikirler
 | Veri gizliliği | Düşük | Kritik | Client-side encryption |
 
 ---
-
