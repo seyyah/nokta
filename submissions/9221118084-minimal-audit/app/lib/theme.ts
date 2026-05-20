@@ -1,48 +1,48 @@
-// Lightweight design system shared across screens.
+// Design system modeled on the reference: warm cream gradients, heavy black
+// typography, pill shapes, black primary actions, gold selection accents,
+// and lavender count badges.
 
 export const colors = {
-  bg: '#F6F6FB',
+  bgTop: '#FCFAF4',
+  bgBottom: '#F0E7D3',
   surface: '#FFFFFF',
-  primary: '#6366F1',
-  primaryDark: '#4F46E5',
-  text: '#191933',
-  textMuted: '#8C8CA6',
-  border: '#ECECF4',
-  danger: '#F43F5E',
-  dangerSoft: '#FFE9EE',
+  ink: '#15130E', // near-black for headings + primary buttons
+  inkSoft: '#736C5C', // warm muted gray
+  primary: '#15130E',
+  gold: '#E8B84B',
+  goldSoft: '#F6E4AE',
+  border: '#ECE4D3',
+  danger: '#E5484D',
+  dangerSoft: '#FBE7E7',
   white: '#FFFFFF',
+  badgeBg: '#ECE8FF', // lavender count badge
+  badgeText: '#7A6FF0',
 };
 
-// Indigo → violet, used on the FAB and primary actions.
-export const primaryGradient = ['#6366F1', '#8B5CF6'] as const;
+// Warm cream background gradient, top → bottom.
+export const bgGradient = [colors.bgTop, colors.bgBottom] as const;
+// Gold selection / hero gradient.
+export const goldGradient = ['#F7DD9C', '#E7B645'] as const;
 
-export const radius = { sm: 10, md: 16, lg: 22, pill: 999 };
+export const radius = { sm: 12, md: 18, lg: 26, xl: 34, pill: 999 };
 
 export const shadow = {
   card: {
-    shadowColor: '#1B1B3A',
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 2,
-  },
-  floating: {
-    shadowColor: '#4338CA',
-    shadowOpacity: 0.32,
-    shadowRadius: 14,
+    shadowColor: '#7A6A3F',
+    shadowOpacity: 0.1,
+    shadowRadius: 18,
     shadowOffset: { width: 0, height: 8 },
+    elevation: 3,
+  },
+  // Deep shadow for the black primary buttons.
+  button: {
+    shadowColor: '#15130E',
+    shadowOpacity: 0.28,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 10 },
     elevation: 8,
   },
 };
-
-// A small palette so each note card gets a stable accent color.
-const accents = ['#6366F1', '#0EA5E9', '#10B981', '#F59E0B', '#EC4899', '#8B5CF6'];
-
-export function accentFor(id: string): string {
-  let h = 0;
-  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
-  return accents[h % accents.length];
-}
 
 export function formatDate(iso: string): string {
   try {

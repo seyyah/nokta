@@ -32,12 +32,12 @@ export default function RootLayout() {
       <StatusBar style="dark" />
       <Stack
         screenOptions={{
-          headerStyle: { backgroundColor: colors.bg },
+          headerStyle: { backgroundColor: colors.bgTop },
           headerShadowVisible: false,
-          headerTintColor: colors.text,
-          headerTitleStyle: { fontWeight: '800', fontSize: 18, color: colors.text },
+          headerTintColor: colors.ink,
+          headerTitleStyle: { fontWeight: '800', fontSize: 18, color: colors.ink },
           headerTitleAlign: 'center',
-          contentStyle: { backgroundColor: colors.bg },
+          contentStyle: { backgroundColor: colors.bgTop },
         }}
       >
         <Stack.Screen name="index" options={{ title: 'Notlarım' }} />

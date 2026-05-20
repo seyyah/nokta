@@ -7,6 +7,7 @@ export interface Note {
   title: string;
   body: string;
   createdAt: string;
+  starred?: boolean;
 }
 
 export async function loadNotes(): Promise<Note[]> {
@@ -34,4 +35,10 @@ export async function addNote(title: string, body: string): Promise<Note> {
 export async function deleteNote(id: string): Promise<void> {
   const notes = await loadNotes();
   await AsyncStorage.setItem(KEY, JSON.stringify(notes.filter((n) => n.id !== id)));
+}
+
+export async function toggleStar(id: string): Promise<void> {
+  const notes = await loadNotes();
+  const next = notes.map((n) => (n.id === id ? { ...n, starred: !n.starred } : n));
+  await AsyncStorage.setItem(KEY, JSON.stringify(next));
 }
