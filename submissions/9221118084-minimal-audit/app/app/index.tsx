@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
-import { Stack, router, useFocusEffect } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { loadNotes, type Note } from '../lib/notes';
 
 export default function HomeScreen() {
@@ -14,21 +14,6 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      {/*
-        INTENTIONAL UX BUG (HomeScreen):
-        The only way to create a note is this tiny, unlabeled "+" in the header.
-        It is easy to miss and gives no hint of what it does.
-      */}
-      <Stack.Screen
-        options={{
-          headerRight: () => (
-            <Pressable onPress={() => router.push('/new-note')} hitSlop={6}>
-              <Text style={styles.headerPlus}>+</Text>
-            </Pressable>
-          ),
-        }}
-      />
-
       <FlatList
         data={notes}
         keyExtractor={(n) => n.id}
@@ -45,13 +30,17 @@ export default function HomeScreen() {
           </Pressable>
         )}
       />
+
+      {/* FORGE Cycle 1: labeled bottom FAB replaces the easy-to-miss header "+". */}
+      <Pressable style={styles.fab} onPress={() => router.push('/new-note')}>
+        <Text style={styles.fabText}>+ Yeni Not</Text>
+      </Pressable>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f5f5f5' },
-  headerPlus: { fontSize: 22, color: '#222', paddingHorizontal: 4 },
   listContent: { padding: 16, gap: 12 },
   emptyWrap: { flexGrow: 1, alignItems: 'center', justifyContent: 'center' },
   empty: { color: '#999', fontSize: 16 },
@@ -67,4 +56,19 @@ const styles = StyleSheet.create({
   },
   cardTitle: { fontSize: 16, fontWeight: '600', color: '#222' },
   cardBody: { fontSize: 14, color: '#777', marginTop: 4 },
+  fab: {
+    position: 'absolute',
+    bottom: 24,
+    alignSelf: 'center',
+    backgroundColor: '#2563eb',
+    borderRadius: 28,
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 5,
+  },
+  fabText: { color: '#fff', fontSize: 16, fontWeight: '700' },
 });
