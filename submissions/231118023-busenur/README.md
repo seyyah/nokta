@@ -2,7 +2,7 @@ Track: A
 
 # HydroFlow - Su Tüketim Takipçisi (Challenge 2 - Track A)
 
-**Öğrenci Adı Soyadı:** Busenur
+**Öğrenci Adı Soyadı:** Busenur Çİl
 **Öğrenci No:** 231118023
 **Seçilen Track:** Track A
 
