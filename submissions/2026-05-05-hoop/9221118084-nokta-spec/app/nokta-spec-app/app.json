@@ -1,0 +1,54 @@
+{
+  "expo": {
+    "name": "nokta-spec-app",
+    "slug": "nokta-spec-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.abou1111.noktaspec",
+      "infoPlist": {
+        "NSSpeechRecognitionUsageDescription": "Allow $(PRODUCT_NAME) to recognise your speech and convert it to text.",
+        "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access the microphone to capture your spoken idea."
+      }
+    },
+    "android": {
+      "package": "com.abou1111.noktaspec",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-font",
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access the microphone to capture your spoken idea.",
+          "speechRecognitionPermission": "Allow $(PRODUCT_NAME) to recognise your speech and convert it to text."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "e4969471-4a34-4d0e-9281-d485e01b4361"
+      }
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "Nokta — Human Dot",
+    "slug": "nokta-human-dot",
+    "version": "2.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": false,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#080814"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.nokta.humandot"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#080814"
+      },
+      "softwareKeyboardLayoutMode": "pan",
+      "package": "com.nokta.humandot"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b72903d8-e28d-4c04-9576-f3067b12d6da"
+      }
+    },
+    "owner": "aybukeet",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/b72903d8-e28d-4c04-9576-f3067b12d6da"
+    }
+  }
+}
