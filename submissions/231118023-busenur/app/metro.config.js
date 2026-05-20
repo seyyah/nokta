@@ -3,7 +3,7 @@ const path = require('path');
 
 // Project and Library roots
 const projectRoot = __dirname;
-const libraryRoot = path.resolve(projectRoot, '../../../../nokta-audit-main');
+const libraryRoot = path.resolve(projectRoot, './nokta-audit-main');
 
 const config = getDefaultConfig(projectRoot);
 
