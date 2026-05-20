@@ -3,8 +3,8 @@ Track: A
 # Notlar — Audit Forge Submission
 
 **Student:** 9221118084
-**Expo Link:** _<!-- TODO: paste your `exp://…` or https://expo.dev/… link after `npx expo start` -->_
-**Demo Video:** _<!-- TODO: paste YouTube/Drive link — max 60 seconds -->_
+**Expo Link:** [Install APK (EAS build)](https://expo.dev/accounts/abou2223/projects/notlar/builds/68982026-e410-4cba-b248-7e0e01b0ad59) — or run locally with `cd app && npx expo start`
+**Demo Video:** https://youtube.com/shorts/XCzyfQooJDw
 **AI Tool Used:** Claude Code (claude-opus-4-7)
 
 ## Decision Log
@@ -68,8 +68,8 @@ FORGE.md                ← cycle ledger
 
 ## Still To Do Before Submitting
 
-- [ ] `npx expo start` → paste the Expo link above
+- [x] Demo video recorded → linked above
+- [x] APK built on EAS → `app-release.apk` present
+- [x] Expo/EAS install link added above
 - [ ] Capture the 3 reports on a device (🐛 FAB → draw box → note → Export MD) so the burn-in screenshots are real, and replace the placeholder images in `audit-reports/`
-- [ ] Record the ≤60s demo video → paste the link above
-- [ ] `eas build -p android --profile preview` → add `app-release.apk`
 - [ ] Move this folder into your `seyyah/nokta` fork under `submissions/` and open the PR
