@@ -1,5 +1,6 @@
 Video linki: https://youtu.be/axTwfSnWQco
-QR code:
+QR code:<img width="163" height="212" alt="image" src="https://github.com/user-attachments/assets/ce99dd65-d301-4391-b164-57e45d71197a" />
+
 
 
 # Nokta — Community-Driven program.md
