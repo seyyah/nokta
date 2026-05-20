@@ -1,6 +1,5 @@
 const { getDefaultConfig } = require('expo/metro-config');
 const path = require('path');
-const exclusionList = require('metro-config/src/defaults/exclusionList');
 
 // Project and Library roots
 const projectRoot = __dirname;
@@ -12,9 +11,7 @@ const config = getDefaultConfig(projectRoot);
 config.watchFolders = [libraryRoot];
 
 // 2. Block Metro from watching/resolving the library's own node_modules to prevent duplicate package & codegen conflicts
-config.resolver.blacklistRE = exclusionList([
-  new RegExp(path.resolve(libraryRoot, 'node_modules').replace(/[/\\]/g, '[/\\\\]')),
-]);
+config.resolver.blacklistRE = /nokta-audit-main[/\\]node_modules[/\\]/;
 
 // 3. Force Metro to resolve packages from the app's node_modules first
 config.resolver.nodeModulesPaths = [
