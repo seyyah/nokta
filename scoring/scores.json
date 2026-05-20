@@ -33,8 +33,8 @@
         "trace": {
           "points": 0,
           "max": 20,
-          "total_commits": 1,
-          "meaningful_commits": 1
+          "total_commits": 2,
+          "meaningful_commits": 2
         }
       },
       "penalties": [
