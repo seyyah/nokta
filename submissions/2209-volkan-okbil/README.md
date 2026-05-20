@@ -3,8 +3,9 @@ Track: B
 # OkbilApp - Nokta Audit Forge Mission
 
 ## Proje Bilgileri
-- **Expo QR / Link:** [Expo Go Bağlantınızı veya QR Linkinizi Buraya Ekleyin]
-- **Demo Video:** [60 Saniyelik Uygulama ve Otonomi Demomunuzun Linkini Buraya Ekleyin]
+- **Expo Go Yayını (Update):** [Proje Linki ve QR Kod](https://expo.dev/accounts/231118058/projects/okbilapp/updates/2b2f62ae-f885-444d-917f-7ab591e75a23)
+- **APK İndirme Linki:** [app-release.apk İndir](https://expo.dev/accounts/231118058/projects/okbilapp/builds/0222821d-9153-48f9-9387-455d5eaff0c4)
+- **Demo Video:** [YouTube Shorts Demo - Nokta Audit Forge](https://youtube.com/shorts/amKW_w7Yock)
 - **Kullanılan AI Tool:** Antigravity (Gemini 3.1 Pro)
 - **Human Touch Points:** 3 
   - (Tasarım kararlarının yönünü onaylama ve çöken bir bağımlılık paketinde rollback kararı verilmesi durumlarında yapay zeka yönlendirildi)
