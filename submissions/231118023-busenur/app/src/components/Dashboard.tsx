@@ -179,13 +179,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
+    flexWrap: 'wrap',
+    gap: 8,
   },
   waterBtn: {
     backgroundColor: '#1E293B',
     borderRadius: 16,
     padding: 12,
     alignItems: 'center',
-    width: 110, // Fixed width that causes overflow on smaller screens
+    flex: 1,
+    minWidth: 90,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
