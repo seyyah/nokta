@@ -4,7 +4,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { captureScreen, captureRef } from 'react-native-view-shot';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
+import { StatusBar } from 'expo-status-bar';
 import { Text } from 'react-native';
+import { colors } from '../lib/theme';
 
 const auditStorage = {
   async loadNotes() {
@@ -27,8 +29,18 @@ export default function RootLayout() {
   const pathname = usePathname();
   return (
     <>
-      <Stack screenOptions={{ headerStyle: { backgroundColor: '#fff' }, headerTitleStyle: { fontWeight: '700' } }}>
-        <Stack.Screen name="index" options={{ title: 'Notlar' }} />
+      <StatusBar style="dark" />
+      <Stack
+        screenOptions={{
+          headerStyle: { backgroundColor: colors.bg },
+          headerShadowVisible: false,
+          headerTintColor: colors.text,
+          headerTitleStyle: { fontWeight: '800', fontSize: 18, color: colors.text },
+          headerTitleAlign: 'center',
+          contentStyle: { backgroundColor: colors.bg },
+        }}
+      >
+        <Stack.Screen name="index" options={{ title: 'Notlarım' }} />
         <Stack.Screen name="new-note" options={{ title: 'Yeni Not' }} />
         <Stack.Screen name="note/[id]" options={{ title: 'Not' }} />
       </Stack>
