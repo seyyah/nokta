@@ -54,18 +54,14 @@ export default function App() {
     setCurrentWater(newTotal);
   };
 
-  // Delete log (with INTENTIONAL STATE SYNC BUG - Bug 3)
+  // Fixed deletion state sync (Bug 3 Fix)
   const handleDeleteLog = async (id: string) => {
     const todayLogs = await storage.deleteWaterLog(id);
     setLogs(todayLogs);
     
-    // INTENTIONAL STATE SYNC BUG:
-    // We update the local logs array, but we FORGET to update the currentWater sum.
-    // Thus, the HomeScreen progress circle won't change after deleting an item
-    // until the app or state is refreshed.
-    // Correct way would be:
-    // const newTotal = todayLogs.reduce((sum, log) => sum + log.amount, 0);
-    // setCurrentWater(newTotal);
+    // Fix state sync: recalculate and update currentWater
+    const newTotal = todayLogs.reduce((sum, log) => sum + log.amount, 0);
+    setCurrentWater(newTotal);
   };
 
   // Save profile settings
