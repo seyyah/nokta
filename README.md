@@ -1,3 +1,7 @@
+Video linki: https://youtu.be/axTwfSnWQco
+QR code:
+
+
 # Nokta — Community-Driven program.md
 
 ![NOKTA](assets/nokta.jpeg)
