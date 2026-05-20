@@ -9,7 +9,7 @@
 
 ### ✅ #1 — Alt aksiyon butonları FAB/scroll altında; “Yeni fikir” etiketi kontrastı düşük
 
-![Screenshot](assets/spec-burnin.png)
+![Screenshot](assets/spec-burnin.jpeg)
 
 - **Durum:** Kapalı (FORGE cycle 4 — `specPrimaryButtonText` + `specScrollSpacer`)
 - **Zaman:** 19.05.2026 02:40:00

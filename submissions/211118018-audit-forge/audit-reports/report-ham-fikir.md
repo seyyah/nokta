@@ -9,7 +9,7 @@
 
 ### ✅ #1 — Birincil buton audit FAB ile çakışıyor; alt padding yetersiz
 
-![Screenshot](assets/ham-fikir-burnin.png)
+![Screenshot](assets/ham-fikir-burnin.jpeg)
 
 - **Durum:** Kapalı (FORGE cycle 1 — `contentWithFabPad`)
 - **Zaman:** 19.05.2026 02:30:00
