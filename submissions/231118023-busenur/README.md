@@ -11,9 +11,9 @@ HydroFlow, kullanıcıların günlük su tüketim hedeflerini takip etmelerine, 
 ---
 
 ## 🔗 Teslimat Linkleri
-- **Expo Go Proje Linki:** [https://expo.dev/@bbusenur/hydroflow](https://expo.dev/@bbusenur/hydroflow)
-- **Demo Tanıtım Videosu:** [https://youtube.com/watch?v=hydroflow-demo-231118023](https://youtube.com/watch?v=hydroflow-demo-231118023)
-- **Android APK Dosyası:** [app-release.apk](./app-release.apk)
+- **Expo Go Proje Linki:** https://expo.dev/accounts/busssnrrr/projects/app/builds/6e32cbaa-c6e5-4762-a5d4-27f71c9791cf
+- **Demo Tanıtım Videosu:** https://youtube.com/shorts/lTG7GihwEo8?feature=share
+- **Android APK Dosyası:** app.zip/app.apk
 
 ---
 
