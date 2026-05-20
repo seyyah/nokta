@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, Switch, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Switch, TouchableOpacity, ScrollView, Alert } from 'react-native';
 
 interface SettingsProps {
   currentGoal: number;
@@ -29,16 +29,22 @@ export default function Settings({
     return Math.round(weightVal * 35);
   };
 
-  // INTENTIONAL FORM VALIDATION BUG (Bug 2):
-  // We parse the string to float/int directly and save it without verifying if it's negative, 
-  // zero, or NaN. It can cause NaN to propagate or result in negative water values.
+  // Fixed form validation (Bug 2 Fix)
   const handleSave = () => {
     const goalVal = parseInt(goalText, 10);
     const weightVal = parseFloat(weightText);
     
-    // We intentionally do NOT validate if they are valid numbers, >= 0, etc.
-    // This allows the user to write negative values or text, causing errors.
+    if (isNaN(goalVal) || goalVal <= 0) {
+      Alert.alert('Hata', 'Lütfen geçerli ve pozitif bir su hedefi girin (ml).');
+      return;
+    }
+    if (isNaN(weightVal) || weightVal <= 0) {
+      Alert.alert('Hata', 'Lütfen geçerli ve pozitif bir vücut ağırlığı girin (kg).');
+      return;
+    }
+    
     onSaveSettings(goalVal, weightVal, reminders);
+    Alert.alert('Başarılı', 'Ayarlarınız başarıyla güncellendi.');
   };
 
   // Auto-fill recommended water based on weight input
