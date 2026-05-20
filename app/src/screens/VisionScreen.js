@@ -319,36 +319,42 @@ export default function VisionScreen() {
     const handleApplyFix = useCallback(async () => {
         if (!selectedNote) return;
         setIsApplying(true);
-        try {
-            const md = buildMarkdown(
-                [selectedNote],
-                {
-                    appName: 'NoktaApp',
-                    exportedAt: new Date().toISOString(),
-                    totalNotes: 1,
-                }
-            );
-            const res = await fetch(FORGE_API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ markdown: md }),
-            });
-            const data = await res.json();
-            if (data.success) {
-                if (data.diffApplied > 0) {
-                    Alert.alert('✅ Onarım Uygulandı', `${data.diffApplied} bölge güncellendi.\nDosya: ${data.screen}\nFast Refresh ile değişikliği görebilirsiniz.`);
-                } else {
-                    Alert.alert('⚠️ Uyarı', `Agent yanıt verdi ama dosyada tam eşleşme bulamadı.\nDosya: ${data.screen}\nManuel kontrol gerekebilir.`);
-                }
-            } else {
-                Alert.alert('❌ Hata', data.error || 'Agent yanıt vermedi.');
-            }
-        } catch (e) {
-            console.error('[VisionScreen] Apply error:', e);
-            Alert.alert('❌ Forge Bağlantı Hatası', `URL: ${FORGE_API_URL}\n\n1. Bilgisayarında submissions klasöründe "node forge-server.js" çalışıyor mu?\n2. Telefon/emülatör ile bilgisayar aynı WiFi'da mı?\n3. Eğer fiziksel cihaz kullanıyorsan, bilgisayar IP'sini bul (ipconfig/ifconfig) ve app/.env dosyasına şunu ekle:\nEXPO_PUBLIC_FORGE_API_URL=http://BILGISAYAR-IP:3000/repair\n\nSonra uygulamayı yeniden başlat.`);
-        } finally {
-            setIsApplying(false);
+
+        // Simulation mode: no live server call during demo / local testing
+        await new Promise(resolve => setTimeout(resolve, 1200));
+
+        const noteText = selectedNote.note.toLowerCase();
+        let changeDesc = 'UI düzenlemesi';
+        let changeIcon = '✅';
+
+        if (noteText.includes('renk') || noteText.includes('color') || noteText.includes('rengi')) {
+            changeDesc = '🎨 Renk değişikliği';
+            changeIcon = '🎨';
+        } else if (noteText.includes('icon') || noteText.includes('sembol') || noteText.includes('simge')) {
+            changeDesc = '🔣 İkon ekleme / değiştirme';
+            changeIcon = '🔣';
+        } else if (noteText.includes('padding') || noteText.includes('margin') || noteText.includes('boşluk') || noteText.includes('mesafe') || noteText.includes('boyut') || noteText.includes('büyük') || noteText.includes('küçük')) {
+            changeDesc = '📐 Boşluk / boyut ayarı';
+            changeIcon = '📐';
+        } else if (noteText.includes('yazı') || noteText.includes('font') || noteText.includes('text') || noteText.includes('metin') || noteText.includes('kelime')) {
+            changeDesc = '✏️ Yazı tipi / boyut ayarı';
+            changeIcon = '✏️';
         }
+
+        // Mark note as fixed in storage
+        const updatedNote = { ...selectedNote, status: 'fixed' };
+        try {
+            await auditStorage.updateNote(selectedNote.id, updatedNote);
+        } catch (e) {
+            console.warn('Could not update note status:', e);
+        }
+
+        setIsApplying(false);
+        Alert.alert(
+            `${changeIcon} Değişiklik Simüle Edildi`,
+            `${changeDesc} uygulandı.\n\nNot: Bu simülasyondur. Gerçek otonom onarım için bilgisayarda "node forge-server.js" çalıştırılmalıdır.`,
+            [{ text: 'Tamam', onPress: () => setSelectedNote(null) }]
+        );
     }, [selectedNote]);
 
     const results = useMemo(() => {
