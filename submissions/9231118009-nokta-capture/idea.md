@@ -1,79 +1,56 @@
-# 💩 Slop Dedektörü — Track 2: Pitch → Slop Score
+# IDEA.md — Track B: Pitch Coach Modu
 
-## Fikir Özeti
+## Feature Pitch
 
-Startup pitch paragraflarını yapay zekâ ile analiz edip **"slop score"** (0–100) üreten bir mobil uygulama.
+**Fikir:** Slop Dedektörü'ne tek seferlik skor yerine **iteratif Pitch Coach Modu** ekle.
 
-Kullanıcı pitch metnini yapıştırır, AI şu boyutları test eder:
+Şu an uygulama bir pitch alıp skor üretiyor — kullanıcı skoru görüyor ama **nasıl iyileştireceğini** bilmiyor. Coach Modu bu boşluğu kapatıyor: en düşük puan alan boyutu tespit edip, AI kullanıcıya o boyuta özgü sorular soruyor, yanıtları alıyor ve pitch'in o bölümünü birlikte yeniden yazıyor.
 
-| Boyut | Ne ölçer? |
-|-------|-----------|
-| **Buzzword yoğunluğu** | "disrupting", "revolutionizing", "AI-powered" gibi boş jargon oranı |
-| **Kanıt eksikliği** | Sayı, veri, metrik olmadan yapılan büyük iddialar |
-| **Pazar büyüklüğü şişirme** | "trillion-dollar market" gibi abartılı TAM/SAM/SOM iddiaları |
-| **Belirsiz fayda** | Somut değer yerine genel vaatler ("daha iyi deneyim" vb.) |
-| **Teknik muğlaklık** | Nasıl çalıştığı açıklanmadan "AI/ML/blockchain" kullanımı |
+---
 
-## Çıktı Formatı
+## Kullanıcı Akışı
 
 ```
-📊 SLOP SCORE: 73/100  (Yüksek Slop!)
-
-🔍 Detaylı Analiz:
-- Buzzword yoğunluğu: 8/10  → "AI-powered", "disrupt", "revolutionary" x3
-- Kanıt eksikliği: 7/10    → 0 metrik, 0 veri noktası
-- Pazar şişirme: 9/10      → "$50B market" kaynaksız
-- Belirsiz fayda: 6/10     → "seamless experience" somut değil
-- Teknik muğlaklık: 7/10   → AI nasıl kullanılıyor belirsiz
-
-💡 Öneriler:
-1. "$50B market" iddiasını kaynak ile destekle
-2. "Seamless experience" yerine ölçülebilir fayda yaz
-3. AI'ın hangi modeli/veriyi kullandığını belirt
+Pitch analizi biter
+    ↓
+"Coach Modu'nu Aç" butonu belirir
+    ↓
+AI en zayıf boyutu seçer (örn. "Kanıt Eksikliği: 8/10")
+    ↓
+Soru sorar: "Ürününüzü kaç kullanıcı test etti?"
+    ↓
+Kullanıcı cevaplar
+    ↓
+AI o bölümü yeniden yazar, kullanıcı onaylar
+    ↓
+Yeni pitch otomatik analiz edilir → skor güncellenir
+    ↓
+Döngü, tüm zayıf boyutlar iyileşene kadar devam eder
 ```
 
-## Kullanıcı Akışı & Human Loop Spectrum
+---
 
-Hoca'nın framework'üne göre uygulama üç loop seviyesinde çalışır:
+## Human Loop Spectrum Bağlantısı
 
-| Adım | Loop | Ne olur? |
-|------|------|----------|
-| 1. Pitch yapıştır + "Analiz Et" | **HOOTL** | AI otonom analiz eder, insan müdahalesi yok |
-| 2. Sonuç ekrana gelir, "Onayla / Düzenle" sorusu çıkar | **HOTL** | İnsan sonucu izler, onaylar ya da reddeder |
-| 3a. Onayla → Sonuç kesinleşir, paylaş butonu aktif | **HOTL** | İnsan onayladı, AI kararı geçerli |
-| 3b. Düzenle → Manuel skor girişi açılır | **HITL** | İnsan tam kontrolü alır, skoru değiştirir |
+| Mod | Loop | Açıklama |
+|-----|------|----------|
+| Otomatik boyut seçimi | **HOOTL** | AI en zayıf boyutu kendisi belirliyor |
+| Soru-cevap akışı | **HOTL** | AI soru soruyor, kullanıcı onaylıyor/atlıyor |
+| Pitch bölümü onayı | **HITL** | Kullanıcı AI'ın yazdığı bölümü kabul veya reddediyor |
 
-## Teknik Mimari
+---
 
-- **Frontend**: React Native + Expo
-- **AI Backend**: Anthropic Claude API (client-side — demo amaçlı)
-- **State**: React useState (loopMode: HOOTL / HOTL / HITL)
-- **Styling**: React Native StyleSheet
+## Müşteri - Geliştirici Farkı
 
-## Referans Alınan Materyaller
+**Müşteri gözünden:** "Sadece skoru görüyorum, ne yapacağımı bilmiyorum. Somut yardım istiyorum."
 
-Karpathy'nin autoresearch'ü, AI'ın otonom döngüde hipotez üretip metrik ölçebildiğini gösterdi. Hoca'nın HOTL/HOOTL çerçevesi ise ne zaman AI'ın otonom çalışacağını, ne zaman insanın devreye gireceğini harness katmanıyla belirlemenin önemini ortaya koydu. Slop Dedektörü bu iki fikri birleştiriyor: pitch analizi HOOTL modunda çalışıyor, kullanıcı sonucu onaylayıp paylaşmaya karar verdiğinde HITL devreye giriyor.
+**Geliştirici gözünden:** Her coach oturumu bir `FORGE` döngüsü gibi çalışıyor — `READ (skor) → LOCATE (zayıf boyut) → HYPOTHESIZE (soru) → REPAIR (yeniden yaz) → VERIFY (yeni skor)`. Kullanıcı farkında olmadan Karpathy ratchet loop'u koşturuyor.
 
-## Hedef Kullanıcı
+---
 
-- Startup kurucuları (pitch'lerini test etmek için)
-- Yatırımcılar (gelen pitch'leri hızlıca elemek için)
-- Üniversite öğrencileri (girişimcilik dersi ödevleri)
+## Neden Track B?
 
-## Neden Track 2?
-
-- Tek input / tek output → En basit akış
-- Multi-turn diyalog yok
-- Parsing/dedup karmaşası yok
-- Görsel olarak etkili (skor göstergesi)
-
-## Decision Log
-
-| Karar | Neden |
-|-------|-------|
-| Track 2 seçildi | En basit akış: tek input → tek output |
-| Expo blank template | Minimum bağımlılık, hızlı geliştirme |
-| Client-side API çağrısı | Demo amaçlı; production'da backend proxy kullanılmalı |
-| Dark theme | Slop dedektörü konseptine uygun edgy estetik |
-| 5 boyutlu analiz | Tek sayıdan daha anlamlı ve öğretici |
-| HOTL/HITL katmanı eklendi | Hoca'nın Human Loop Spectrum framework'üne göre AI sonucu kullanıcı onayına sunuluyor, reddederse manuel düzenleme modu açılıyor |
+- Mevcut HOOTL/HOTL/HITL altyapısını doğal olarak genişletiyor
+- Yeni bir ekran veya navigasyon gerektirmiyor — mevcut tek ekrana ek state olarak ekleniyor
+- nokta-audit ile entegrasyon: kullanıcı coach modunda UI'da bir sorunla karşılaşırsa bug FAB'ına basıp anında rapor üretebiliyor
+- Karpathy autoresearch'ün "ölçülebilir metriği olan her döngü otomatikleştirilebilir" ilkesini kullanıcıya görünür kılıyor

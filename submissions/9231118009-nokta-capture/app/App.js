@@ -14,6 +14,11 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { captureScreen } from 'react-native-view-shot';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
+import { AuditWidget } from '@xtatistix/mobile-audit';
+import { auditStorage } from './auditStorage';
 
 // ─── Örnek Pitchler ───
 const EXAMPLES = [
@@ -93,6 +98,7 @@ function ScoreGauge({ score, label }) {
   const anim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    anim.setValue(0); // Cycle 2 fix: her yeni skor için animasyonu sıfırla
     Animated.timing(anim, { toValue: score, duration: 1200, useNativeDriver: false }).start();
   }, [score]);
 
@@ -167,6 +173,13 @@ export default function App() {
     setResult(null);
     fadeAnim.setValue(0);
 
+    // Cycle 1 fix: minimum karakter kontrolü
+    if (pitch.trim().length < 50) {
+      setError('Pitch çok kısa — en az 50 karakter gerekli.');
+      setLoading(false);
+      return;
+    }
+
     try {
       const res = await analyzePitch(pitch, apiKey);
       // HOOTL → HOTL: AI bitti, insan onayına sun
@@ -213,8 +226,18 @@ export default function App() {
     await Share.share({ message: msg });
   };
 
+  // currentScreen → AuditWidget için ekran adı
+  const currentScreen = result
+    ? 'ResultsScreen'
+    : loopMode === 'HOTL'
+    ? 'HotlScreen'
+    : loopMode === 'HITL'
+    ? 'HitlScreen'
+    : 'InputScreen';
+
   return (
-    <SafeAreaView style={s.safe}>
+    <>
+      <SafeAreaView style={s.safe}>
       <StatusBar barStyle="light-content" backgroundColor="#0f0f0f" />
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView style={s.scroll} contentContainerStyle={s.scrollContent} keyboardShouldPersistTaps="handled">
@@ -323,9 +346,15 @@ export default function App() {
                 keyboardType="numeric"
                 maxLength={3}
               />
-              <TouchableOpacity style={s.approveBtn} onPress={handleHitlConfirm}>
-                <Text style={s.approveBtnText}>✅ Onayla ve Kaydet</Text>
-              </TouchableOpacity>
+              {/* Cycle 3 fix: geri butonu eklendi */}
+              <View style={{ flexDirection: 'row', gap: 10, marginTop: 12 }}>
+                <TouchableOpacity style={s.rejectBtn} onPress={() => setLoopMode('HOTL')}>
+                  <Text style={s.rejectBtnText}>← Geri</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={s.approveBtn} onPress={handleHitlConfirm}>
+                  <Text style={s.approveBtnText}>✅ Onayla</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           )}
 
@@ -353,10 +382,39 @@ export default function App() {
             </Animated.View>
           )}
 
-          <View style={{ height: 60 }} />
+        <View style={{ height: 60 }} />
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
+
+      {/* ─── nokta-audit: Drop-in Bug Raporlama Widget'ı ─── */}
+      <AuditWidget
+        appName="Slop Dedektörü"
+        initialPosition={{ bottom: 100, right: 16 }}
+        deps={{
+          captureScreen: () => captureScreen({ format: 'png', result: 'tmpfile' }),
+          captureRef: (ref) =>
+            captureScreen({ format: 'png', result: 'tmpfile' }),
+          writeFile: async (filename, content) => {
+            const uri = FileSystem.documentDirectory + filename;
+            await FileSystem.writeAsStringAsync(uri, content);
+            return uri;
+          },
+          writeFileBinary: async (filename, base64) => {
+            const uri = FileSystem.documentDirectory + filename;
+            await FileSystem.writeAsStringAsync(uri, base64, {
+              encoding: FileSystem.EncodingType.Base64,
+            });
+            return uri;
+          },
+          shareFile: (uri) => Sharing.shareAsync(uri),
+          storage: auditStorage,
+          currentScreen,
+          reporterId: 'slop-qa',
+          BugIcon: <Text style={{ fontSize: 22 }}>🐛</Text>,
+        }}
+      />
+    </>
   );
 }
 
