@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "Nokta Expert",
+    "slug": "nokta-expert-support",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.nokta.expertsupport"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#2563eb"
+      },
+      "package": "com.nokta.expertsupport",
+      "softwareKeyboardLayoutMode": "pan"
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "eadaf5a6-e9e8-4638-be95-f494efa4e352"
+      }
+    }
+  }
+}

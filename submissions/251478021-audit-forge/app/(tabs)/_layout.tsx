@@ -22,16 +22,8 @@ export default function TabLayout() {
 
   const handleCapture = async () => {
     setIsCapturing(true);
-    
     try {
-      // Step 1: Capture Full Screen (Reliable on all devices)
-      const fullUri = await captureRef(globalViewRef, {
-        format: 'jpg',
-        quality: 1,
-      });
-
-      // Step 2: Crop the image manually using selection box coordinates
-      // We must multiply coordinates by PixelRatio because captureRef works on pixels
+      const fullUri = await captureRef(globalViewRef, { format: 'jpg', quality: 1 });
       const scale = PixelRatio.get();
       const cropRect = {
         originX: Math.max(0, boxPos.x * scale),
@@ -39,64 +31,32 @@ export default function TabLayout() {
         width: boxSize.width * scale,
         height: boxSize.height * scale,
       };
-
       const croppedResult = await ImageManipulator.manipulateAsync(
         fullUri,
         [{ crop: cropRect }],
         { compress: 0.9, format: ImageManipulator.SaveFormat.JPEG }
       );
-
       setCapturedImage(croppedResult.uri);
       setShowFeedbackModal(true);
       setIsDesignMode(false);
     } catch (error) {
-      console.error('Capture/Crop failed', error);
-      Alert.alert('Hata', 'Alan yakalanamadı. Lütfen tam ekran yakalamayı deneyin.');
+      Alert.alert('Hata', 'Alan yakalanamadı.');
     } finally {
       setIsCapturing(false);
     }
   };
 
   const handleSaveFeedback = async () => {
-    if (!feedbackText.trim()) {
-      Alert.alert('Uyarı', 'Lütfen önerinizi yazın.');
-      return;
-    }
-
+    if (!feedbackText.trim()) { Alert.alert('Uyarı', 'Lütfen önerinizi yazın.'); return; }
     try {
-      const newFeedback = {
-        id: Date.now().toString(),
-        text: feedbackText,
-        date: new Date().toLocaleString('tr-TR'),
-        image: capturedImage,
-      };
-
+      const newFeedback = { id: Date.now().toString(), text: feedbackText, date: new Date().toLocaleString('tr-TR'), image: capturedImage };
       const existingData = await AsyncStorage.getItem('user_feedbacks');
       const feedbacks = existingData ? JSON.parse(existingData) : [];
       feedbacks.unshift(newFeedback);
       await AsyncStorage.setItem('user_feedbacks', JSON.stringify(feedbacks));
-      
-      setFeedbackText('');
-      setCapturedImage(null);
-      setShowFeedbackModal(false);
-      Alert.alert('Başarılı', 'Öneriniz iletildi, teşekkürler!');
-    } catch (error) {
-      Alert.alert('Hata', 'Kaydedilemedi.');
-    }
-  };
-
-  const increaseSize = () => {
-    setBoxSize(prev => ({ 
-      width: Math.min(350, prev.width + 30), 
-      height: Math.min(500, prev.height + 20) 
-    }));
-  };
-
-  const decreaseSize = () => {
-    setBoxSize(prev => ({ 
-      width: Math.max(100, prev.width - 30), 
-      height: Math.max(80, prev.height - 20) 
-    }));
+      setFeedbackText(''); setCapturedImage(null); setShowFeedbackModal(false);
+      Alert.alert('Başarılı', 'Öneriniz iletildi!');
+    } catch { Alert.alert('Hata', 'Kaydedilemedi.'); }
   };
 
   return (
@@ -106,72 +66,79 @@ export default function TabLayout() {
           screenOptions={{
             headerShown: false,
             tabBarStyle: {
-              backgroundColor: '#0F172A',
+              backgroundColor: '#080B14',
               borderTopWidth: 1,
-              borderTopColor: 'rgba(255, 255, 255, 0.1)',
-              height: Platform.OS === 'ios' ? 85 : 65,
+              borderTopColor: 'rgba(255, 255, 255, 0.08)',
+              height: Platform.OS === 'ios' ? 88 : 68,
               paddingBottom: Platform.OS === 'ios' ? 30 : 10,
             },
             tabBarActiveTintColor: '#3B82F6',
-            tabBarInactiveTintColor: '#64748B',
-            tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
+            tabBarInactiveTintColor: '#475569',
+            tabBarLabelStyle: { fontSize: 9, fontWeight: '700', marginTop: 2 },
           }}
         >
-          <Tabs.Screen name="index" options={{ title: 'Anasayfa', tabBarIcon: ({ color, focused }) => (<Ionicons name={focused ? 'home' : 'home-outline'} size={24} color={color} />) }} />
-          <Tabs.Screen name="tickets" options={{ title: 'Biletlerim', tabBarIcon: ({ color, focused }) => (<Ionicons name={focused ? 'ticket' : 'ticket-outline'} size={24} color={color} />) }} />
-          <Tabs.Screen name="feedbacks" options={{ title: 'Tasarım Düzeltmeler', tabBarIcon: ({ color, focused }) => (<Ionicons name={focused ? 'color-palette' : 'color-palette-outline'} size={24} color={color} />) }} />
-          <Tabs.Screen name="profile" options={{ title: 'Profil', tabBarIcon: ({ color, focused }) => (<Ionicons name={focused ? 'person' : 'person-outline'} size={24} color={color} />) }} />
+          <Tabs.Screen name="index" options={{ title: 'Anasayfa', tabBarIcon: ({ color, focused }) => (<Ionicons name={focused ? 'home' : 'home-outline'} size={21} color={color} />) }} />
+          <Tabs.Screen name="tickets" options={{ title: 'Biletler', tabBarIcon: ({ color, focused }) => (<Ionicons name={focused ? 'ticket' : 'ticket-outline'} size={21} color={color} />) }} />
+          <Tabs.Screen name="voice" options={{
+            title: 'Ses',
+            tabBarIcon: ({ color, focused }) => (<Ionicons name={focused ? 'mic' : 'mic-outline'} size={21} color={color} />),
+            tabBarActiveTintColor: '#8B5CF6',
+          }} />
+          <Tabs.Screen name="avatar" options={{
+            title: 'Avatar',
+            tabBarIcon: ({ color, focused }) => (<Ionicons name={focused ? 'person-circle' : 'person-circle-outline'} size={21} color={color} />),
+            tabBarActiveTintColor: '#EC4899',
+          }} />
+          <Tabs.Screen name="forge" options={{
+            title: 'Forge',
+            tabBarIcon: ({ color, focused }) => (<Ionicons name={focused ? 'flash' : 'flash-outline'} size={21} color={color} />),
+            tabBarActiveTintColor: '#F59E0B',
+          }} />
+          <Tabs.Screen name="feedbacks" options={{ title: 'Audit', tabBarIcon: ({ color, focused }) => (<Ionicons name={focused ? 'color-palette' : 'color-palette-outline'} size={21} color={color} />) }} />
+          <Tabs.Screen name="profile" options={{ title: 'Profil', tabBarIcon: ({ color, focused }) => (<Ionicons name={focused ? 'person' : 'person-outline'} size={21} color={color} />) }} />
         </Tabs>
       </View>
 
       {/* DRAGGABLE & RESIZABLE SELECTION BOX */}
       {isDesignMode && (
         <View style={styles.designOverlay}>
-          <View 
+          <View
             style={[styles.targetBox, { left: boxPos.x, top: boxPos.y, width: boxSize.width, height: boxSize.height }]}
             onStartShouldSetResponder={() => true}
             onResponderMove={(evt) => {
               const { pageX, pageY } = evt.nativeEvent;
-              setBoxPos({ 
-                x: Math.max(0, pageX - boxSize.width / 2), 
-                y: Math.max(0, pageY - boxSize.height / 2) 
-              });
+              setBoxPos({ x: Math.max(0, pageX - boxSize.width / 2), y: Math.max(0, pageY - boxSize.height / 2) });
             }}
           >
-            <View style={styles.boxCornerTL} />
-            <View style={styles.boxCornerTR} />
-            <View style={styles.boxCornerBL} />
-            <View style={styles.boxCornerBR} />
-            
+            <View style={styles.boxCornerTL} /><View style={styles.boxCornerTR} />
+            <View style={styles.boxCornerBL} /><View style={styles.boxCornerBR} />
             <TouchableOpacity style={styles.captureActionBtn} onPress={handleCapture} activeOpacity={0.8}>
-              <Ionicons name="camera" size={24} color="#FFF" />
+              <Ionicons name="camera" size={22} color="#FFF" />
               <Text style={styles.captureActionText}>{isCapturing ? "İŞLENİYOR..." : "YAKALA"}</Text>
             </TouchableOpacity>
-
             <View style={styles.resizeControls}>
-              <TouchableOpacity style={styles.resizeBtn} onPress={decreaseSize}>
+              <TouchableOpacity style={styles.resizeBtn} onPress={() => setBoxSize(p => ({ width: Math.max(100, p.width-30), height: Math.max(80, p.height-20) }))}>
                 <Ionicons name="remove-circle" size={24} color="#FFF" />
               </TouchableOpacity>
-              <TouchableOpacity style={styles.resizeBtn} onPress={increaseSize}>
+              <TouchableOpacity style={styles.resizeBtn} onPress={() => setBoxSize(p => ({ width: Math.min(350, p.width+30), height: Math.min(500, p.height+20) }))}>
                 <Ionicons name="add-circle" size={24} color="#FFF" />
               </TouchableOpacity>
             </View>
           </View>
-          
           <View style={styles.designHintContainer}>
-            <Text style={styles.designHintText}>Çerçeveyi sürükleyin ve boyutu ayarlayıp yakalayın</Text>
+            <Text style={styles.designHintText}>Çerçeveyi sürükle · boyutu ayarla · yakala</Text>
           </View>
         </View>
       )}
 
-      {/* FAB */}
+      {/* FAB - Audit Widget */}
       {!showFeedbackModal && (
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[styles.fab, isDesignMode && { backgroundColor: '#EF4444' }]}
           onPress={() => setIsDesignMode(!isDesignMode)}
         >
-          <Ionicons name={isDesignMode ? "close" : "scan"} size={20} color="#FFF" />
-          <Text style={styles.fabText}>{isDesignMode ? "KAPAT" : "TASARIM DÜZELT"}</Text>
+          <Ionicons name={isDesignMode ? "close" : "scan-circle"} size={20} color="#FFF" />
+          <Text style={styles.fabText}>{isDesignMode ? "KAPAT" : "AUDİT"}</Text>
         </TouchableOpacity>
       )}
 
@@ -186,11 +153,9 @@ export default function TabLayout() {
                   <Ionicons name="close" size={24} color="#94A3B8" />
                 </TouchableOpacity>
               </View>
-
               <View style={styles.previewContainer}>
                 {capturedImage && <Image source={{ uri: capturedImage }} style={styles.previewImage} resizeMode="contain" />}
               </View>
-
               <TextInput
                 style={styles.feedbackInput}
                 placeholder="Önerinizi buraya yazın..."
@@ -200,7 +165,6 @@ export default function TabLayout() {
                 onChangeText={setFeedbackText}
                 autoFocus
               />
-
               <TouchableOpacity style={styles.saveBtn} onPress={handleSaveFeedback}>
                 <Text style={styles.saveBtnText}>Geri Bildirimi Kaydet</Text>
               </TouchableOpacity>
@@ -219,22 +183,22 @@ const styles = StyleSheet.create({
   boxCornerTR: { position: 'absolute', top: -4, right: -4, width: 24, height: 24, borderTopWidth: 5, borderRightWidth: 5, borderColor: '#3B82F6' },
   boxCornerBL: { position: 'absolute', bottom: -4, left: -4, width: 24, height: 24, borderBottomWidth: 5, borderLeftWidth: 5, borderColor: '#3B82F6' },
   boxCornerBR: { position: 'absolute', bottom: -4, right: -4, width: 24, height: 24, borderBottomWidth: 5, borderRightWidth: 5, borderColor: '#3B82F6' },
-  captureActionBtn: { backgroundColor: '#3B82F6', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 25, paddingVertical: 14, borderRadius: 30, gap: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 5 }, shadowOpacity: 0.4, shadowRadius: 10, elevation: 8 },
-  captureActionText: { color: '#FFF', fontWeight: '900', fontSize: 16 },
+  captureActionBtn: { backgroundColor: '#3B82F6', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 22, paddingVertical: 12, borderRadius: 28, gap: 8, elevation: 8 },
+  captureActionText: { color: '#FFF', fontWeight: '900', fontSize: 15 },
   resizeControls: { position: 'absolute', bottom: -50, flexDirection: 'row', backgroundColor: '#1E293B', borderRadius: 25, padding: 8, gap: 20, borderWidth: 2, borderColor: '#3B82F6' },
   resizeBtn: { padding: 5 },
-  designHintContainer: { position: 'absolute', top: 60, alignSelf: 'center', backgroundColor: '#3B82F6', paddingHorizontal: 25, paddingVertical: 12, borderRadius: 30, elevation: 5 },
-  designHintText: { color: '#FFF', fontSize: 13, fontWeight: '800', textAlign: 'center' },
-  fab: { position: 'absolute', bottom: 70, right: 20, backgroundColor: '#3B82F6', paddingHorizontal: 25, height: 60, borderRadius: 30, flexDirection: 'row', alignItems: 'center', gap: 12, elevation: 15, zIndex: 10000 },
-  fabText: { color: '#FFF', fontWeight: '900', fontSize: 16 },
+  designHintContainer: { position: 'absolute', top: 60, alignSelf: 'center', backgroundColor: '#3B82F6', paddingHorizontal: 22, paddingVertical: 10, borderRadius: 28, elevation: 5 },
+  designHintText: { color: '#FFF', fontSize: 12, fontWeight: '800', textAlign: 'center' },
+  fab: { position: 'absolute', bottom: 75, right: 16, backgroundColor: '#3B82F6', paddingHorizontal: 16, height: 48, borderRadius: 24, flexDirection: 'row', alignItems: 'center', gap: 7, elevation: 15, zIndex: 10000 },
+  fabText: { color: '#FFF', fontWeight: '900', fontSize: 13 },
   modalOverlay: { flex: 1, justifyContent: 'flex-end' },
   modalBlur: { borderTopLeftRadius: 32, borderTopRightRadius: 32, overflow: 'hidden' },
   modalContent: { backgroundColor: '#1E293B', padding: 24, paddingBottom: 40 },
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 25 },
-  modalTitle: { fontSize: 24, fontWeight: '900', color: '#FFF' },
-  previewContainer: { width: '100%', height: 240, backgroundColor: '#0F172A', borderRadius: 24, marginBottom: 25, overflow: 'hidden', borderWidth: 2, borderColor: '#3B82F6' },
+  modalTitle: { fontSize: 22, fontWeight: '900', color: '#FFF' },
+  previewContainer: { width: '100%', height: 220, backgroundColor: '#0F172A', borderRadius: 20, marginBottom: 20, overflow: 'hidden', borderWidth: 2, borderColor: '#3B82F6' },
   previewImage: { width: '100%', height: '100%' },
-  feedbackInput: { backgroundColor: '#334155', borderRadius: 24, padding: 20, color: '#FFF', fontSize: 17, height: 130, textAlignVertical: 'top', marginBottom: 25, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
-  saveBtn: { backgroundColor: '#3B82F6', height: 65, borderRadius: 24, alignItems: 'center', justifyContent: 'center', elevation: 5 },
-  saveBtnText: { color: '#FFF', fontSize: 20, fontWeight: '900' }
+  feedbackInput: { backgroundColor: '#334155', borderRadius: 20, padding: 18, color: '#FFF', fontSize: 16, height: 120, textAlignVertical: 'top', marginBottom: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
+  saveBtn: { backgroundColor: '#3B82F6', height: 60, borderRadius: 20, alignItems: 'center', justifyContent: 'center', elevation: 5 },
+  saveBtnText: { color: '#FFF', fontSize: 18, fontWeight: '900' }
 });
