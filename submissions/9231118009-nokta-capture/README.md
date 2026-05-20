@@ -22,8 +22,9 @@ Human Loop Spectrum entegrasyonu:
 ## Demo
 
 - **Expo QR / Update:** https://expo.dev/accounts/mrcyberexe/projects/slop-dedektoru/updates/99fb6569-5fbb-4ebb-bd49-0b2af98f5e8e
-- **Demo Video (60sn):** `<!-- video linki buraya eklenecek -->`
+- **Demo Video (60sn):** https://youtube.com/shorts/7lNcCJ6SNk8?feature=share
 - **APK:** https://expo.dev/accounts/mrcyberexe/projects/slop-dedektoru/builds
+
 
 ---
 

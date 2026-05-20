@@ -45,9 +45,9 @@ const DIM_META = {
   teknik_muglaklık: { icon: '⚙️', title: 'Teknik Muğlaklık' },
 };
 
-// ─── Claude API çağrısı ───
+// ─── Gemini API çağrısı ───
 async function analyzePitch(pitchText, apiKey) {
-  const systemPrompt = `Sen bir startup pitch analizcisisin. Kullanıcının yapıştırdığı pitch paragrafını analiz edip "slop score" üreteceksin.
+  const prompt = `Sen bir startup pitch analizcisisin. Kullanıcının yapıştırdığı pitch paragrafını analiz edip "slop score" üreteceksin.
 
 Her pitch'i şu 5 boyutta 0-10 arası puanla:
 1. buzzword_yogunlugu: Boş jargon oranı
@@ -68,28 +68,25 @@ SADECE JSON yanıt ver, başka bir şey yazma:
     "teknik_muglaklık": { "puan": <0-10>, "aciklama": "<kısa>" }
   },
   "oneriler": ["<1>", "<2>", "<3>"]
-}`;
+}
 
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true',
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1024,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: `Analiz et:\n\n"${pitchText}"` }],
-    }),
-  });
+Analiz et: "${pitchText}"`;
+
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+      }),
+    }
+  );
 
   if (!response.ok) throw new Error(`API hatası: ${response.status}`);
 
   const data = await response.json();
-  const text = data.content?.[0]?.text || '';
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
   return JSON.parse(text.replace(/```json|```/g, '').trim());
 }
 

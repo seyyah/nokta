@@ -1,25 +1,29 @@
 {
   "expo": {
-    "name": "Slop Dedektörü",
-    "slug": "slop-dedektoru",
+    "name": "app",
+    "slug": "app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "dark",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
     "splash": {
-      "backgroundColor": "#0f0f0f"
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.nokta.slopdedektoru"
+      "supportsTablet": true
     },
     "android": {
-      "package": "com.nokta.slopdedektoru"
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true
     },
-    "web": {},
-    "extra": {
-      "eas": {
-        "projectId": "4a2b42ab-0f21-4136-9b97-37c55140e5ff"
-      }
+    "web": {
+      "favicon": "./assets/favicon.png"
     }
   }
 }
