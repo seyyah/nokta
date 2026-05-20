@@ -13,7 +13,7 @@ Each cycle follows: READ → LOCATE → HYPOTHESIZE → REPAIR → TEST → VERI
 - **Result:** ✅ SUCCESS
 - **Test:** Launched the app; the "+ Yeni Not" button is now obvious at the bottom-center and navigates to the new-note screen.
 - **Verify:** NewNoteScreen and DetailScreen unaffected; widget mount untouched.
-- **Commit:** fd94612
+- **Commit:** 2d352bd
 - **kg:** 1
 - **Human touch points:** 1 (reviewed FAB placement/label)
 
@@ -25,7 +25,7 @@ Each cycle follows: READ → LOCATE → HYPOTHESIZE → REPAIR → TEST → VERI
 - **Result:** ✅ SUCCESS
 - **Test:** Typed a note, pressed Save once; confirmation alert appeared, "Tamam" returned to the list, and the new note was present.
 - **Verify:** HomeScreen and DetailScreen unaffected.
-- **Commit:** b2cf696
+- **Commit:** 4265820
 - **kg:** 2
 - **Human touch points:** 0
 
@@ -49,7 +49,7 @@ Each cycle follows: READ → LOCATE → HYPOTHESIZE → REPAIR → TEST → VERI
 - **Result:** ✅ SUCCESS
 - **Test:** Opened a note, tapped Sil; the confirmation dialog appeared. "İptal" kept the note; "Sil" removed it and returned to the list.
 - **Verify:** HomeScreen and NewNoteScreen unaffected; one file changed.
-- **Commit:** cc7b73c
+- **Commit:** 12c2393
 - **kg:** 3
 - **Human touch points:** 0
 
