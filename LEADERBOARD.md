@@ -128,25 +128,26 @@ TF-IDF cosine similarity; `.github/scripts/similarity_check.py` detayını üret
 | Original | Copycat | Similarity |
 |---|---|---|
 | `231118072-idea-tracker` | `9211118091-mohammed-almashhor` | **0.889** |
-| `9211118091-mohammed-almashhor` | `9221118097-note-migrator` | **0.861** |
+| `9211118091-mohammed-almashhor` | `9221118097-note-migrator` | **0.860** |
 | `231118072-idea-tracker` | `9221118097-note-migrator` | **0.845** |
-| `9211118091-mohammed-almashhor` | `231118023-busenur` | **0.841** |
-| `231118072-idea-tracker` | `231118023-busenur` | **0.838** |
+| `9211118091-mohammed-almashhor` | `231118023-busenur` | **0.839** |
+| `231118072-idea-tracker` | `231118023-busenur` | **0.837** |
 | `231118072-idea-tracker` | `231118036-ali-nursin-karacan` | **0.835** |
-| `231118072-idea-tracker` | `191118022-audit-forge` | **0.830** |
+| `231118072-idea-tracker` | `191118022-audit-forge` | **0.831** |
 | `9211118091-mohammed-almashhor` | `231118036-ali-nursin-karacan` | **0.825** |
-| `231118011-faruk-emre-ok` | `231118040-audit-forge` | **0.822** |
-| `231118023-busenur` | `191118022-audit-forge` | **0.817** |
+| `231118011-faruk-emre-ok` | `231118040-audit-forge` | **0.821** |
 | `9211118091-mohammed-almashhor` | `191118022-audit-forge` | **0.817** |
-| `231118036-ali-nursin-karacan` | `231118023-busenur` | **0.814** |
-| `231118036-ali-nursin-karacan` | `231118009-audit-track-a-` | **0.809** |
+| `231118023-busenur` | `191118022-audit-forge` | **0.816** |
+| `231118036-ali-nursin-karacan` | `231118023-busenur` | **0.812** |
+| `231118036-ali-nursin-karacan` | `231118009-audit-track-a-` | **0.810** |
 | `231118036-ali-nursin-karacan` | `9221118097-note-migrator` | **0.807** |
-| `9221118097-note-migrator` | `231118023-busenur` | **0.805** |
-| `9221118097-note-migrator` | `191118022-audit-forge` | **0.802** |
+| `9221118097-note-migrator` | `231118023-busenur` | **0.804** |
+| `9221118097-note-migrator` | `191118022-audit-forge` | **0.801** |
+| `231118036-ali-nursin-karacan` | `191118022-audit-forge` | **0.800** |
 
 ---
 
-**Last Updated:** 2026-05-20 22:07 UTC
+**Last Updated:** 2026-05-21 04:52 UTC
 
 **Total Contributors:** 0
 
@@ -154,7 +155,7 @@ TF-IDF cosine similarity; `.github/scripts/similarity_check.py` detayını üret
 
 **Total Submissions (Challenge 2):** 18
 
-**Similarity flags:** 16
+**Similarity flags:** 17
 
 
 🤖 Otomatik üretildi — kaynak: `scoring/scores.json` + `gh pr list --state merged`. Manuel "Çılgınlık +10" bonusu eklenmedi.
