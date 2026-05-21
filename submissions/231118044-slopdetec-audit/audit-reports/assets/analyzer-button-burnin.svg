@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="844" viewBox="0 0 390 844">
+  <rect width="390" height="844" fill="#0a0a0a"/>
+  <rect x="22" y="54" width="346" height="92" rx="16" fill="#151515" stroke="#2a2a2a"/>
+  <text x="42" y="94" fill="#fff" font-family="Arial" font-size="30" font-weight="800">NOKTA.</text>
+  <text x="42" y="122" fill="#ff3366" font-family="Arial" font-size="13" font-weight="700">RED-TEAM / SLOP DETECTOR</text>
+  <rect x="22" y="190" width="346" height="220" rx="16" fill="#1a1a1a" stroke="#333"/>
+  <text x="42" y="230" fill="#e0e0e0" font-family="Arial" font-size="16" font-weight="700">Startup Pitch</text>
+  <rect x="42" y="250" width="306" height="128" rx="8" fill="#0f0f0f" stroke="#333"/>
+  <text x="58" y="286" fill="#777" font-family="Arial" font-size="14">AI ile tum pazari tek haftada...</text>
+  <rect x="22" y="444" width="346" height="58" rx="8" fill="#ff3366"/>
+  <text x="150" y="480" fill="#fff" font-family="Arial" font-size="17" font-weight="800">Analiz Et</text>
+  <rect x="14" y="284" width="54" height="54" rx="27" fill="#111827" stroke="#4b5563"/>
+  <text x="26" y="316" fill="#fff" font-family="Arial" font-size="11" font-weight="900">Audit</text>
+  <rect x="20" y="442" width="348" height="64" rx="10" fill="rgba(246,224,94,0.18)" stroke="#f6e05e" stroke-width="6"/>
+</svg>

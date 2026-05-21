@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "Audit Forge",
+    "slug": "audit-forge-9221118087",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "jsEngine": "hermes",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "android": {
+      "package": "com.moncat.auditforge"
+    }
+  }
+}

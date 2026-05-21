@@ -1,0 +1,13 @@
+diff --git a/node_modules/@xtatistix/mobile-audit/src/components/AuditSelector.tsx b/node_modules/@xtatistix/mobile-audit/src/components/AuditSelector.tsx
+index 9310889..30c6f84 100644
+--- a/node_modules/@xtatistix/mobile-audit/src/components/AuditSelector.tsx
++++ b/node_modules/@xtatistix/mobile-audit/src/components/AuditSelector.tsx
+@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
+     backgroundColor: 'rgba(246,224,94,0.2)',
+   },
+   overlay: {
+-    ...StyleSheet.absoluteFill,
++    ...StyleSheet.absoluteFillObject,
+     backgroundColor: 'rgba(0,0,0,0.45)',
+   },
+   // Shown on top of overlay while user is selecting (same visual)

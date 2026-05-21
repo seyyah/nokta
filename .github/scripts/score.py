@@ -178,8 +178,26 @@ def main():
     sim_path = SCORING_DIR / "similarity.json"
     similarity_data = json.loads(sim_path.read_text()) if sim_path.exists() else {"scores": {}}
 
+    # --- Frozen Ch1 scores: load and preserve without rescoring ---
+    frozen_ch1_path = SCORING_DIR / "scores_ch1.json"
+    frozen_ch1_results = []
+    frozen_ch1_names = set()
+    if frozen_ch1_path.exists():
+        frozen_data = json.loads(frozen_ch1_path.read_text())
+        frozen_ch1_results = frozen_data.get("results", [])
+        frozen_ch1_names = {r["submission"] for r in frozen_ch1_results}
+        print(f"Loaded {len(frozen_ch1_results)} frozen Ch1 submissions from scores_ch1.json")
+
+    # Only score submissions NOT already frozen as Ch1
     submissions = sorted([d for d in SUBMISSIONS_DIR.iterdir() if d.is_dir()])
-    results = [score_submission(sub, similarity_data) for sub in submissions]
+    ch2_results = [
+        score_submission(sub, similarity_data)
+        for sub in submissions
+        if sub.name not in frozen_ch1_names
+    ]
+
+    # Combine frozen Ch1 + new Ch2
+    results = frozen_ch1_results + ch2_results
 
     # Sıralı tablo
     results.sort(key=lambda r: r["final_auto"], reverse=True)

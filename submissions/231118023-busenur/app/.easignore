@@ -1,0 +1,9 @@
+# Diğer öğrenci submission'larını yüklemeye dahil etme
+../../*/
+../../../submissions/*/
+
+# Tüm APK dosyaları (kendi APK'ımız hariç)
+../../**/*.apk
+
+# node_modules zaten dahil edilmiyor ama güvenlik için
+node_modules/

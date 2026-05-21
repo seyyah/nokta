@@ -16,6 +16,14 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 
 SIMILARITY_THRESHOLD = 0.80
+
+
+def student_id_from_name(folder_name: str) -> str:
+    """submissions/<id>-<slug> formatından öğrenci numarasını çıkar.
+    Örn: '231118098-tohum' → '231118098'
+    Aynı id'ye sahip submission'lar kendi aralarında benzerlik cezasından muaftır.
+    """
+    return folder_name.split("-")[0]
 PENALTY_PERCENT = 0.35
 SUBMISSIONS_DIR = Path("submissions")
 
@@ -93,6 +101,10 @@ def main():
     flags = []
     for i in range(len(names)):
         for j in range(i + 1, len(names)):
+            # Aynı öğrenci numarasına ait submission'lar → benzerlik cezasından muaf
+            if student_id_from_name(names[i]) == student_id_from_name(names[j]):
+                continue
+
             score = float(sim_matrix[i][j])
             if score >= SIMILARITY_THRESHOLD:
                 t_i = first_commit_time(SUBMISSIONS_DIR / names[i])
@@ -106,6 +118,7 @@ def main():
                     "copycat": copycat,
                     "similarity": round(score, 4),
                     "penalty_percent": PENALTY_PERCENT * 100,
+                    "note": "different students",
                 })
 
     # Her submission için final similarity skoru (20 puan üzerinden)
