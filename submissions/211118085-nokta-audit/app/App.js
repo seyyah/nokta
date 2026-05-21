@@ -19,7 +19,7 @@ const auditStorage = {
   },
 };
 
-const GROQ_API_KEY = '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';
+const GROQ_API_KEY = 'YOUR_API_KEY_HERE';
 
 const DEPARTMANLAR = [
   { id: 'pazarlama', label: '📣 Pazarlama', desc: 'Nasıl satarız?' },
