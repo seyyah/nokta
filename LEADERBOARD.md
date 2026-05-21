@@ -102,23 +102,24 @@ Otomatik puanlama: `.github/scripts/score.py` rubric ile her submission'a 0–11
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `211118018-audit-forge` | **88** | 35/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
 | 2 | `211118068-audit-forge` | **88** | 35/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
-| 3 | `231118012-mustafa-karakoyun` | **88** | 35/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
-| 4 | `231118018-fitloop-audit` | **88** | 35/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
-| 5 | `231118044-slopdetec-audit` | **88** | 35/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
-| 6 | `231118052-audit-forge` | **88** | 35/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
-| 7 | `9221118084-minimal-audit` | **88** | 35/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
-| 8 | `9221118096-audit-forge` | **88** | 35/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
-| 9 | `191118022-audit-forge` | **81** | 35/35 | 25/25 | 13/20 | 5/20 | +3 ✅ | — | — | ⚠️ similarity |
-| 10 | `231118009-audit-track-a-` | **81** | 35/35 | 25/25 | 13/20 | 5/20 | +3 ✅ | — | — | ⚠️ similarity |
-| 11 | `231118023-busenur` | **81** | 35/35 | 25/25 | 13/20 | 5/20 | +3 ✅ | — | — | ⚠️ similarity |
-| 12 | `231118040-audit-forge` | **81** | 35/35 | 25/25 | 13/20 | 5/20 | +3 ✅ | — | — | ⚠️ similarity |
-| 13 | `211118032-audit-forge` | **78** | 25/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
-| 14 | `231118014-audit-forge` | **78** | 25/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
-| 15 | `231118053-noktav3-sengk` | **78** | 25/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
-| 16 | `231118070-audit-forge` | **59** | 27/35 | 17/25 | 20/20 | 0/20 | −5 ❌ | — | — |  |
-| 17 | `231118027-audit-forge` | **55** | 10/35 | 25/25 | 20/20 | 5/20 | −5 ❌ | — | — |  |
-| 18 | `241478088-Abdulkahhar-main` | **55** | 15/35 | 17/25 | 20/20 | 0/20 | +3 ✅ | — | — |  |
-| 19 | `9221118087-audit-forge` | **32** | 0/35 | 17/25 | 20/20 | 0/20 | −5 ❌ | — | — |  |
+| 3 | `221118014-slop-detector-forge` | **88** | 35/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
+| 4 | `231118012-mustafa-karakoyun` | **88** | 35/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
+| 5 | `231118018-fitloop-audit` | **88** | 35/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
+| 6 | `231118044-slopdetec-audit` | **88** | 35/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
+| 7 | `231118052-audit-forge` | **88** | 35/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
+| 8 | `9221118084-minimal-audit` | **88** | 35/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
+| 9 | `9221118096-audit-forge` | **88** | 35/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
+| 10 | `191118022-audit-forge` | **81** | 35/35 | 25/25 | 13/20 | 5/20 | +3 ✅ | — | — | ⚠️ similarity |
+| 11 | `231118009-audit-track-a-` | **81** | 35/35 | 25/25 | 13/20 | 5/20 | +3 ✅ | — | — | ⚠️ similarity |
+| 12 | `231118023-busenur` | **81** | 35/35 | 25/25 | 13/20 | 5/20 | +3 ✅ | — | — | ⚠️ similarity |
+| 13 | `231118040-audit-forge` | **81** | 35/35 | 25/25 | 13/20 | 5/20 | +3 ✅ | — | — | ⚠️ similarity |
+| 14 | `211118032-audit-forge` | **78** | 25/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
+| 15 | `231118014-audit-forge` | **78** | 25/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
+| 16 | `231118053-noktav3-sengk` | **78** | 25/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
+| 17 | `231118070-audit-forge` | **59** | 27/35 | 17/25 | 20/20 | 0/20 | −5 ❌ | — | — |  |
+| 18 | `231118027-audit-forge` | **55** | 10/35 | 25/25 | 20/20 | 5/20 | −5 ❌ | — | — |  |
+| 19 | `241478088-Abdulkahhar-main` | **55** | 15/35 | 17/25 | 20/20 | 0/20 | +3 ✅ | — | — |  |
+| 20 | `9221118087-audit-forge` | **32** | 0/35 | 17/25 | 20/20 | 0/20 | −5 ❌ | — | — |  |
 
 ---
 
@@ -130,33 +131,32 @@ TF-IDF cosine similarity; `.github/scripts/similarity_check.py` detayını üret
 |---|---|---|
 | `231118072-idea-tracker` | `9211118091-mohammed-almashhor` | **0.886** |
 | `9211118091-mohammed-almashhor` | `9221118097-note-migrator` | **0.860** |
-| `231118072-idea-tracker` | `9221118097-note-migrator` | **0.844** |
-| `9211118091-mohammed-almashhor` | `231118023-busenur` | **0.840** |
-| `231118072-idea-tracker` | `231118023-busenur` | **0.837** |
-| `231118072-idea-tracker` | `231118036-ali-nursin-karacan` | **0.833** |
-| `231118072-idea-tracker` | `191118022-audit-forge` | **0.831** |
-| `9211118091-mohammed-almashhor` | `231118036-ali-nursin-karacan` | **0.824** |
-| `231118011-faruk-emre-ok` | `231118040-audit-forge` | **0.820** |
-| `231118023-busenur` | `191118022-audit-forge` | **0.820** |
-| `9211118091-mohammed-almashhor` | `191118022-audit-forge` | **0.819** |
-| `231118036-ali-nursin-karacan` | `231118023-busenur` | **0.813** |
-| `231118036-ali-nursin-karacan` | `231118009-audit-track-a-` | **0.808** |
-| `231118036-ali-nursin-karacan` | `9221118097-note-migrator` | **0.807** |
-| `9221118097-note-migrator` | `231118023-busenur` | **0.805** |
-| `9221118097-note-migrator` | `191118022-audit-forge` | **0.804** |
-| `231118036-ali-nursin-karacan` | `191118022-audit-forge` | **0.801** |
+| `231118072-idea-tracker` | `9221118097-note-migrator` | **0.842** |
+| `9211118091-mohammed-almashhor` | `231118023-busenur` | **0.837** |
+| `231118072-idea-tracker` | `231118023-busenur` | **0.834** |
+| `231118072-idea-tracker` | `231118036-ali-nursin-karacan` | **0.831** |
+| `231118072-idea-tracker` | `191118022-audit-forge` | **0.829** |
+| `9211118091-mohammed-almashhor` | `231118036-ali-nursin-karacan` | **0.822** |
+| `231118011-faruk-emre-ok` | `231118040-audit-forge` | **0.819** |
+| `9211118091-mohammed-almashhor` | `191118022-audit-forge` | **0.817** |
+| `231118023-busenur` | `191118022-audit-forge` | **0.816** |
+| `231118036-ali-nursin-karacan` | `231118023-busenur` | **0.810** |
+| `231118036-ali-nursin-karacan` | `231118009-audit-track-a-` | **0.806** |
+| `231118036-ali-nursin-karacan` | `9221118097-note-migrator` | **0.805** |
+| `9221118097-note-migrator` | `231118023-busenur` | **0.803** |
+| `9221118097-note-migrator` | `191118022-audit-forge` | **0.802** |
 
 ---
 
-**Last Updated:** 2026-05-21 08:41 UTC
+**Last Updated:** 2026-05-21 10:49 UTC
 
 **Total Contributors:** 0
 
 **Total Submissions (Challenge 1):** 69
 
-**Total Submissions (Challenge 2):** 19
+**Total Submissions (Challenge 2):** 20
 
-**Similarity flags:** 17
+**Similarity flags:** 16
 
 
 🤖 Otomatik üretildi — kaynak: `scoring/scores.json` + `gh pr list --state merged`. Manuel "Çılgınlık +10" bonusu eklenmedi.

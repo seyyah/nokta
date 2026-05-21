@@ -1,5 +1,5 @@
 {
-  "count": 88,
+  "count": 89,
   "results": [
     {
       "submission": "20260416-dot-capture",
@@ -1291,6 +1291,46 @@
           "track": "A",
           "decision_log": true,
           "readme_length": 3008
+        },
+        "antislop": {
+          "points": 20,
+          "max": 20,
+          "flagged": false
+        },
+        "trace": {
+          "points": 5,
+          "max": 20,
+          "total_commits": 1,
+          "meaningful_commits": 1,
+          "has_forge": true
+        }
+      },
+      "penalties": []
+    },
+    {
+      "submission": "221118014-slop-detector-forge",
+      "challenge_version": 2,
+      "base_score": 85,
+      "apk_adjustment": 3,
+      "final_auto": 88,
+      "manual_craziness_bonus_pending": "demo day +0..+10",
+      "breakdown": {
+        "delivery": {
+          "points": 35,
+          "max": 35,
+          "readme": true,
+          "expo_link": true,
+          "demo_video": true,
+          "apk": true,
+          "app_json": true,
+          "audit_reports_count": 3
+        },
+        "scope": {
+          "points": 25,
+          "max": 25,
+          "track": "B",
+          "decision_log": true,
+          "readme_length": 2317
         },
         "antislop": {
           "points": 20,

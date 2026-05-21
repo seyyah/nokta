@@ -4,119 +4,112 @@
     {
       "original": "231118023-busenur",
       "copycat": "191118022-audit-forge",
-      "similarity": 0.8195,
-      "penalty_percent": 35.0,
-      "note": "different students"
-    },
-    {
-      "original": "231118036-ali-nursin-karacan",
-      "copycat": "191118022-audit-forge",
-      "similarity": 0.8015,
+      "similarity": 0.8161,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "231118072-idea-tracker",
       "copycat": "191118022-audit-forge",
-      "similarity": 0.831,
+      "similarity": 0.829,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "9211118091-mohammed-almashhor",
       "copycat": "191118022-audit-forge",
-      "similarity": 0.8186,
+      "similarity": 0.8166,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "9221118097-note-migrator",
       "copycat": "191118022-audit-forge",
-      "similarity": 0.8039,
+      "similarity": 0.802,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "231118036-ali-nursin-karacan",
       "copycat": "231118009-audit-track-a-",
-      "similarity": 0.8082,
+      "similarity": 0.8065,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "231118011-faruk-emre-ok",
       "copycat": "231118040-audit-forge",
-      "similarity": 0.8201,
+      "similarity": 0.8194,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "231118036-ali-nursin-karacan",
       "copycat": "231118023-busenur",
-      "similarity": 0.8133,
+      "similarity": 0.8098,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "231118072-idea-tracker",
       "copycat": "231118023-busenur",
-      "similarity": 0.8369,
+      "similarity": 0.834,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "9211118091-mohammed-almashhor",
       "copycat": "231118023-busenur",
-      "similarity": 0.8404,
+      "similarity": 0.8373,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "9221118097-note-migrator",
       "copycat": "231118023-busenur",
-      "similarity": 0.8055,
+      "similarity": 0.8029,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "231118072-idea-tracker",
       "copycat": "231118036-ali-nursin-karacan",
-      "similarity": 0.8327,
+      "similarity": 0.831,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "9211118091-mohammed-almashhor",
       "copycat": "231118036-ali-nursin-karacan",
-      "similarity": 0.824,
+      "similarity": 0.8222,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "231118036-ali-nursin-karacan",
       "copycat": "9221118097-note-migrator",
-      "similarity": 0.8066,
+      "similarity": 0.805,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "231118072-idea-tracker",
       "copycat": "9211118091-mohammed-almashhor",
-      "similarity": 0.8865,
+      "similarity": 0.8856,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "231118072-idea-tracker",
       "copycat": "9221118097-note-migrator",
-      "similarity": 0.8436,
+      "similarity": 0.8423,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "9211118091-mohammed-almashhor",
       "copycat": "9221118097-note-migrator",
-      "similarity": 0.8604,
+      "similarity": 0.8596,
       "penalty_percent": 35.0,
       "note": "different students"
     }
@@ -143,6 +136,11 @@
       "penalty_percent": 0
     },
     "211118068-audit-forge": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "221118014-slop-detector-forge": {
       "similarity_points": 20,
       "penalty_applied": false,
       "penalty_percent": 0
