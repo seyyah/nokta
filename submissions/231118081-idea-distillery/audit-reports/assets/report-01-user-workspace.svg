@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="780" viewBox="0 0 390 780">
+  <rect width="390" height="780" fill="#F5F5F2"/>
+  <text x="28" y="54" font-family="Arial" font-size="14" font-weight="700" fill="#003DB3">Nokta Game Pitch</text>
+  <text x="28" y="94" font-family="Arial" font-size="30" font-weight="700" fill="#1A1C1B">User Workspace</text>
+  <text x="28" y="122" font-family="Arial" font-size="14" fill="#626A74">Add a new idea or continue from a saved brief.</text>
+  <rect x="22" y="150" width="346" height="118" rx="24" fill="#FFFFFF"/>
+  <text x="42" y="188" font-family="Arial" font-size="28" font-weight="700" fill="#1A1C1B">New Notes</text>
+  <text x="42" y="216" font-family="Arial" font-size="14" fill="#626A74">Paste messy game notes and turn them into a GDD-lite brief.</text>
+  <rect x="42" y="230" width="200" height="34" rx="17" fill="#0055FF"/>
+  <text x="64" y="252" font-family="Arial" font-size="13" font-weight="700" fill="#FFFFFF">Add Notes / Idea</text>
+  <text x="28" y="318" font-family="Arial" font-size="30" font-weight="700" fill="#1A1C1B">Saved Briefs</text>
+  <rect x="22" y="344" width="346" height="178" rx="24" fill="#FFFFFF"/>
+  <text x="42" y="382" font-family="Arial" font-size="25" font-weight="700" fill="#1A1C1B">Cozy Horror Brief</text>
+  <rect x="238" y="360" width="106" height="28" rx="14" fill="#FFFFFF" stroke="#D6D6CF"/>
+  <text x="252" y="379" font-family="Arial" font-size="10" font-weight="700" fill="#003DB3">mentor review</text>
+  <text x="42" y="414" font-family="Arial" font-size="12" font-weight="700" fill="#626A74">HOTL / 67 readiness</text>
+  <text x="42" y="442" font-family="Arial" font-size="14" fill="#293340">The brief is saved, but the card does not clearly tell the user what happens next.</text>
+  <rect x="38" y="356" width="314" height="152" rx="18" fill="none" stroke="#FFD938" stroke-width="6"/>
+  <rect x="55" y="530" width="280" height="62" rx="16" fill="#FFD938"/>
+  <text x="70" y="556" font-family="Arial" font-size="14" font-weight="700" fill="#1A1C1B">Audit note</text>
+  <text x="70" y="577" font-family="Arial" font-size="13" fill="#1A1C1B">Status must become a next action.</text>
+</svg>

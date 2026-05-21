@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="780" viewBox="0 0 390 780">
+  <rect width="390" height="780" fill="#F5F5F2"/>
+  <text x="28" y="54" font-family="Arial" font-size="14" font-weight="700" fill="#626A74">New Game Brief</text>
+  <text x="28" y="94" font-family="Arial" font-size="30" font-weight="700" fill="#1A1C1B">Feature Creep Warnings</text>
+  <rect x="22" y="126" width="346" height="346" rx="28" fill="#FFFFFF"/>
+  <text x="44" y="168" font-family="Arial" font-size="16" font-weight="700" fill="#1A1C1B">Large systems that can break a solo prototype.</text>
+  <circle cx="54" cy="210" r="5" fill="#C48A1B"/>
+  <text x="70" y="215" font-family="Arial" font-size="14" fill="#293340">Online multiplayer should stay out of the first solo prototype unless it is the only core mechanic.</text>
+  <circle cx="54" cy="284" r="5" fill="#C48A1B"/>
+  <text x="70" y="289" font-family="Arial" font-size="14" fill="#293340">Base building is a secondary system; cut it unless building is the main loop.</text>
+  <circle cx="54" cy="348" r="5" fill="#C48A1B"/>
+  <text x="70" y="353" font-family="Arial" font-size="14" fill="#293340">Pet systems add AI, animation, UI, and balancing work.</text>
+  <rect x="36" y="190" width="316" height="198" rx="18" fill="none" stroke="#FFD938" stroke-width="6"/>
+  <rect x="48" y="496" width="294" height="74" rx="16" fill="#FFD938"/>
+  <text x="64" y="522" font-family="Arial" font-size="14" font-weight="700" fill="#1A1C1B">Audit note</text>
+  <text x="64" y="543" font-family="Arial" font-size="13" fill="#1A1C1B">Warnings are passive. Make them Cut / Later / Keep decisions.</text>
+</svg>

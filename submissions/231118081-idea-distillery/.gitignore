@@ -1,0 +1,16 @@
+# Local secrets
+app/.env
+app/.env.local
+app/.env.*.local
+
+# Expo / JavaScript build output
+app/node_modules/
+app/.expo/
+app/dist/
+
+# Temporary reference repo used during development
+example/
+
+# Optional local forge automation runtime output
+audit-reports/inbox/
+tools/forge-runs/

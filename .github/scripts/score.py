@@ -51,6 +51,16 @@ def score_submission(sub_dir: Path, similarity_data: dict) -> dict:
     breakdown = {}
     penalties = []
 
+    # --- Challenge Version Detection
+    # If a submission directory contains FORGE.md or the audit-reports/ folder, it is Challenge 2
+    has_forge = (sub_dir / "FORGE.md").exists()
+    has_audit_reports_dir = (sub_dir / "audit-reports").exists() and (sub_dir / "audit-reports").is_dir()
+    
+    if has_forge or has_audit_reports_dir:
+        challenge_version = 2
+    else:
+        challenge_version = 1
+
     # --- Çalışır Teslim (35p)
     readme = sub_dir / "README.md"
     readme_text = readme.read_text(encoding="utf-8", errors="ignore") if readme.exists() else ""
@@ -67,11 +77,28 @@ def score_submission(sub_dir: Path, similarity_data: dict) -> dict:
     if has_demo_video: delivery_pts += 10
     if has_apk: delivery_pts += 5
     if has_app_json: delivery_pts += 3
+
+    # Challenge 2 specific: audit reports count check
+    num_reports = 0
+    if challenge_version == 2:
+        if has_audit_reports_dir:
+            markdown_reports = [f for f in (sub_dir / "audit-reports").rglob("*.md") if f.is_file()]
+            num_reports = len(markdown_reports)
+        
+        if num_reports < 3:
+            delivery_pts = max(0, delivery_pts - 10)
+            penalties.append({
+                "reason": f"Yetersiz audit raporu ({num_reports}/3)",
+                "applied": "-10 on Çalışır Teslim"
+            })
+
     breakdown["delivery"] = {
         "points": delivery_pts, "max": 35,
         "readme": has_readme, "expo_link": has_expo_link,
         "demo_video": has_demo_video, "apk": has_apk, "app_json": has_app_json,
     }
+    if challenge_version == 2:
+        breakdown["delivery"]["audit_reports_count"] = num_reports
 
     # --- Scope Disiplini (25p)
     track_match = re.search(r"track[:\s]*([ABC])", readme_text, re.IGNORECASE)
@@ -107,10 +134,21 @@ def score_submission(sub_dir: Path, similarity_data: dict) -> dict:
     if good_commits >= 5: trace_pts += 7
     elif good_commits >= 3: trace_pts += 4
     if decision_log: trace_pts += 5
+
+    # Challenge 2 specific: missing FORGE.md sets Engineering Trace to 0
+    if challenge_version == 2 and not has_forge:
+        trace_pts = 0
+        penalties.append({
+            "reason": "FORGE.md eksik",
+            "applied": "Engineering Trace = 0"
+        })
+
     breakdown["trace"] = {
         "points": trace_pts, "max": 20,
         "total_commits": total_commits, "meaningful_commits": good_commits,
     }
+    if challenge_version == 2:
+        breakdown["trace"]["has_forge"] = has_forge
 
     base_score = delivery_pts + scope_pts + antislop_pts + trace_pts
 
@@ -126,6 +164,7 @@ def score_submission(sub_dir: Path, similarity_data: dict) -> dict:
 
     return {
         "submission": name,
+        "challenge_version": challenge_version,
         "base_score": base_score,
         "apk_adjustment": apk_adjustment,
         "final_auto": final_before_manual,
@@ -139,8 +178,26 @@ def main():
     sim_path = SCORING_DIR / "similarity.json"
     similarity_data = json.loads(sim_path.read_text()) if sim_path.exists() else {"scores": {}}
 
+    # --- Frozen Ch1 scores: load and preserve without rescoring ---
+    frozen_ch1_path = SCORING_DIR / "scores_ch1.json"
+    frozen_ch1_results = []
+    frozen_ch1_names = set()
+    if frozen_ch1_path.exists():
+        frozen_data = json.loads(frozen_ch1_path.read_text())
+        frozen_ch1_results = frozen_data.get("results", [])
+        frozen_ch1_names = {r["submission"] for r in frozen_ch1_results}
+        print(f"Loaded {len(frozen_ch1_results)} frozen Ch1 submissions from scores_ch1.json")
+
+    # Only score submissions NOT already frozen as Ch1
     submissions = sorted([d for d in SUBMISSIONS_DIR.iterdir() if d.is_dir()])
-    results = [score_submission(sub, similarity_data) for sub in submissions]
+    ch2_results = [
+        score_submission(sub, similarity_data)
+        for sub in submissions
+        if sub.name not in frozen_ch1_names
+    ]
+
+    # Combine frozen Ch1 + new Ch2
+    results = frozen_ch1_results + ch2_results
 
     # Sıralı tablo
     results.sort(key=lambda r: r["final_auto"], reverse=True)
@@ -150,14 +207,15 @@ def main():
 
     # Markdown özet
     md = ["# Auto Scoring (manual craziness bonus ayrıca eklenecek)\n"]
-    md.append("| Submission | Auto Score | Delivery | Scope | Anti-Slop | Trace | APK | Flags |")
-    md.append("|---|---|---|---|---|---|---|---|")
+    md.append("| Submission | Challenge | Auto Score | Delivery | Scope | Anti-Slop | Trace | APK | Flags |")
+    md.append("|---|---|---|---|---|---|---|---|---|")
     for r in results:
         b = r["breakdown"]
         flags = "⚠️" if b["antislop"]["flagged"] else ""
         apk = "✅ +3" if r["apk_adjustment"] > 0 else "❌ -5"
+        ch_str = f"Challenge {r['challenge_version']}"
         md.append(
-            f"| `{r['submission']}` | **{r['final_auto']}** | "
+            f"| `{r['submission']}` | **{ch_str}** | **{r['final_auto']}** | "
             f"{b['delivery']['points']}/35 | {b['scope']['points']}/25 | "
             f"{b['antislop']['points']}/20 | {b['trace']['points']}/20 | {apk} | {flags} |"
         )
