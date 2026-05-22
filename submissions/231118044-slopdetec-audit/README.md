@@ -7,7 +7,7 @@ SlopDetec, startup pitch metinlerini "slop" riskine gore inceleyen Expo + TypeSc
 ## Teslim linkleri
 
 - Expo QR / Link: https://expo.dev/accounts/yilmazurn/projects/app/updates/0a2f3adb-e5e2-4097-98e2-7fde391b7feb
-- Demo video: onceki demo linki duruyor; final Phase A/B/C icin Jitsi ekran paylasimli video manuel kaydedilmeli.
+- Demo video: https://youtube.com/shorts/b-ESHIIzl_0?feature=share
 - APK: `app-release.apk` 
 - Avatar asset: `avatar.glb` ve `app/assets/avatar.glb`
 - Kaynak kod: `app/`
