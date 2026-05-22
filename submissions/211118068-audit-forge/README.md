@@ -13,7 +13,7 @@ Track: A
 ```bash
 cd submissions/211118068-audit-forge/app
 npm install
-npx expo start
+npx expo start --clear
 ```
 
 QR kodu Expo Go ile tara (iOS/Android).
@@ -22,36 +22,41 @@ QR kodu Expo Go ile tara (iOS/Android).
 
 ## Demo Video
 
-https://youtube.com/shorts/6G0HnG6ZxnU?feature=share
+https://youtube.com/shorts/WQRtY0Sb_Fo?feature=share
 
 ---
 
 ## Proje Özeti
 
-Minimal bir "fikir takip" uygulaması. 4 ekran:
+Minimal bir "fikir takip" uygulaması. Final haftasında Voice Visualizer, R3F Avatar ve Expert Bridge eklendi.
 
 | Ekran | Dosya | Açıklama |
 |---|---|---|
 | OnboardingScreen | `app/index.tsx` | Karşılama + navigasyon |
 | IdeasScreen | `app/(tabs)/ideas.tsx` | Fikir listesi (FlatList) |
 | IdeaDetailScreen | `app/idea/[id].tsx` | Fikir detayı |
-| SettingsScreen | `app/(tabs)/settings.tsx` | Uygulama bilgisi |
+| StudioScreen | `app/(tabs)/studio.tsx` | Voice viz + R3F avatar + lipsync + rapor |
+| SettingsScreen | `app/(tabs)/settings.tsx` | Forge STUCK tespiti + Uzmana Bağlan |
+| ExpertBridgeScreen | `app/expert-bridge.tsx` | Jitsi Meet WebRTC görüntülü köprü |
 
-**AuditWidget tek satırda mount:** `app/_layout.tsx:33` →  
-`<AuditWidget appName="nokta-audit-forge" deps={...} initialPosition={...} />`
+**AuditWidget tek satırda mount:** `app/_layout.tsx:42`
 
-Widget kaldırıldığında: `grep -r 'AuditWidget' app/app/` → yalnızca `_layout.tsx:33` döner. Uygulama çalışmaya devam eder.
+Widget kaldırıldığında: `grep -r 'AuditWidget' app/app/` → yalnızca `_layout.tsx:42` döner.
 
 ---
 
 ## Decision Log
 
-1. **Track A seçimi:** Drop-in disiplini kanıtlanabilir — widget tek dosyada, tek satırda monte. Kaldırılabilirlik test edildi: `_layout.tsx`'teki 1 satır silinince app çalışmaya devam eder.
-2. **Expo Router (file-based):** `usePathname()` ile `currentScreen` prop'u otomatik güncelleniyor — hiç ekstra state yok.
-3. **AsyncStorage adaptörü:** `auditStorage.ts` — host sınırı korunuyor. Widget doğrudan AsyncStorage import etmiyor.
-4. **3 kasıtlı bug:** Forge cycle'larının gerçek kod değişikliği üretmesi için başlangıç kodu bilinçli hatalı yazıldı. Raporlar widget ile üretildi.
-5. **Rollback kararı (Cycle 4):** `useState(true)` typo → sonsuz spinner. Mock data statik olduğu için pull-to-refresh scope dışı → rollback.
-6. **APK:** EAS ile build gerekiyor — bkz. aşağıdaki adımlar.
+1. **Track A seçimi:** Drop-in disiplini — widget tek dosyada, tek satırda. Kaldırılabilirlik korunuyor.
+2. **Expo Router `usePathname()`:** `currentScreen` prop'u ekstra state olmadan dinamik besleniyor.
+3. **AsyncStorage adaptörü:** `auditStorage.ts` — host boundary korunuyor.
+4. **R3F native (WebView değil):** model-viewer web worker kısıtlaması Android'de aşılamaz → `AvatarGLB.tsx` ile expo-gl native rendering.
+5. **preprocessGlbTextures:** Three.js r160 blob: URL → React Native WebGL dönüşemez → texture'lar önceden `file://` URI'ye çıkarıldı.
+6. **LinearToneMapping + exposure=1.8:** expo-gl linear framebuffer → sRGB gamma compensasyonu manuel yapıldı.
+7. **ForgeTracker heuristik:** 2 ardışık FAIL → STUCK → Settings'te "Uzmana Bağlan" butonu aktifleşiyor.
+8. **Jitsi Meet:** LiveKit/Daily yerine Jitsi — sıfır backend, sabit oda URL'i, WebView ile çalışıyor.
+9. **Rollback (Cycle 4):** useState(true) typo → sonsuz spinner — mock data statik olduğu için scope dışı.
+10. **Rollback (Cycle 5):** WebView + model-viewer → web worker kısıtlaması — yaklaşım değiştirildi.
 
 ---
 
@@ -59,10 +64,8 @@ Widget kaldırıldığında: `grep -r 'AuditWidget' app/app/` → yalnızca `_la
 
 | # | Adım | Neden |
 |---|---|---|
-| 1 | Fork + clone + branch oluşturma | Git setup — agent yapamaz |
-| 2 | PR açma | GitHub UI — agent yapamaz |
-
-Agent (Claude Code) tüm kod yazımını, commit geçmişini, FORGE.md loglamasını ve audit raporlarını otonom üretti.
+| 1 | Fork + clone + branch oluşturma | Git setup |
+| 2 | PR açma + video çekme | GitHub UI + demo |
 
 ---
 
@@ -75,7 +78,7 @@ eas login
 eas build -p android --profile preview
 ```
 
-EAS artifact linki: *(build sonrası eklenecek)*
+EAS build ID: `ed7eec96` — `app-release.apk` repoda mevcut.
 
 ---
 
@@ -93,7 +96,12 @@ EAS artifact linki: *(build sonrası eklenecek)*
 - [x] `README.md` ilk satırında `Track: A` var
 - [x] `app/` altında çalışır Expo projesi + audit widget mount
 - [x] `audit-reports/` altında 3 burn-in'li `.md` rapor
-- [x] `FORGE.md` ledger: 3 başarılı + 1 rollback cycle
-- [x] `app-release.apk` — EAS build `ed7eec96` (62.8 MB)
+- [x] `FORGE.md` ledger: 5 başarılı + 2 rollback cycle
+- [x] `app-release.apk` repoda mevcut
 - [x] Decision log + human touch points + AI tool log README'de
 - [x] Root dizine dokunulmadı
+- [x] Demo video: https://youtube.com/shorts/WQRtY0Sb_Fo?feature=share
+- [x] `avatar.glb` kendi yüz modeli (Avaturn export)
+- [x] `BRIDGE.md` expert köprü özeti
+- [x] Voice visualizer + R3F avatar + lipsync çalışıyor
+- [x] ForgeTracker STUCK tespiti + Jitsi expert bridge
