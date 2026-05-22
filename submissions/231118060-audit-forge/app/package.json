@@ -1,0 +1,27 @@
+{
+  "name": "nokta-audit-forge-231118060",
+  "version": "1.0.0",
+  "private": true,
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo run:android",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "@xtatistix/mobile-audit": "^0.1.0",
+    "expo": "~55.0.24",
+    "expo-file-system": "~55.0.20",
+    "expo-router": "~55.0.14",
+    "expo-sharing": "~55.0.19",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-native": "0.83.6",
+    "react-native-view-shot": "4.0.3"
+  },
+  "devDependencies": {
+    "@types/react": "~19.2.6",
+    "typescript": "~5.9.3"
+  }
+}

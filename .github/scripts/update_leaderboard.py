@@ -65,25 +65,34 @@ def render(scores: dict, similarity: dict, pr_map: dict[str, dict]) -> str:
     results = scores.get("results", [])
     flagged = {f["copycat"] for f in similarity.get("flags", [])}
 
-    by_author: dict[str, list] = defaultdict(list)
-    for r in results:
-        info = pr_map.get(r["submission"], {})
-        author = info.get("author") or ""
-        if not author:
-            continue
-        by_author[author].append((r["final_auto"], r["submission"], info.get("pr")))
+    # Group results by challenge version
+    results_ch1 = [r for r in results if r.get("challenge_version", 1) == 1]
+    results_ch2 = [r for r in results if r.get("challenge_version", 1) == 2]
 
-    top = []
-    for author, subs in by_author.items():
-        subs.sort(reverse=True)
-        best_score, _, best_pr = subs[0]
-        top.append({
-            "author": author,
-            "best_score": best_score,
-            "submission_count": len(subs),
-            "best_pr": best_pr,
-        })
-    top.sort(key=lambda x: (-x["best_score"], -x["submission_count"], x["author"].lower()))
+    def get_top_contributors(ch_results):
+        by_author: dict[str, list] = defaultdict(list)
+        for r in ch_results:
+            info = pr_map.get(r["submission"], {})
+            author = info.get("author") or ""
+            if not author:
+                continue
+            by_author[author].append((r["final_auto"], r["submission"], info.get("pr")))
+
+        top = []
+        for author, subs in by_author.items():
+            subs.sort(reverse=True)
+            best_score, _, best_pr = subs[0]
+            top.append({
+                "author": author,
+                "best_score": best_score,
+                "submission_count": len(subs),
+                "best_pr": best_pr,
+            })
+        top.sort(key=lambda x: (-x["best_score"], -x["submission_count"], x["author"].lower()))
+        return top
+
+    top_ch1 = get_top_contributors(results_ch1)
+    top_ch2 = get_top_contributors(results_ch2)
 
     out: list[str] = []
     out.append("# 🏆 Nokta Leaderboard\n")
@@ -92,38 +101,57 @@ def render(scores: dict, similarity: dict, pr_map: dict[str, dict]) -> str:
         "0–110 arası skor verir. Anti-slop + APK düzeltmesi dahil. "
         "\"Çılgınlık +10\" bonusu demo gününde elden eklenecek.\n"
     )
-    out.append("**Rubric:** Delivery 35 + Scope 25 + Anti-Slop 20 + Trace 20 + APK (±3/−5) = 110 max.\n")
+    out.append("**Rubric (Challenge 1 - Away Mission):** Delivery 35 + Scope 25 + Anti-Slop 20 + Trace 20 + APK (±3/−5) = 110 max.\n")
+    out.append("**Rubric (Challenge 2 - Audit-Forge):** Aynı temel puanlama geçerlidir. Ancak `FORGE.md` dosyası eksikse Engineering Trace otomatik olarak **0** puanlanır. `audit-reports/` altında en az 3 adet `.md` raporu yoksa Çalışır Teslim puanından **-10** düşülür.\n")
     out.append("---\n")
-    out.append("## Top Contributors\n")
-    out.append("| Rank | Contributor | Best Score | Submissions | Best PR |")
-    out.append("|---|---|---|---|---|")
-    for i, t in enumerate(top[:TOP_N], 1):
-        pr_link = f"#{t['best_pr']}" if t["best_pr"] else "—"
-        out.append(
-            f"| {i} | [@{t['author']}](https://github.com/{t['author']}) | "
-            f"**{t['best_score']}** | {t['submission_count']} | {pr_link} |"
-        )
-    out.append("")
 
-    out.append("## All Submissions\n")
-    out.append("| Rank | Submission | Score | Delivery | Scope | Anti-Slop | Trace | APK | Author | PR | Flags |")
-    out.append("|---|---|---|---|---|---|---|---|---|---|---|")
-    sorted_results = sorted(results, key=lambda r: -r["final_auto"])
-    for i, r in enumerate(sorted_results, 1):
-        b = r["breakdown"]
-        flag = "⚠️ similarity" if r["submission"] in flagged else ""
-        apk = "+3 ✅" if r["apk_adjustment"] > 0 else "−5 ❌"
-        info = pr_map.get(r["submission"], {})
-        author = info.get("author") or ""
-        author_cell = f"@{author}" if author else "—"
-        pr_cell = f"#{info['pr']}" if info.get("pr") else "—"
-        out.append(
-            f"| {i} | `{r['submission']}` | **{r['final_auto']}** | "
-            f"{b['delivery']['points']}/35 | {b['scope']['points']}/25 | "
-            f"{b['antislop']['points']}/20 | {b['trace']['points']}/20 | {apk} | "
-            f"{author_cell} | {pr_cell} | {flag} |"
-        )
-    out.append("")
+    def render_challenge_tables(title, ch_results, ch_top):
+        lines = []
+        lines.append(f"## {title}\n")
+        
+        lines.append("### Top Contributors")
+        lines.append("| Rank | Contributor | Best Score | Submissions | Best PR |")
+        lines.append("|---|---|---|---|---|")
+        if not ch_top:
+            lines.append("| — | — | — | — | — |")
+        for i, t in enumerate(ch_top[:TOP_N], 1):
+            pr_link = f"#{t['best_pr']}" if t["best_pr"] else "—"
+            lines.append(
+                f"| {i} | [@{t['author']}](https://github.com/{t['author']}) | "
+                f"**{t['best_score']}** | {t['submission_count']} | {pr_link} |"
+            )
+        lines.append("")
+
+        lines.append("### All Submissions")
+        lines.append("| Rank | Submission | Score | Delivery | Scope | Anti-Slop | Trace | APK | Author | PR | Flags |")
+        lines.append("|---|---|---|---|---|---|---|---|---|---|---|")
+        if not ch_results:
+            lines.append("| — | — | — | — | — | — | — | — | — | — | — |")
+        sorted_results = sorted(ch_results, key=lambda r: -r["final_auto"])
+        for i, r in enumerate(sorted_results, 1):
+            b = r["breakdown"]
+            flag = "⚠️ similarity" if r["submission"] in flagged else ""
+            apk = "+3 ✅" if r["apk_adjustment"] > 0 else "−5 ❌"
+            info = pr_map.get(r["submission"], {})
+            author = info.get("author") or ""
+            author_cell = f"@{author}" if author else "—"
+            pr_cell = f"#{info['pr']}" if info.get("pr") else "—"
+            lines.append(
+                f"| {i} | `{r['submission']}` | **{r['final_auto']}** | "
+                f"{b['delivery']['points']}/35 | {b['scope']['points']}/25 | "
+                f"{b['antislop']['points']}/20 | {b['trace']['points']}/20 | {apk} | "
+                f"{author_cell} | {pr_cell} | {flag} |"
+            )
+        lines.append("")
+        return lines
+
+    # Render Challenge 1
+    out.extend(render_challenge_tables("☄️ Challenge 1: Away Mission", results_ch1, top_ch1))
+    out.append("---\n")
+
+    # Render Challenge 2
+    out.extend(render_challenge_tables("🛠️ Challenge 2: Audit-Forge Mission", results_ch2, top_ch2))
+    out.append("---\n")
 
     out.append("## Anti-Slop (Similarity ≥ 0.80)\n")
     out.append(
@@ -133,6 +161,8 @@ def render(scores: dict, similarity: dict, pr_map: dict[str, dict]) -> str:
     out.append("| Original | Copycat | Similarity |")
     out.append("|---|---|---|")
     flags_sorted = sorted(similarity.get("flags", []), key=lambda f: -f["similarity"])
+    if not flags_sorted:
+        out.append("| — | — | — |")
     for f in flags_sorted:
         out.append(f"| `{f['original']}` | `{f['copycat']}` | **{f['similarity']:.3f}** |")
     out.append("")
@@ -142,7 +172,8 @@ def render(scores: dict, similarity: dict, pr_map: dict[str, dict]) -> str:
     out.append("---\n")
     out.append(f"**Last Updated:** {now}\n")
     out.append(f"**Total Contributors:** {len(contributors)}\n")
-    out.append(f"**Total Submissions:** {len(results)}\n")
+    out.append(f"**Total Submissions (Challenge 1):** {len(results_ch1)}\n")
+    out.append(f"**Total Submissions (Challenge 2):** {len(results_ch2)}\n")
     out.append(f"**Similarity flags:** {len(flags_sorted)}\n")
     out.append("")
     out.append(

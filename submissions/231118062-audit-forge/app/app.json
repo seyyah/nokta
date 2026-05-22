@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "Nokta Audit Forge 231118062",
+    "slug": "nokta-audit-forge-231118062",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "nokta-audit-forge-231118062",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "plugins": [
+      "expo-router",
+      "expo-sharing"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.noktaauditforge.student231118062",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#f7f2e8"
+      }
+    }
+  }
+}

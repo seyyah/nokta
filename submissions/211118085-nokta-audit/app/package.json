@@ -1,0 +1,28 @@
+{
+  "name": "nokta-audit",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "postinstall": "patch-package"
+  },
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "@xtatistix/mobile-audit": "^0.1.0",
+    "expo": "~54.0.33",
+    "expo-file-system": "~19.0.22",
+    "expo-sharing": "~14.0.8",
+    "expo-status-bar": "~3.0.9",
+    "react": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-view-shot": "4.0.3"
+  },
+  "private": true,
+  "devDependencies": {
+    "patch-package": "^8.0.1",
+    "postinstall-postinstall": "^2.1.0"
+  }
+}

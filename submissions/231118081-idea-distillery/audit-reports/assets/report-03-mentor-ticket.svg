@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="780" viewBox="0 0 390 780">
+  <rect width="390" height="780" fill="#F5F5F2"/>
+  <text x="28" y="54" font-family="Arial" font-size="14" font-weight="700" fill="#626A74">Mentor Review</text>
+  <text x="28" y="94" font-family="Arial" font-size="30" font-weight="700" fill="#1A1C1B">Pending Ticket</text>
+  <rect x="22" y="126" width="346" height="458" rx="28" fill="#FFFFFF"/>
+  <rect x="44" y="154" width="116" height="30" rx="15" fill="#DCE4FF"/>
+  <text x="58" y="174" font-family="Arial" font-size="11" font-weight="700" fill="#003DB3">PENDING TICKET</text>
+  <text x="44" y="220" font-family="Arial" font-size="28" font-weight="700" fill="#1A1C1B">Cozy Horror Brief</text>
+  <text x="44" y="250" font-family="Arial" font-size="14" fill="#293340">Game designer / technical producer</text>
+  <text x="44" y="302" font-family="Arial" font-size="12" font-weight="700" fill="#626A74">QUESTIONS FROM USER BRIEF</text>
+  <text x="44" y="334" font-family="Arial" font-size="14" fill="#1A1C1B">1. Should horror be atmosphere or mechanics?</text>
+  <text x="44" y="364" font-family="Arial" font-size="14" fill="#1A1C1B">2. Which mechanic must be cut from v1?</text>
+  <rect x="36" y="288" width="318" height="104" rx="18" fill="none" stroke="#FFD938" stroke-width="6"/>
+  <rect x="48" y="610" width="294" height="84" rx="16" fill="#FFD938"/>
+  <text x="64" y="636" font-family="Arial" font-size="14" font-weight="700" fill="#1A1C1B">Audit note</text>
+  <text x="64" y="657" font-family="Arial" font-size="13" fill="#1A1C1B">Mentor cannot see which options the user already locked.</text>
+</svg>

@@ -1,0 +1,34 @@
+{
+  "expo": {
+    "name": "Nokta Audit-Forge Host",
+    "slug": "nokta-audit-forge-host",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "noktaforge",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0B1220"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "edgeToEdgeEnabled": true,
+      "package": "com.ibrahimalicode.noktaforge"
+    },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
