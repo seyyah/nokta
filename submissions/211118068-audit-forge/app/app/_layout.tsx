@@ -1,3 +1,4 @@
+import { Text } from 'react-native';
 import { Stack, usePathname } from 'expo-router';
 import { captureScreen, captureRef } from 'react-native-view-shot';
 import {
@@ -14,6 +15,8 @@ function resolveScreen(pathname: string): string {
   if (pathname.includes('/ideas')) return 'IdeasScreen';
   if (pathname.includes('/idea/')) return 'IdeaDetailScreen';
   if (pathname.includes('/settings')) return 'SettingsScreen';
+  if (pathname.includes('/studio')) return 'StudioScreen';
+  if (pathname.includes('/expert-bridge')) return 'ExpertBridgeScreen';
   return 'UnknownScreen';
 }
 
@@ -29,6 +32,10 @@ export default function RootLayout() {
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="idea/[id]" options={{ title: 'Fikir Detayı' }} />
+        <Stack.Screen
+          name="expert-bridge"
+          options={{ title: 'Uzman Köprüsü', presentation: 'modal' }}
+        />
         <Stack.Screen name="+not-found" />
       </Stack>
 
@@ -53,6 +60,7 @@ export default function RootLayout() {
           storage: auditStorage,
           currentScreen,
           reporterId: 'karahan-qa',
+          BugIcon: <Text style={{ fontSize: 22 }}>🐛</Text>,
         }}
         initialPosition={{ bottom: 110, right: 16 }}
       />
