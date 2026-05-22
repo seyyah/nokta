@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -16,8 +16,23 @@ import {
 } from 'react-native';
 import { AuditWidget } from './src/audit';
 import type { AuditWidgetDeps, AuditNote, AuditNoteBounds } from './src/audit';
+import {
+  AvatarLabScreen,
+  ExpertBridgeScreen,
+  ForgeSignalPanel,
+  getConsecutiveBlockCount,
+  makeForgeRun,
+  useVoiceMeter,
+  VoiceLabScreen,
+} from './src/final/VoiceAvatarBridge';
+import type { ForgeRun, ForgeSignal } from './src/final/VoiceAvatarBridge';
 
 const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
+const HAS_GEMINI_KEY = Boolean(
+  GEMINI_API_KEY &&
+    GEMINI_API_KEY !== 'your_key_here' &&
+    GEMINI_API_KEY !== 'your_gemini_api_key_here',
+);
 
 type SlopResult = {
   slopScore: number;
@@ -25,7 +40,7 @@ type SlopResult = {
   correctedPitch: string;
 };
 
-type ScreenKey = 'Analyzer' | 'Results' | 'Forge';
+type ScreenKey = 'Analyzer' | 'Results' | 'Forge' | 'Voice' | 'Avatar' | 'Bridge';
 
 type ExportCache = {
   filename: string;
@@ -46,6 +61,37 @@ const auditStorage = {
 
 const samplePitch =
   'AI ile tum KOBI operasyonlarini tek gunde otomatiklestiren, regule sektorlerde de risksiz calisan yatirim platformu.';
+
+function analyzePitchLocally(value: string): SlopResult {
+  const text = value.toLocaleLowerCase('tr-TR');
+  const riskyTerms = [
+    'tum',
+    'herkes',
+    'risksiz',
+    'garanti',
+    'tek gunde',
+    'domine',
+    'devrim',
+    'kusursuz',
+    'otomatik',
+    'regule',
+  ];
+  const evidenceTerms = ['pilot', 'musteri', 'gelir', 'maliyet', 'sure', 'entegrasyon', 'kpi', 'veri'];
+  const riskHits = riskyTerms.filter((term) => text.includes(term)).length;
+  const evidenceHits = evidenceTerms.filter((term) => text.includes(term)).length;
+  const lengthPenalty = value.trim().length < 120 ? 14 : value.trim().length > 420 ? -5 : 4;
+  const slopScore = Math.max(8, Math.min(96, 38 + riskHits * 8 - evidenceHits * 5 + lengthPenalty));
+
+  return {
+    slopScore,
+    reason:
+      riskHits > evidenceHits
+        ? 'Lokal analiz: pitch iddiali kelimeler tasiyor ama kanit, hedef segment, entegrasyon ve olculebilir basari metrigi zayif. Bu yuzden slop riski yuksek gorunuyor.'
+        : 'Lokal analiz: pitchte bazi kanit ve uygulanabilirlik sinyalleri var; yine de hedef kullanici, teknik sinir ve olcum metrigi daha net yazilmali.',
+    correctedPitch:
+      'Daha guclu taslak: Belirli bir KOBI segmenti icin tek bir operasyonel problemi sec, mevcut manuel sureyi ve maliyeti yaz, ilk entegrasyonu sinirla, 4 haftalik pilotta takip edilecek KPI ve basari esigini acikla.',
+  };
+}
 
 function clampText(value: string, max = 140): string {
   const compact = value.replace(/\s+/g, ' ').trim();
@@ -71,13 +117,33 @@ function buildScreenCaptureSvg(
   highlight?: AuditNoteBounds,
 ): string {
   const score = result ? `${result.slopScore}/100` : 'Bekliyor';
-  const headline = screen === 'Analyzer' ? 'Pitch analiz ekrani' : screen === 'Results' ? 'Sonuc ve uzman onayi' : 'Forge ledger';
-  const body =
-    screen === 'Analyzer'
-      ? clampText(pitch || samplePitch)
-      : screen === 'Results'
-        ? clampText(result?.reason || 'Analiz sonucu henuz uretilmedi.')
-        : 'READ -> LOCATE -> HYPOTHESIZE -> REPAIR -> TEST -> VERIFY';
+  const screenCopy: Record<ScreenKey, { headline: string; body: string }> = {
+    Analyzer: {
+      headline: 'Pitch analiz ekrani',
+      body: clampText(pitch || samplePitch),
+    },
+    Results: {
+      headline: 'Sonuc ve uzman onayi',
+      body: clampText(result?.reason || 'Analiz sonucu henuz uretilmedi.'),
+    },
+    Forge: {
+      headline: 'Forge ledger',
+      body: 'READ -> LOCATE -> HYPOTHESIZE -> REPAIR -> TEST -> VERIFY',
+    },
+    Voice: {
+      headline: 'Voice visualizer ve dikte',
+      body: 'Mikrofon RMS/FFT barlari; voice -> STT -> markdown audit raporu.',
+    },
+    Avatar: {
+      headline: 'Avatar lipsync sahnesi',
+      body: 'Avaturn GLB + viseme morph target; fallback procedural yuz.',
+    },
+    Bridge: {
+      headline: 'Expert bridge',
+      body: '2 ardil FAIL/ROLLBACK durumunda Jitsi ses/video/ekran paylasimi.',
+    },
+  };
+  const { headline, body } = screenCopy[screen];
 
   const box = highlight
     ? `<rect x="${highlight.x}" y="${highlight.y}" width="${highlight.width}" height="${highlight.height}" rx="10" fill="rgba(246,224,94,0.16)" stroke="#f6e05e" stroke-width="6"/>`
@@ -154,7 +220,24 @@ export default function App() {
   const [result, setResult] = useState<SlopResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [expertNotified, setExpertNotified] = useState(false);
+  const [forgeRuns, setForgeRuns] = useState<ForgeRun[]>(() => [
+    makeForgeRun('SUCCESS', 'C6 Voice visualizer RMS/FFT basarili'),
+    makeForgeRun('SUCCESS', 'C7 Avatar sahnesi + viseme pipeline basarili'),
+    makeForgeRun('ROLLBACK', 'C8 GLB-only lipsync hipotezi rollback'),
+  ]);
   const lastExport = useRef<ExportCache | null>(null);
+  const voiceMeter = useVoiceMeter();
+  const stuckCount = useMemo(() => getConsecutiveBlockCount(forgeRuns), [forgeRuns]);
+
+  const appendForgeRun = (status: ForgeSignal) => {
+    setForgeRuns((runs) => [...runs, makeForgeRun(status)]);
+  };
+
+  useEffect(() => {
+    if (stuckCount >= 2 && activeScreen !== 'Bridge') {
+      setActiveScreen('Bridge');
+    }
+  }, [activeScreen, stuckCount]);
 
   const handleAnalyze = async () => {
     if (!pitch.trim()) return;
@@ -164,8 +247,11 @@ export default function App() {
     setExpertNotified(false);
 
     try {
-      if (!GEMINI_API_KEY || GEMINI_API_KEY === 'your_gemini_api_key_here') {
-        throw new Error('EXPO_PUBLIC_GEMINI_API_KEY eksik. Demo icin ornek metinle lokal ekranlari gezebilirsiniz.');
+      if (!HAS_GEMINI_KEY) {
+        const parsed = analyzePitchLocally(pitch);
+        setResult(parsed);
+        setActiveScreen('Results');
+        return;
       }
 
       const prompt = `
@@ -205,8 +291,12 @@ Pitch:
       setResult(parsed);
       setActiveScreen('Results');
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Bir hata olustu.';
-      setError(message);
+      const parsed = analyzePitchLocally(pitch);
+      setResult({
+        ...parsed,
+        reason: `${parsed.reason} Gemini baglantisi kullanilamadigi icin lokal fallback calisti.`,
+      });
+      setActiveScreen('Results');
     } finally {
       setLoading(false);
     }
@@ -257,6 +347,18 @@ Pitch:
     }),
     [activeScreen, pitch, result],
   );
+
+  const exportDictatedAudit = async (markdown: string) => {
+    const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-');
+    const filename = `voice-dictated-audit-${stamp}.md`;
+    lastExport.current = { filename, content: markdown, title: 'Voice dictated audit' };
+    const uri = downloadWebFile(filename, markdown, 'text/markdown;charset=utf-8');
+    await Share.share({
+      title: 'Voice dictated audit',
+      message: `${filename}\n\n${markdown.slice(0, 1600)}`,
+      url: uri,
+    });
+  };
 
   const renderAnalyzer = () => (
     <>
@@ -386,33 +488,60 @@ Pitch:
       <View style={styles.infoBand}>
         <Text style={styles.infoTitle}>Bu teslimdeki karar</Text>
         <Text style={styles.infoText}>
-          Track B secildi: musteri sadece gorselde ne istedigini isaretler; agent bunu feature/fix
-          niyetine cevirip FORGE.md ledger'inda kapali donguyu kaydeder.
+          Final hafta icin Track C secildi: 2 ardil FAIL/ROLLBACK gorulurse agent Bridge ekranini
+          otomatik acar ve insan uzmana Jitsi odasi uzerinden baglanir.
         </Text>
       </View>
+
+      <ForgeSignalPanel
+        runs={forgeRuns}
+        onAppend={appendForgeRun}
+        onOpenBridge={() => setActiveScreen('Bridge')}
+      />
     </>
+  );
+
+  const renderVoice = () => (
+    <VoiceLabScreen meter={voiceMeter} onExportDictation={exportDictatedAudit} />
+  );
+
+  const renderAvatar = () => (
+    <AvatarLabScreen
+      level={voiceMeter.level}
+      isListening={voiceMeter.isListening}
+      onToggleListening={voiceMeter.toggleListening}
+    />
+  );
+
+  const renderBridge = () => (
+    <ExpertBridgeScreen runs={forgeRuns} onAppend={appendForgeRun} />
   );
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style="light" />
       <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <View style={styles.tabs}>
-          {(['Analyzer', 'Results', 'Forge'] as ScreenKey[]).map((screen) => (
-            <TouchableOpacity
-              key={screen}
-              style={[styles.tab, activeScreen === screen && styles.tabActive]}
-              onPress={() => setActiveScreen(screen)}
-            >
-              <Text style={[styles.tabText, activeScreen === screen && styles.tabTextActive]}>{screen}</Text>
-            </TouchableOpacity>
-          ))}
+        <View style={styles.tabWrap}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabs}>
+            {(['Analyzer', 'Results', 'Forge', 'Voice', 'Avatar', 'Bridge'] as ScreenKey[]).map((screen) => (
+              <TouchableOpacity
+                key={screen}
+                style={[styles.tab, activeScreen === screen && styles.tabActive]}
+                onPress={() => setActiveScreen(screen)}
+              >
+                <Text style={[styles.tabText, activeScreen === screen && styles.tabTextActive]}>{screen}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollContent}>
           {activeScreen === 'Analyzer' && renderAnalyzer()}
           {activeScreen === 'Results' && renderResults()}
           {activeScreen === 'Forge' && renderForge()}
+          {activeScreen === 'Voice' && renderVoice()}
+          {activeScreen === 'Avatar' && renderAvatar()}
+          {activeScreen === 'Bridge' && renderBridge()}
         </ScrollView>
       </KeyboardAvoidingView>
 
@@ -434,16 +563,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  tabs: {
-    flexDirection: 'row',
-    gap: 8,
-    paddingHorizontal: 18,
+  tabWrap: {
     paddingTop: 14,
     paddingBottom: 8,
     backgroundColor: '#0a0a0a',
   },
+  tabs: {
+    flexDirection: 'row',
+    gap: 8,
+    paddingHorizontal: 18,
+  },
   tab: {
-    flex: 1,
+    width: 94,
     minHeight: 38,
     borderRadius: 8,
     borderWidth: 1,
