@@ -22,7 +22,10 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.yilmazurn.app"
+      "package": "com.yilmazurn.app",
+      "permissions": [
+        "RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -37,6 +40,15 @@
     },
     "updates": {
       "url": "https://u.expo.dev/50446787-c944-4d4c-b28c-f491c9ea0b53"
-    }
+    },
+    "plugins": [
+      "expo-asset",
+      [
+        "expo-av",
+        {
+          "microphonePermission": "SlopDetec uses the microphone for the live voice visualizer and dictated audit reports."
+        }
+      ]
+    ]
   }
 }
