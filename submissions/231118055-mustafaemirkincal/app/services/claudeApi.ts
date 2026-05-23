@@ -10,6 +10,22 @@ export interface IdeaCard {
   category: 'idea' | 'task' | 'decision' | 'risk' | 'other';
 }
 
+export interface BridgeQuestion {
+  id: string;
+  text: string;
+  why: string;
+  priority: 'high' | 'medium' | 'low';
+}
+
+export interface BridgeBrief {
+  title: string;
+  summary: string;
+  questions: BridgeQuestion[];
+  humanDecision: string;
+  nextStep: string;
+  tags: string[];
+}
+
 type Group = {
   category: IdeaCard['category'];
   lineNumbers: number[];
@@ -333,5 +349,168 @@ export async function analyzeNotes(rawText: string): Promise<IdeaCard[]> {
   } catch (error) {
     console.warn('Falling back to local dedup logic:', error);
     return buildFallbackCards(rawText);
+  }
+}
+
+function buildBridgeQuestions(rawText: string): BridgeQuestion[] {
+  const normalized = rawText.toLowerCase();
+  const baseQuestions: BridgeQuestion[] = [
+    {
+      id: 'problem',
+      text: 'What exact problem are we solving?',
+      why: 'The bridge needs one crisp problem statement before any expert review is useful.',
+      priority: 'high',
+    },
+    {
+      id: 'user',
+      text: 'Who is the primary user and what do they do today?',
+      why: 'The human expert should confirm the real user path, not just the product idea.',
+      priority: 'high',
+    },
+    {
+      id: 'scope',
+      text: 'What is the smallest version that still feels useful?',
+      why: 'Scope creep is the easiest way to turn a strong idea into slop.',
+      priority: 'high',
+    },
+    {
+      id: 'constraint',
+      text: 'What constraint would most likely break this plan?',
+      why: 'A hard constraint often changes the solution more than the idea itself.',
+      priority: 'medium',
+    },
+    {
+      id: 'success',
+      text: 'How will we know this worked in one week?',
+      why: 'A short success signal keeps the expert feedback concrete.',
+      priority: 'medium',
+    },
+  ];
+
+  return baseQuestions.filter(question => {
+    if (question.id === 'problem' || question.id === 'user' || question.id === 'scope') {
+      return true;
+    }
+
+    if (question.id === 'constraint') {
+      return /risk|constraint|limit|blocked|budget|time|legal|api|approval|dependency/.test(normalized);
+    }
+
+    if (question.id === 'success') {
+      return /metric|success|goal|ship|launch|done|validate|measure/.test(normalized);
+    }
+
+    return false;
+  });
+}
+
+function buildBridgeFallback(rawText: string): BridgeBrief {
+  const lines = splitLines(rawText);
+  const summary =
+    lines.length === 0
+      ? 'No input was provided, so the expert bridge should ask for a short problem statement first.'
+      : lines.slice(0, 2).join(' ');
+
+  const dominantTags = Array.from(
+    new Set(
+      lines
+        .flatMap(line => tokenize(line))
+        .filter(token => token.length > 3)
+        .slice(0, 5),
+    ),
+  );
+
+  return {
+    title: 'Human bridge brief',
+    summary,
+    questions: buildBridgeQuestions(rawText),
+    humanDecision:
+      'Escalate to a human expert when the input mixes scope, risk, or user intent and the model cannot isolate a single problem statement.',
+    nextStep:
+      'Share this brief with the expert, ask for a one-paragraph clarification, then feed the result back into the main dedup flow.',
+    tags: dominantTags.length > 0 ? dominantTags : ['bridge', 'human', 'support'],
+  };
+}
+
+function extractJsonObject(response: any): string {
+  const candidate = response?.candidates?.[0];
+  const parts = candidate?.content?.parts ?? [];
+  return parts
+    .map((part: { text?: string }) => part.text ?? '')
+    .join('')
+    .trim();
+}
+
+async function callGeminiBridge(rawText: string): Promise<BridgeBrief> {
+  const lines = splitLines(rawText);
+  if (lines.length === 0) {
+    return buildBridgeFallback(rawText);
+  }
+
+  const numberedText = lines.map((line, index) => `${index + 1}. ${line}`).join('\n');
+  const response = await fetch(GEMINI_API_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': GEMINI_API_KEY,
+    },
+    body: JSON.stringify({
+      systemInstruction: {
+        parts: [
+          {
+            text:
+              'You are a senior product engineer who prepares a concise human support bridge. Return only JSON. No markdown fences. No prose.',
+          },
+        ],
+      },
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {
+              text:
+                'Turn this messy product input into a human support brief with 3 to 5 engineering questions, a summary, a human decision note, a next step, and 2 to 5 tags.\n\n' +
+                numberedText,
+            },
+          ],
+        },
+      ],
+      generationConfig: {
+        temperature: 0.2,
+        maxOutputTokens: 1200,
+        responseMimeType: 'application/json',
+      },
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Gemini bridge error ${response.status}: ${errorText}`);
+  }
+
+  const data = await response.json();
+  const text = extractJsonObject(data);
+  const jsonMatch = text.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) {
+    throw new Error('No JSON object found in bridge response');
+  }
+
+  return JSON.parse(jsonMatch[0]) as BridgeBrief;
+}
+
+export async function buildExpertBridge(rawText: string): Promise<BridgeBrief> {
+  if (!rawText.trim()) {
+    return buildBridgeFallback(rawText);
+  }
+
+  if (!GEMINI_API_KEY) {
+    return buildBridgeFallback(rawText);
+  }
+
+  try {
+    return await callGeminiBridge(rawText);
+  } catch (error) {
+    console.warn('Falling back to local bridge logic:', error);
+    return buildBridgeFallback(rawText);
   }
 }

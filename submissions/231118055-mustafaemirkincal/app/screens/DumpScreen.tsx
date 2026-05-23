@@ -12,7 +12,7 @@ import {
   View,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { analyzeNotes, IdeaCard } from '../services/claudeApi';
+import { analyzeNotes, buildExpertBridge, IdeaCard } from '../services/claudeApi';
 import { RootStackParamList } from '../App';
 
 type Props = {
@@ -33,6 +33,7 @@ const PLACEHOLDER = `WhatsApp export or rough notes work fine.
 export default function DumpScreen({ navigation }: Props) {
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
+  const [bridgeLoading, setBridgeLoading] = useState(false);
   const [lineCount, setLineCount] = useState(0);
 
   function handleChange(nextText: string) {
@@ -58,6 +59,23 @@ export default function DumpScreen({ navigation }: Props) {
       Alert.alert('Analysis failed', error?.message ?? 'Something went wrong.');
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleBridge() {
+    if (!text.trim()) {
+      Alert.alert('Empty input', 'Paste a note dump, pitch, or messy chat export first.');
+      return;
+    }
+
+    setBridgeLoading(true);
+    try {
+      const brief = await buildExpertBridge(text);
+      navigation.navigate('Bridge', { brief });
+    } catch (error: any) {
+      Alert.alert('Bridge failed', error?.message ?? 'Something went wrong.');
+    } finally {
+      setBridgeLoading(false);
     }
   }
 
@@ -130,9 +148,25 @@ export default function DumpScreen({ navigation }: Props) {
           )}
         </TouchableOpacity>
 
+        <TouchableOpacity
+          style={[styles.secondaryButton, bridgeLoading && styles.buttonDisabled]}
+          onPress={handleBridge}
+          disabled={bridgeLoading}
+        >
+          {bridgeLoading ? (
+            <ActivityIndicator color="#22d3ee" />
+          ) : (
+            <Text style={styles.secondaryButtonText}>Ask human expert</Text>
+          )}
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.ghostButton} onPress={() => navigation.navigate('Forge')}>
+          <Text style={styles.ghostButtonText}>Open forge ledger</Text>
+        </TouchableOpacity>
+
         <Text style={styles.footerNote}>
           Local fallback is built in. If `EXPO_PUBLIC_GEMINI_API_KEY` is present, the app uses
-          Gemini for model-backed extraction.
+          Gemini for model-backed extraction and bridge generation.
         </Text>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -283,6 +317,36 @@ const styles = StyleSheet.create({
     color: '#0b1020',
     fontSize: 16,
     fontWeight: '900',
+  },
+  secondaryButton: {
+    minHeight: 54,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: 'rgba(34, 211, 238, 0.30)',
+    backgroundColor: 'rgba(34, 211, 238, 0.10)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+  secondaryButtonText: {
+    color: '#67e8f9',
+    fontSize: 15,
+    fontWeight: '900',
+  },
+  ghostButton: {
+    minHeight: 48,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(248, 250, 252, 0.12)',
+    backgroundColor: 'rgba(248, 250, 252, 0.04)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+  ghostButtonText: {
+    color: '#e2e8f0',
+    fontSize: 13,
+    fontWeight: '800',
   },
   footerNote: {
     color: '#7c8aa6',
