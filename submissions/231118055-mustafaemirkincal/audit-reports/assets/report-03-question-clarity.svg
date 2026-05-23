@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+  <rect width="1200" height="900" fill="#07111d"/>
+  <rect x="80" y="80" width="1040" height="740" rx="36" fill="#0f172a" stroke="#22d3ee" stroke-opacity="0.20"/>
+  <rect x="130" y="160" width="300" height="88" rx="24" fill="#f8fafc"/>
+  <rect x="130" y="280" width="520" height="400" rx="28" fill="#111827" stroke="#94a3b8" stroke-opacity="0.18"/>
+  <rect x="700" y="220" width="320" height="110" rx="26" fill="#0b1220" stroke="#fbbf24" stroke-opacity="0.35" stroke-width="4"/>
+  <rect x="700" y="360" width="320" height="110" rx="26" fill="#0b1220" stroke="#22d3ee" stroke-opacity="0.35" stroke-width="4"/>
+  <rect x="700" y="500" width="320" height="110" rx="26" fill="#0b1220" stroke="#22c55e" stroke-opacity="0.30" stroke-width="4"/>
+  <text x="130" y="135" fill="#cbd5e1" font-family="Arial, Helvetica, sans-serif" font-size="24">Bridge screen</text>
+  <text x="730" y="280" fill="#f8fafc" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">Problem</text>
+  <text x="730" y="420" fill="#f8fafc" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">User</text>
+  <text x="730" y="560" fill="#f8fafc" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">Scope</text>
+</svg>
