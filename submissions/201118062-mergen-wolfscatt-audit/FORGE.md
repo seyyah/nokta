@@ -65,21 +65,6 @@
 - Neden faydali: Bu reddedilen hipotez, gelecekte tema iyilestirmesi yapilacaksa bunun ayri ve bilincli bir kapsamla ele alinmasi gerektigini netlestirdi.
 - Kalici sonuc: Herhangi bir global style refactor tutulmadi, app code degismedi.
 
-## Commit Commands
-
-Git staging izni bu oturumda onaylanmadigi icin gercek hash uretilmedi. Commit atmak istersen asagidaki komutlari repo kokunde calistir:
-
-```powershell
-git add -- submissions/201118062-mergen-wolfscatt/app/screens/HomeScreen.js
-git commit -m "[FORGE: HomeScreen] Add quick idea clear action — 1kg"
-
-git add -- submissions/201118062-mergen-wolfscatt/app/screens/QuestionsScreen.js
-git commit -m "[FORGE: QuestionsScreen] Remove duplicate progress bar — 2kg"
-
-git add -- submissions/201118062-mergen-wolfscatt/app/screens/ResultScreen.js
-git commit -m "[FORGE: ResultScreen] Add summary copy action — 3kg"
-```
-
 ## Manual Verification Checklist
 
 - HomeScreen uzerinde metin yazip `Fikri Temizle` ile alan sifirlandi.

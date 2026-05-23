@@ -11,7 +11,7 @@ Bu teslimde resmi track `B` olarak secildi. Ayrica Track C'den ilham alan bir ot
 ## How To Run
 
 ```bash
-cd submissions/201118062-mergen-wolfscatt/app
+cd submissions/201118062-mergen-wolfscatt-audit/app
 npm install
 npx expo start
 ```
