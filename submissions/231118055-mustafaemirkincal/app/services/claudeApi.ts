@@ -1,4 +1,4 @@
-import { GROQ_API_KEY, GROQ_API_URL, MODEL } from '../constants/Config';
+import { GEMINI_API_KEY, GEMINI_API_URL } from '../constants/Config';
 
 export interface IdeaCard {
   id: string;
@@ -259,7 +259,16 @@ function buildFallbackCards(rawText: string): IdeaCard[] {
   }));
 }
 
-async function callGroq(rawText: string): Promise<IdeaCard[]> {
+function extractText(response: any): string {
+  const candidate = response?.candidates?.[0];
+  const parts = candidate?.content?.parts ?? [];
+  return parts
+    .map((part: { text?: string }) => part.text ?? '')
+    .join('')
+    .trim();
+}
+
+async function callGemini(rawText: string): Promise<IdeaCard[]> {
   const lines = splitLines(rawText);
   if (lines.length === 0) {
     return [];
@@ -267,32 +276,41 @@ async function callGroq(rawText: string): Promise<IdeaCard[]> {
 
   const numberedText = lines.map((line, index) => `${index + 1}. ${line}`).join('\n');
 
-  const response = await fetch(GROQ_API_URL, {
+  const response = await fetch(GEMINI_API_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${GROQ_API_KEY}`,
+      'x-goog-api-key': GEMINI_API_KEY,
     },
     body: JSON.stringify({
-      model: MODEL,
-      temperature: 0.2,
-      max_tokens: 1800,
-      messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
+      systemInstruction: {
+        parts: [{ text: SYSTEM_PROMPT }],
+      },
+      contents: [
         {
           role: 'user',
-          content: `Deduplicate and extract idea cards from the following notes. Return only JSON.\n\n${numberedText}`,
+          parts: [
+            {
+              text: `Deduplicate and extract idea cards from the following notes. Return only JSON.\n\n${numberedText}`,
+            },
+          ],
         },
       ],
+      generationConfig: {
+        temperature: 0.2,
+        maxOutputTokens: 1800,
+        responseMimeType: 'application/json',
+      },
     }),
   });
 
   if (!response.ok) {
-    throw new Error(`Groq API error ${response.status}`);
+    const errorText = await response.text();
+    throw new Error(`Gemini API error ${response.status}: ${errorText}`);
   }
 
   const data = await response.json();
-  const text: string = data.choices?.[0]?.message?.content ?? '';
+  const text = extractText(data);
   const jsonMatch = text.match(/\[[\s\S]*\]/);
   if (!jsonMatch) {
     throw new Error('No JSON array found in model response');
@@ -306,12 +324,12 @@ export async function analyzeNotes(rawText: string): Promise<IdeaCard[]> {
     return [];
   }
 
-  if (!GROQ_API_KEY) {
+  if (!GEMINI_API_KEY) {
     return buildFallbackCards(rawText);
   }
 
   try {
-    return await callGroq(rawText);
+    return await callGemini(rawText);
   } catch (error) {
     console.warn('Falling back to local dedup logic:', error);
     return buildFallbackCards(rawText);

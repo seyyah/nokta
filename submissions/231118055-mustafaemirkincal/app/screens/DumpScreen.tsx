@@ -131,8 +131,8 @@ export default function DumpScreen({ navigation }: Props) {
         </TouchableOpacity>
 
         <Text style={styles.footerNote}>
-          Local fallback is built in. If `EXPO_PUBLIC_GROQ_API_KEY` is present, the app uses Groq
-          for model-backed extraction.
+          Local fallback is built in. If `EXPO_PUBLIC_GEMINI_API_KEY` is present, the app uses
+          Gemini for model-backed extraction.
         </Text>
       </ScrollView>
     </KeyboardAvoidingView>

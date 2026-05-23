@@ -44,9 +44,8 @@ This keeps the output focused on common note-dump patterns instead of forcing th
 
 ## AI Strategy
 
-The app prefers a model-backed extraction path when `EXPO_PUBLIC_GROQ_API_KEY` is available. If no key exists, it falls back to a local dedup pipeline so the demo is still usable in a classroom or offline setup.
+The app prefers a model-backed extraction path when `EXPO_PUBLIC_GEMINI_API_KEY` is available. If no key exists, it falls back to a local dedup pipeline so the demo is still usable in a classroom or offline setup.
 
 ## Why this track
 
 Track C is the cleanest fit for the current repository because it demonstrates NOKTA's core thesis: transform fragmented input into a structured artifact with traceability.
-
