@@ -1,46 +1,81 @@
-\# NOKTA Audit Forge Submission
+\# NOKTA Final Bridge
 
 
 
 \- Öğrenci No: 231118070
 
-\- Track: C
-
 \- Slug: audit-forge
 
+\- Track: A — Voice viz akıcılığı + lipsync senkronu
 
 
-\## Expo Link
 
-https://expo.dev/accounts/myank/projects/app/builds/3d799ae9-206c-46b5-9853-9a8bee4d4039
+\## Proje Özeti
+
+
+
+Bu proje final haftası için NOKTA audit-forge uygulamasının genişletilmiş halidir. Uygulamada ses görselleştirme, avatar lipsync simülasyonu, forge döngüsü ve uzman bağlantısı bulunmaktadır.
+
+
+
+\## Özellikler
+
+
+
+\- Voice visualizer
+
+\- Avatar lipsync simülasyonu
+
+\- Audit raporları
+
+\- Forge cycle takibi
+
+\- Rollback / stuck senaryosu
+
+\- Jitsi tabanlı uzman bağlantısı
+
+
+
+\## Kullanılan Teknolojiler
+
+
+
+\- Expo
+
+\- React Native
+
+\- TypeScript
+
+\- Jitsi Meet
+
+\- EAS Build
+
+
+
+\## Avatar
+
+
+
+`avatar.glb` dosyası submission klasörüne eklenecektir.
 
 
 
 \## Demo Video
 
-https://youtube.com/shorts/J-NMtEUsb5s?feature=share
+
+
+https://youtube.com/shorts/Akbdr7lsKjQ
+
+
+\## Expo Project
+
+https://expo.dev/accounts/myank/projects/noktaa
+
+\## APK
 
 
 
-\## Açıklama
-
-
-
-Bu proje, NOKTA challenge kapsamında hazırlanmış minimal bir audit-forge uygulamasıdır.
-
-
-
-\## Human Touch Points
-
-
-
-1\. Track seçimi
-
-2\. Audit report review
-
-3\. Forge cycle kontrolü
-
-4\. Rollback kararı
+`app-release.apk` dosyası submission klasöründe yer alacaktır.
 
 
 
@@ -48,9 +83,9 @@ Bu proje, NOKTA challenge kapsamında hazırlanmış minimal bir audit-forge uyg
 
 
 
-\- ChatGPT
+\- ChatGPT: proje planı, kod desteği, README/FORGE/BRIDGE içerikleri
 
-\- Expo
+\- Expo: mobil uygulama geliştirme
 
-\- EAS Build
+\- EAS Build: Android APK üretimi
 
