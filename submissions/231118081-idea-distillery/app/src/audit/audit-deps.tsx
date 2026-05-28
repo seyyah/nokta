@@ -5,6 +5,7 @@ import React from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { captureRef, captureScreen } from 'react-native-view-shot';
 import { AuditStorage, AuditWidgetDeps } from './AuditWidgetHost';
+import { loadPendingAuditVoiceNote } from '../services/auditVoiceNote';
 
 const AUDIT_STORAGE_KEY = 'nokta-game-pitch-audit-notes-v1';
 const REPORT_DIR_NAME = 'nokta-game-pitch-audit/';
@@ -82,6 +83,22 @@ async function withResolvedMarkdownTargets(content: string) {
   }
 }
 
+async function withDictatedAuditNote(content: string) {
+  const dictatedNote = await loadPendingAuditVoiceNote();
+
+  if (!dictatedNote?.trim() || content.includes('## Voice Dictated Audit Note')) {
+    return content;
+  }
+
+  return [
+    content.trimEnd(),
+    '',
+    '## Voice Dictated Audit Note',
+    dictatedNote.trim(),
+    '',
+  ].join('\n');
+}
+
 const auditStorage: AuditStorage = {
   async loadNotes() {
     const raw = await AsyncStorage.getItem(AUDIT_STORAGE_KEY);
@@ -122,7 +139,7 @@ async function writeAuditFile(filename: string, content: string) {
   const reportDirectory = await ensureReportDirectory();
   const fileUri = `${reportDirectory}${sanitizeFileName(filename)}`;
   const finalContent = filename.toLowerCase().endsWith('.md')
-    ? await withResolvedMarkdownTargets(content)
+    ? await withDictatedAuditNote(await withResolvedMarkdownTargets(content))
     : content;
 
   await FileSystem.writeAsStringAsync(fileUri, finalContent, {

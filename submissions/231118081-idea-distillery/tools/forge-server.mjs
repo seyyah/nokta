@@ -12,6 +12,8 @@ const appRoot = path.join(submissionRoot, 'app');
 const inboxDir = path.join(submissionRoot, 'audit-reports', 'inbox');
 const runsDir = path.join(toolsDir, 'forge-runs');
 const forgeLedgerPath = path.join(submissionRoot, 'FORGE.md');
+const bridgeStatePath = path.join(toolsDir, 'bridge-state.json');
+const bridgeDocPath = path.join(submissionRoot, 'BRIDGE.md');
 
 const port = Number(process.env.FORGE_PORT ?? 8787);
 const ollamaUrl = process.env.OLLAMA_URL ?? 'http://localhost:11434';
@@ -43,6 +45,9 @@ Endpoint:
     "fileUri": "file://...",
     "source": "Nokta Game Pitch AuditWidget"
   }
+
+  GET /bridge/status
+  POST /bridge/transcript
 `);
 }
 
@@ -264,6 +269,12 @@ async function buildPrompt(payload, reportPath) {
   const evalDoc = existsSync(path.join(submissionRoot, 'EVAL.md'))
     ? await readText('EVAL.md', 4200)
     : '';
+  const bridgeDoc = existsSync(bridgeDocPath)
+    ? await readText('BRIDGE.md', 2200)
+    : '';
+  const bridgeState = existsSync(bridgeStatePath)
+    ? await fs.readFile(bridgeStatePath, 'utf8').catch(() => '')
+    : '';
 
   return [
     'You are the local autonomous forge repair agent for a student Audit-Forge submission.',
@@ -323,6 +334,16 @@ async function buildPrompt(payload, reportPath) {
     'EVAL ratchet:',
     '```md',
     evalDoc,
+    '```',
+    '',
+    'Expert bridge context:',
+    '```md',
+    bridgeDoc || 'No expert bridge summary yet.',
+    '```',
+    '',
+    'Current bridge state:',
+    '```json',
+    bridgeState || '{}',
     '```',
     '',
     'Relevant source context:',
@@ -970,6 +991,148 @@ async function appendForgeRow(entry) {
   );
 }
 
+function parseForgeRows(ledger) {
+  return ledger
+    .split(/\r?\n/)
+    .filter((line) => /^\|\s*\d+\s*\|/.test(line))
+    .map((line) => {
+      const columns = line.split('|').slice(1, -1).map((item) => item.trim());
+      return {
+        cycle: Number(columns[0]),
+        reportName: columns[1]?.replace(/`/g, '') ?? '',
+        hypothesis: columns[2] ?? '',
+        result: String(columns[3] ?? '').toLowerCase(),
+      };
+    })
+    .filter((row) => Number.isFinite(row.cycle));
+}
+
+function isBridgeFailure(result) {
+  return result === 'rollback' || result === 'fail' || result === 'failed' || result === 'stuck';
+}
+
+function jitsiRoomName(cycle) {
+  return `nokta-231118081-cycle-${cycle}`;
+}
+
+function jitsiRoomUrl(roomName) {
+  return `https://meet.jit.si/${roomName}#config.prejoinPageEnabled=false&config.startWithAudioMuted=false&config.startWithVideoMuted=false`;
+}
+
+async function readBridgeState() {
+  if (!existsSync(bridgeStatePath)) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(await fs.readFile(bridgeStatePath, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
+async function writeBridgeState(state) {
+  await fs.mkdir(path.dirname(bridgeStatePath), { recursive: true });
+  await fs.writeFile(bridgeStatePath, `${JSON.stringify(state, null, 2)}\n`, 'utf8');
+}
+
+async function updateBridgeStateFromLedger() {
+  const ledger = await fs.readFile(forgeLedgerPath, 'utf8');
+  const rows = parseForgeRows(ledger);
+  const lastCycles = rows.slice(-2);
+  const stuck = lastCycles.length === 2 && lastCycles.every((row) => isBridgeFailure(row.result));
+  const lastCycle = rows.at(-1)?.cycle ?? 0;
+  const roomName = jitsiRoomName(lastCycle || 1);
+  const reason = stuck
+    ? `Forge is stuck after consecutive ${lastCycles.map((row) => row.result).join(' + ')} cycles.`
+    : 'No consecutive rollback/fail pair detected.';
+  const state = {
+    stuck,
+    roomName,
+    roomUrl: jitsiRoomUrl(roomName),
+    reason,
+    lastCycles,
+    updatedAt: new Date().toISOString(),
+  };
+
+  await writeBridgeState(state);
+  return state;
+}
+
+async function handleBridgeStatus(_request, response) {
+  const state = await updateBridgeStateFromLedger().catch(async () => {
+    const fallback = await readBridgeState();
+
+    if (fallback) {
+      return fallback;
+    }
+
+    const roomName = jitsiRoomName(1);
+    return {
+      stuck: false,
+      roomName,
+      roomUrl: jitsiRoomUrl(roomName),
+      reason: 'Bridge status is not ready yet.',
+      lastCycles: [],
+      updatedAt: new Date().toISOString(),
+    };
+  });
+
+  sendJson(response, 200, state);
+}
+
+async function handleBridgeTranscript(request, response) {
+  try {
+    const body = await readRequestBody(request);
+    const payload = JSON.parse(body);
+    const summary = String(payload.summary ?? '').trim();
+    const nextCycleContext = String(payload.nextCycleContext ?? '').trim();
+
+    if (!summary) {
+      sendJson(response, 400, { error: 'Empty bridge summary.' });
+      return;
+    }
+
+    const state = await readBridgeState();
+    const content = [
+      '# BRIDGE.md',
+      '',
+      '## Expert Bridge Summary',
+      '',
+      `- Updated at: ${new Date().toISOString()}`,
+      `- Room: ${state?.roomName ?? 'manual-bridge'}`,
+      `- Trigger: ${state?.reason ?? 'manual expert bridge'}`,
+      '',
+      '## Call Recap',
+      '',
+      summary,
+      '',
+      '## Next Cycle Context',
+      '',
+      nextCycleContext || summary,
+      '',
+      '## Last Forge Cycles',
+      '',
+      ...(state?.lastCycles?.length
+        ? state.lastCycles.map((cycle) => `- Cycle ${cycle.cycle}: ${cycle.result} - ${cycle.hypothesis}`)
+        : ['- No cycle state recorded.']),
+      '',
+    ].join('\n');
+
+    await fs.writeFile(bridgeDocPath, content, 'utf8');
+
+    if (autoCommit) {
+      await commitFiles(['BRIDGE.md'], '[FORGE: Bridge] Log expert bridge recap -- 0kg');
+    }
+
+    sendJson(response, 200, { ok: true });
+  } catch (error) {
+    sendJson(response, 500, {
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
+
 async function changedFiles() {
   const status = await run(gitCommand, ['status', '--porcelain', '--', '.'], { cwd: submissionRoot });
   const prefixResult = await run(gitCommand, ['rev-parse', '--show-prefix'], { cwd: submissionRoot });
@@ -1241,8 +1404,9 @@ async function handleAudit(request, response) {
 
     console.log(`[Forge] ${runId} received ${payload.filename}`);
     const result = await processAudit(payload, runId);
+    const bridge = await updateBridgeStateFromLedger();
     console.log(`[Forge] ${runId} ${result.status}`);
-    sendJson(response, 200, { runId, ...result });
+    sendJson(response, 200, { runId, ...result, bridge });
   } catch (error) {
     console.error(`[Forge] ${runId} failed`, error);
     sendJson(response, 500, {
@@ -1279,7 +1443,17 @@ if (process.argv.includes('--self-check')) {
       return;
     }
 
-    sendJson(response, 404, { error: 'Not found. Use POST /audit.' });
+    if (request.method === 'GET' && request.url === '/bridge/status') {
+      void handleBridgeStatus(request, response);
+      return;
+    }
+
+    if (request.method === 'POST' && request.url === '/bridge/transcript') {
+      void handleBridgeTranscript(request, response);
+      return;
+    }
+
+    sendJson(response, 404, { error: 'Not found. Use POST /audit or GET /bridge/status.' });
   });
 
   server.listen(port, () => {

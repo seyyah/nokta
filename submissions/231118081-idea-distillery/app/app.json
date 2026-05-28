@@ -13,10 +13,20 @@
       "backgroundColor": "#F5F5F2"
     },
     "ios": {
-      "supportsTablet": false
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Nokta opens an expert video bridge when forge cycles get stuck.",
+        "NSMicrophoneUsageDescription": "Nokta records voice energy for the avatar and dictated audit notes.",
+        "NSSpeechRecognitionUsageDescription": "Nokta turns dictated audit notes and bridge recaps into text."
+      }
     },
     "android": {
       "package": "com.samsun081.noktadraft",
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "MODIFY_AUDIO_SETTINGS"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#F5F5F2"
@@ -28,7 +38,9 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-font"
+      "expo-font",
+      "expo-speech-recognition",
+      "expo-asset"
     ],
     "extra": {
       "eas": {
