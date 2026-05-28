@@ -1,0 +1,14 @@
+{
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/.expo": true,
+    "**/dist": true,
+    "**/build": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.expo": true,
+    "**/dist": true,
+    "**/build": true
+  }
+}
