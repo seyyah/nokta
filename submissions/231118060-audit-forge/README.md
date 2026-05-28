@@ -38,6 +38,7 @@ Those boundaries are preserved. The audit widget still lives in the root layout;
 - Added Jitsi Meet external bridge for audio, video and screen share.
 - Added new audit evidence for voice/avatar, report continuity and bridge escalation.
 - Added engineering docs: `DECISIONS.md`, `BRIDGE.md`, `VERIFY.md`.
+- Hardened the live path so mic startup, avatar GLB load and bridge URL failures report honestly instead of failing silently.
 
 ## 4. Architecture Summary
 
@@ -59,7 +60,7 @@ The app remains a small Expo Router surface:
 
 `useMicrophoneLevel` requests microphone permission on demand. When permission is granted, `Audio.Recording.createAsync` starts a real recording session using Expo AV's high quality preset with metering enabled. The status callback runs every 80ms and reads `status.metering`.
 
-The dB value is mapped from a floor/ceiling range into `0..1`. An attack/release smoothing step reacts faster to rising speech and slower to falling silence. Silence therefore returns to an idle state instead of jittering.
+The dB value is mapped from a floor/ceiling range into `0..1`. An attack/release smoothing step reacts faster to rising speech and slower to falling silence. Silence therefore returns to an idle state instead of jittering. The recording options explicitly keep `isMeteringEnabled: true` even though the Expo preset already includes it, so the requirement is visible in code review.
 
 ## 6. Avatar Pipeline
 

@@ -13,6 +13,7 @@ Run these checks from the repo root.
 
 ```bash
 rg -n "AuditWidget" submissions/231118060-audit-forge/app -g "!node_modules"
+rg -n "isMeteringEnabled|canOpenURL|Avatar asset could not be loaded" submissions/231118060-audit-forge/app -g "!node_modules"
 git status --short
 git diff --name-only origin/codex/231118060-audit-forge
 ```
@@ -32,9 +33,10 @@ submissions/231118060-audit-forge/app/app/_layout.tsx:<line>: <MobileAudit.Audit
 Manual checks:
 
 - Capture route asks for mic permission only after user action.
+- Mic recording options explicitly keep metering enabled.
 - Silence keeps the avatar idle.
 - Speech moves both the bars and the avatar mouth.
 - Reports route keeps audit evidence readable.
-- Bridge route opens the Jitsi room, not a fake local call screen.
+- Bridge route opens the Jitsi room, not a fake local call screen, and reports URL-handler failure inline.
 - Diff stays inside `submissions/231118060-audit-forge/`.
 - `app-release.apk` is the rebuilt release artifact, not the previous baseline APK.
