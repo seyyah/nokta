@@ -13,6 +13,8 @@ import ChatScreen from './screens/ChatScreen';
 import SpecScreen from './screens/SpecScreen';
 import HistoryScreen from './screens/HistoryScreen';
 import ExpertScreen from './screens/ExpertScreen';
+import VoiceScreen from './screens/VoiceScreen';
+import ExpertCallScreen from './screens/ExpertCallScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -64,6 +66,7 @@ export default function App() {
           });
         } else {
           Alert.alert('Hata', 'Paylaşım desteklenmiyor.');
+          return;
         }
       } catch (e) {
         Alert.alert('Share Error', String(e));
@@ -98,7 +101,10 @@ export default function App() {
         <Stack.Screen name="Spec" component={SpecScreen} />
         <Stack.Screen name="History" component={HistoryScreen} />
         <Stack.Screen name="Expert" component={ExpertScreen} />
+        <Stack.Screen name="Voice" component={VoiceScreen} />
+        <Stack.Screen name="ExpertCall" component={ExpertCallScreen} />
       </Stack.Navigator>
+
 
       {/* AuditWidget — tek satır mount, drop-in primitive */}
       <AuditWidget

@@ -48,7 +48,6 @@ function _smartSpec(idea, qas) {
 }
 
 function _smartScore(idea) {
-  // Fikir uzunluğuna ve kelime sayısına göre skorlar hafifçe değişsin
   const words = (idea || '').split(/\s+/).length;
   const base = 70 + Math.min(words, 15);
   const v = (offset) => Math.min(100, Math.max(55, base + offset + (Math.floor(Math.random() * 7) - 3)));
@@ -273,5 +272,65 @@ Format:
   } catch (error) {
     console.warn('generateStackAndCostStream → smart fallback:', error.message);
     return _smartStack(spec?.title);
+  }
+}
+
+// ── Voice -> STT -> Markdown dictation ────────────────────────────────────────
+export async function transcribeAudio(base64AudioData, mimeType = 'audio/m4a') {
+  if (!GEMINI_API_KEY || GEMINI_API_KEY === 'BURAYA_KENDI_API_ANAHTARINIZI_YAZIN') {
+    console.warn('Gemini API key is placeholder. Falling back to mock transcription.');
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    return `# Hata Raporu: Navigasyon Akışı Kopukluğu
+
+## Özet
+Kullanıcı bir ekrandan diğerine geçerken scroll konumu sıfırlanıyor. Bu durum navigasyon süreçlerinde tutarsız deneyime neden oluyor.
+
+## Etkilenen Ekranlar
+- Ses kayıt ekranından ana sayfaya dönüş
+- Rapor detayından geri gelince scroll pozisyonu korunmuyor
+
+## Yeniden Üretme Adımları
+1. Ses mod ekranını aç.
+2. Mikrofon butonuna basarak kısa bir mesaj kaydet.
+3. Kaydı durdur ve ana sayfaya dön.
+4. Sayfa konumunun sıfırlandığını gözlemle.
+
+## Beklenen Davranış
+Kullanıcı geri döndüğünde kaldığı konumda devam etmeli.
+
+## Önerilen Çözüm
+Navigation state'e scroll pozisyonu persist edilmeli veya \`unmountOnBlur: false\` ayarı kontrol edilmeli.`;
+  }
+
+  const prompt = `Sen bir ses kayıt çözümleme (STT) asistanısın. Bu ses kaydında konuşan geliştiricinin/müşterinin dikte ettiği hata veya özellik talebini dinle. Konuşulanları metne dök ve ardından bunu profesyonel bir yazılım hata/istek raporu (Markdown formatında, başlık, açıklama ve adımlarla) haline getir. Formatın temiz ve sade olsun.`;
+
+  try {
+    const response = await model.generateContent([
+      {
+        inlineData: {
+          data: base64AudioData,
+          mimeType: mimeType,
+        },
+      },
+      prompt,
+    ]);
+    return response.response.text();
+  } catch (error) {
+    console.error('transcribeAudio error:', error);
+    console.warn('transcribeAudio API failed. Using mock fallback.');
+    return `# Hata Raporu: Ses Tanıma Bağlantı Hatası
+
+## Özet
+Ses kaydı tamamlandı ancak Gemini API'ye iletilirken bağlantı hatası alındı.
+
+## Teknik Detay
+- Hata: API isteği zaman aşımına uğradı veya ağ ulaşılamaz durumda
+- Model: Gemini 2.0 Flash STT pipeline
+- Format: audio/m4a — Base64 encode edildi
+
+## Önerilen Aksiyon
+1. Ağ bağlantısını kontrol et.
+2. API key geçerliliğini doğrula (Gemini Console).
+3. Kısa süre bekleyip tekrar dene.`;
   }
 }

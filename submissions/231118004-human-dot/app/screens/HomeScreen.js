@@ -11,6 +11,7 @@ import {
   StatusBar,
   Animated,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import GlowDot from '../components/GlowDot';
@@ -42,6 +43,7 @@ const STARS = Array.from({ length: 40 }, (_, i) => ({
 export default function HomeScreen({ navigation }) {
   const [idea, setIdea] = useState('');
   const [loading, setLoading] = useState(false);
+  const [stuckCount, setStuckCount] = useState(0);
 
   const handleStart = async () => {
     if (!idea.trim() || loading) return;
@@ -63,6 +65,12 @@ export default function HomeScreen({ navigation }) {
       >
         {/* Logo + top buttons */}
         <View style={styles.topRow}>
+          <TouchableOpacity 
+            onPress={() => navigation.navigate('Voice')} 
+            style={[styles.topBtn, { borderColor: 'rgba(74,222,128,0.4)', backgroundColor: 'rgba(74,222,128,0.05)' }]}
+          >
+            <Text style={[styles.topBtnText, { color: '#4ade80' }]}>🎙️ Ses Modu</Text>
+          </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate('History')} style={styles.topBtn}>
             <Text style={styles.topBtnText}>📋 Geçmiş</Text>
           </TouchableOpacity>
@@ -75,7 +83,7 @@ export default function HomeScreen({ navigation }) {
 
         {/* Glow dot */}
         <View style={styles.dotWrap}>
-          <GlowDot size={20} phase="idle" />
+          <GlowDot size={20} phase={idlePhase()} />
         </View>
 
         {/* Input card */}
@@ -109,9 +117,62 @@ export default function HomeScreen({ navigation }) {
         </TouchableOpacity>
 
         <Text style={styles.hint}>AI sana 5 mühendislik sorusu soracak</Text>
+
+        {/* Forge Status Widget */}
+        <View style={styles.forgeCard}>
+          <Text style={styles.forgeTitle}>🛠️ Forge Döngüsü İzleyici</Text>
+          <Text style={styles.forgeStatus}>
+            Durum: {stuckCount >= 2 ? '🚨 TIKANDI (STUCK - 2x Fail/Rollback)' : '✅ Çalışıyor'}
+          </Text>
+          <View style={styles.forgeRow}>
+            <TouchableOpacity 
+              style={styles.forgeBtn} 
+              onPress={() => {
+                const newVal = stuckCount + 1;
+                setStuckCount(newVal);
+                if (newVal >= 2) {
+                  Alert.alert('STUCK Algılandı!', '2 cycle üst üste başarısız olunduğu için görüntülü uzman köprüsü aktifleşti.');
+                }
+              }}
+            >
+              <Text style={styles.forgeBtnText}>⚠️ Fail/Rollback Simüle Et ({stuckCount}/2)</Text>
+            </TouchableOpacity>
+            
+            {stuckCount > 0 && (
+              <TouchableOpacity 
+                style={styles.forgeResetBtn}
+                onPress={() => setStuckCount(0)}
+              >
+                <Text style={styles.forgeResetBtnText}>Sıfırla</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+          
+          {stuckCount >= 2 && (
+            <TouchableOpacity 
+              style={styles.expertBridgeBtn}
+              onPress={() => navigation.navigate('ExpertCall')}
+            >
+              <LinearGradient
+                colors={['#ef4444', '#b91c1c']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.expertBridgeGradient}
+              >
+                <Text style={styles.expertBridgeText}>📞 Uzmana Bağlan (Görüntülü Köprü)</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          )}
+        </View>
+
       </KeyboardAvoidingView>
     </LinearGradient>
   );
+}
+
+// Helper to resolve phase in local scope
+function idlePhase() {
+  return "idle";
 }
 
 const styles = StyleSheet.create({
@@ -198,4 +259,71 @@ const styles = StyleSheet.create({
     marginTop: 14,
     letterSpacing: 0.3,
   },
+  forgeCard: {
+    width: '100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: 14,
+    padding: 12,
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  forgeTitle: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '700',
+    marginBottom: 4,
+    opacity: 0.8,
+  },
+  forgeStatus: {
+    color: '#aaa',
+    fontSize: 11,
+    marginBottom: 8,
+  },
+  forgeRow: {
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'center',
+  },
+  forgeBtn: {
+    backgroundColor: 'rgba(255,255,255,0.07)',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+  },
+  forgeBtnText: {
+    color: '#bbb',
+    fontSize: 10,
+    fontWeight: '600',
+  },
+  forgeResetBtn: {
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+  },
+  forgeResetBtnText: {
+    color: '#ef4444',
+    fontSize: 10,
+    fontWeight: '600',
+  },
+  expertBridgeBtn: {
+    width: '100%',
+    marginTop: 12,
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  expertBridgeGradient: {
+    paddingVertical: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  expertBridgeText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+  },
 });
+
