@@ -147,7 +147,17 @@ export function VoiceAvatarScreen({ onBack, onOpenBridge }: VoiceAvatarScreenPro
         <Pressable onPress={onBack} style={styles.backButton}>
           <Text style={styles.backButtonText}>Back</Text>
         </Pressable>
-        <Text style={styles.eyebrow}>Pitch Mentor Voice</Text>
+        <View style={styles.topActions}>
+          <Text style={styles.eyebrow}>Pitch Mentor Voice</Text>
+          <Pressable
+            onPress={() => void meter.toggle()}
+            style={[styles.topMicButton, meter.recording ? styles.stopAction : null]}
+          >
+            <Text style={styles.topMicButtonText}>
+              {meter.recording ? 'Stop Mic' : 'Start Mic'}
+            </Text>
+          </Pressable>
+        </View>
       </View>
 
       <View style={styles.hero}>
@@ -164,7 +174,6 @@ export function VoiceAvatarScreen({ onBack, onOpenBridge }: VoiceAvatarScreenPro
           <Text style={styles.cardTitle}>Mentor voice meter</Text>
           <Text style={styles.latencyText}>target &lt; 200ms</Text>
         </View>
-        <VoiceBars bands={meter.bands} level={meter.level} />
         <View style={styles.actionRow}>
           <Pressable
             onPress={() => void meter.toggle()}
@@ -176,6 +185,7 @@ export function VoiceAvatarScreen({ onBack, onOpenBridge }: VoiceAvatarScreenPro
           </Pressable>
           <Text style={styles.levelText}>{Math.round(meter.level * 100)}%</Text>
         </View>
+        <VoiceBars bands={meter.bands} level={meter.level} />
         {meter.error ? <Text style={styles.errorText}>{meter.error}</Text> : null}
       </View>
 
@@ -535,9 +545,26 @@ const styles = StyleSheet.create({
     fontSize: 34,
     lineHeight: 36,
   },
+  topActions: {
+    alignItems: 'flex-end',
+    gap: 8,
+  },
   topBar: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  topMicButton: {
+    alignItems: 'center',
+    backgroundColor: palette.blue,
+    borderRadius: 8,
+    minHeight: 38,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+  },
+  topMicButtonText: {
+    color: '#FFFFFF',
+    fontFamily: 'Manrope_700Bold',
+    fontSize: 12,
   },
 });

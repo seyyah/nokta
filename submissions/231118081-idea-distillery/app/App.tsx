@@ -14,6 +14,7 @@ import {
 import {
   Pressable,
   LayoutChangeEvent,
+  LogBox,
   ScrollView,
   StyleSheet,
   Text,
@@ -38,6 +39,14 @@ import {
   buildMentorFeedbackWriteback,
   distill,
 } from './src/engine/distill';
+
+LogBox.ignoreLogs([
+  '[expo-av]: Expo AV has been deprecated',
+  'THREE.WARNING: Multiple instances of Three.js',
+  'THREE.Clock: This module has been deprecated',
+  'THREE.WebGLProgram: Program Info Log',
+  'EXGL: gl.pixelStorei()',
+]);
 import {
   loadGamePitchStore,
   saveGamePitchStore,

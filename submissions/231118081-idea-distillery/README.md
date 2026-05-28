@@ -258,9 +258,10 @@ same Expo app with `expo prebuild` + Gradle `assembleRelease`.
 ## Demo Video
 
 Current demo video link:
-https://youtube.com/shorts/SQF166ex9W8?feature=share
+https://youtube.com/shorts/KwrvPrJczU0?feature=share
 
-Final-week 3 minute demo link: `TBD after recording`.
+Final-week demo link:
+https://youtube.com/shorts/KwrvPrJczU0?feature=share
 
 ## APK
 
