@@ -1,5 +1,7 @@
 import { Link } from "expo-router";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { BridgePanel } from "./components/BridgePanel";
+import { VoiceAvatarPanel } from "./components/VoiceAvatarPanel";
 import { getScreen, screens, type ScreenKey } from "./screens";
 
 type Props = {
@@ -46,6 +48,9 @@ export function NoktaScreen({ screenKey }: Props) {
         ))}
       </View>
 
+      {screen.key === "capture" ? <VoiceAvatarPanel /> : null}
+      {screen.key === "bridge" ? <BridgePanel /> : null}
+
       <View style={[styles.focusBand, { borderLeftColor: screen.accent }]}>
         <Text style={styles.bandTitle}>Audit focus</Text>
         <Text style={styles.bandCopy}>
@@ -74,7 +79,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     padding: 20,
     paddingBottom: 130,
-    backgroundColor: "#f7f3ea",
+    backgroundColor: "#f4f5f2",
     gap: 18
   },
   header: {
@@ -99,11 +104,13 @@ const styles = StyleSheet.create({
   },
   tabs: {
     flexDirection: "row",
+    flexWrap: "wrap",
     gap: 8
   },
   tab: {
     minHeight: 44,
-    flex: 1,
+    flexGrow: 1,
+    flexBasis: "47%",
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#d0c6b8",
@@ -113,7 +120,7 @@ const styles = StyleSheet.create({
   },
   tabText: {
     color: "#2f2f2f",
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: "800"
   },
   tabTextActive: {
