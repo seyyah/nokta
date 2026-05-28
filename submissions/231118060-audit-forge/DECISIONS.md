@@ -4,7 +4,7 @@
 
 I used `expo-av` because the baseline is already an Expo app and the requirement is live microphone level, not speech transcription. Expo AV exposes recording permission, a native recording session and `metering` in `RecordingStatus`. That gives a real dB signal without adding a speech SDK or server.
 
-I did not generate a fake waveform. The bars read the same smoothed amplitude that drives the avatar mouth.
+I did not generate a fake waveform. The bars read the same smoothed amplitude that drives the avatar mouth. The code now sets `isMeteringEnabled: true` explicitly on the recording options and reports startup errors in the panel, so a missing recorder path is visible instead of being mistaken for silence.
 
 ## Lipsync Approach
 
@@ -19,6 +19,8 @@ For rendering, I chose `expo-gl` + `three` + `GLTFLoader` with `expo-three`'s re
 ## Bridge Tool
 
 I chose Jitsi Meet because it supports audio, video and screen share through a stable external room URL. A native call UI would either need heavier native setup or risk becoming fake. The app launches a real meeting target and documents that it is external.
+
+The bridge button checks whether the URL can be opened and shows the failure inline when the OS/browser handler is unavailable.
 
 ## State And File Organization
 

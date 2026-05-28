@@ -16,6 +16,10 @@ export type VoiceMeterState = {
 const SILENCE_DB = -58;
 const FLOOR_DB = -72;
 const CEILING_DB = -18;
+const RECORDING_OPTIONS = {
+  ...Audio.RecordingOptionsPresets.HIGH_QUALITY,
+  isMeteringEnabled: true
+};
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
@@ -64,27 +68,35 @@ export function useMicrophoneLevel(): VoiceMeterState {
 
     setPermission("granted");
     await stop();
-    await Audio.setAudioModeAsync({
-      allowsRecordingIOS: true,
-      playsInSilentModeIOS: true
-    });
+    try {
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true
+      });
 
-    const { recording } = await Audio.Recording.createAsync(
-      Audio.RecordingOptionsPresets.HIGH_QUALITY,
-      (status) => {
-        const meter = typeof status.metering === "number" ? status.metering : FLOOR_DB;
-        const raw = dbToAmplitude(meter);
-        const attack = raw > smoothRef.current ? 0.42 : 0.16;
-        const smoothed = smoothRef.current + (raw - smoothRef.current) * attack;
-        smoothRef.current = smoothed;
-        setDecibels(meter);
-        setAmplitude(smoothed);
-      },
-      80
-    );
+      const { recording } = await Audio.Recording.createAsync(
+        RECORDING_OPTIONS,
+        (status) => {
+          const meter = typeof status.metering === "number" ? status.metering : FLOOR_DB;
+          const raw = dbToAmplitude(meter);
+          const attack = raw > smoothRef.current ? 0.42 : 0.16;
+          const smoothed = smoothRef.current + (raw - smoothRef.current) * attack;
+          smoothRef.current = smoothed;
+          setDecibels(meter);
+          setAmplitude(smoothed);
+        },
+        80
+      );
 
-    recordingRef.current = recording;
-    setIsListening(true);
+      recordingRef.current = recording;
+      setIsListening(true);
+    } catch (cause) {
+      smoothRef.current = 0;
+      setAmplitude(0);
+      setDecibels(null);
+      setIsListening(false);
+      setError(cause instanceof Error ? cause.message : "Could not start the microphone meter.");
+    }
   }, [stop]);
 
   useEffect(

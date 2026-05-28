@@ -1,9 +1,24 @@
+import { useState } from "react";
 import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
 import { bridgeConfig } from "../bridge/bridgeConfig";
 
 export function BridgePanel() {
+  const [error, setError] = useState<string | null>(null);
+
   const openBridge = async () => {
-    await Linking.openURL(bridgeConfig.roomUrl);
+    setError(null);
+
+    try {
+      const canOpen = await Linking.canOpenURL(bridgeConfig.roomUrl);
+
+      if (!canOpen) {
+        throw new Error("No handler is available for the bridge URL.");
+      }
+
+      await Linking.openURL(bridgeConfig.roomUrl);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Bridge could not be opened.");
+    }
   };
 
   return (
@@ -35,6 +50,8 @@ export function BridgePanel() {
       <Pressable accessibilityRole="button" onPress={openBridge} style={styles.button}>
         <Text style={styles.buttonText}>Connect expert</Text>
       </Pressable>
+
+      {error ? <Text style={styles.error}>{error}</Text> : null}
     </View>
   );
 }
@@ -119,5 +136,11 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontSize: 15,
     fontWeight: "900"
+  },
+  error: {
+    color: "#b42318",
+    fontSize: 13,
+    fontWeight: "700",
+    lineHeight: 18
   }
 });

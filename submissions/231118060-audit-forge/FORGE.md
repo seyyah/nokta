@@ -12,6 +12,7 @@ Track A ledger. Her cycle 15 dakika kutulu tutuldu; commit edilen cycle'lar mini
 | 23:25 | 11 | bridge-escalation.md | A Jitsi external room is safer than fake native call UI for audio/video/share. | success | `app/app/bridge.tsx`, `app/src/bridge/bridgeConfig.ts`, `app/src/components/BridgePanel.tsx` | `npm run typecheck` pass | `e24e685` |
 | 23:31 | 12 | audit-continuity.md | New evidence and docs can deepen the audit loop without touching repo root or other submissions. | success | `README.md`, `DECISIONS.md`, `BRIDGE.md`, `VERIFY.md`, `audit-reports/*`, `demo/demo-60s.mp4` | `npm run typecheck` pass; `npx expo install --check` pass; demo duration 60.0s | `838ecf7` |
 | 23:35 | 13 | release-apk | Native mic/GL changes require a rebuilt APK, but the workspace path may break Android CMake. | rollback then success | `app-release.apk` | first prebuild failed on Turkish path; ASCII temp path + SDK junction build passed; APK zip check passed | `838ecf7` |
+| 00:16 | 14 | voice-avatar-lipsync.md | The live path should expose recorder, avatar and bridge failures instead of reading as false silence. | success | `app/src/audio/useMicrophoneLevel.ts`, `app/src/components/AvatarStage.tsx`, `app/src/components/BridgePanel.tsx`, docs | `npm run typecheck` pass; `npx expo install --check` pass; `npx expo export --platform android` pass with Three export warnings; guard grep pass | pending |
 
 Notes:
 
@@ -19,6 +20,7 @@ Notes:
 - Cycle 10 keeps the prior single mount guard: only `_layout.tsx` contains `MobileAudit.AuditWidget`.
 - Cycle 11 deliberately uses an external bridge so the app does not fake audio/video/screen share.
 - Cycle 13 repeats the baseline workaround: Android build tooling needs an ASCII path for NDK/CMake on this machine.
+- Cycle 14 is a hardening pass after resume: it keeps the same product surface, but makes the live mic, avatar asset and bridge launch failure states explicit.
 
 ## Previous Baseline Ledger
 

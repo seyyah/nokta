@@ -1,8 +1,8 @@
 import { Asset } from "expo-asset";
 import { ExpoWebGLRenderingContext, GLView } from "expo-gl";
 import { Renderer } from "expo-three";
-import { useEffect, useRef } from "react";
-import { StyleSheet, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
@@ -17,6 +17,7 @@ export function AvatarStage({ amplitude }: Props) {
   const mouthRef = useRef<THREE.Object3D | null>(null);
   const headRef = useRef<THREE.Object3D | null>(null);
   const frameRef = useRef<number | null>(null);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     amplitudeRef.current = amplitude;
@@ -53,17 +54,29 @@ export function AvatarStage({ amplitude }: Props) {
     fillLight.position.set(-2.4, 1.6, 2.2);
     scene.add(fillLight);
 
-    const asset = Asset.fromModule(avatarAsset);
-    await asset.downloadAsync();
+    try {
+      setLoadError(false);
+      const asset = Asset.fromModule(avatarAsset);
+      await asset.downloadAsync();
 
-    const loader = new GLTFLoader();
-    loader.load(asset.localUri ?? asset.uri, (gltf) => {
-      gltf.scene.position.set(0, -0.08, 0);
-      gltf.scene.rotation.y = -0.1;
-      scene.add(gltf.scene);
-      mouthRef.current = gltf.scene.getObjectByName("Mouth") ?? null;
-      headRef.current = gltf.scene.getObjectByName("AnalystHead") ?? null;
-    });
+      const loader = new GLTFLoader();
+      loader.load(
+        asset.localUri ?? asset.uri,
+        (gltf) => {
+          gltf.scene.position.set(0, -0.08, 0);
+          gltf.scene.rotation.y = -0.1;
+          scene.add(gltf.scene);
+          mouthRef.current = gltf.scene.getObjectByName("Mouth") ?? null;
+          headRef.current = gltf.scene.getObjectByName("AnalystHead") ?? null;
+        },
+        undefined,
+        () => {
+          setLoadError(true);
+        }
+      );
+    } catch {
+      setLoadError(true);
+    }
 
     const render = () => {
       const level = amplitudeRef.current;
@@ -93,6 +106,11 @@ export function AvatarStage({ amplitude }: Props) {
   return (
     <View style={styles.frame}>
       <GLView style={styles.gl} onContextCreate={handleContextCreate} />
+      {loadError ? (
+        <View style={styles.errorOverlay}>
+          <Text style={styles.errorText}>Avatar asset could not be loaded.</Text>
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -106,5 +124,16 @@ const styles = StyleSheet.create({
   },
   gl: {
     flex: 1
+  },
+  errorOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#ece5d9"
+  },
+  errorText: {
+    color: "#6f2f2f",
+    fontSize: 13,
+    fontWeight: "800"
   }
 });
