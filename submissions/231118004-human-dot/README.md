@@ -25,7 +25,7 @@ Ayrıca `app-release.apk` ismiyle klasörde de bulunmaktadır.
 
 ## Demo Video
 
-> **[▶ Nokta Human-Dot & 3D Avatar Demo Videosu (YouTube)](https://youtube.com/shorts/w_Lqlu7HaTs?feature=share)**
+> **[▶ Nokta Human-Dot & 3D Avatar Demo Videosu (YouTube)](https://youtube.com/shorts/opfmHfNz7iA?feature=share)**
 
 ---
 
