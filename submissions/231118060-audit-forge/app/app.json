@@ -10,7 +10,8 @@
     "newArchEnabled": true,
     "plugins": [
       "expo-router",
-      "expo-asset"
+      "expo-asset",
+      "expo-sharing"
     ],
     "ios": {
       "infoPlist": {
