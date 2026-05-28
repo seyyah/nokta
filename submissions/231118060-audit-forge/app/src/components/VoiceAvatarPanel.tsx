@@ -41,10 +41,6 @@ export function VoiceAvatarPanel() {
             {meter.isListening ? "Stop meter" : "Enable microphone"}
           </Text>
         </Pressable>
-        <Text style={styles.controlNote}>
-          Permission is requested on tap; silence keeps the avatar idle, speech opens the mouth from
-          live metering.
-        </Text>
       </View>
     </View>
   );
@@ -154,9 +150,4 @@ const styles = StyleSheet.create({
   buttonTextStop: {
     color: "#245d55"
   },
-  controlNote: {
-    color: "#665f56",
-    fontSize: 13,
-    lineHeight: 18
-  }
 });
