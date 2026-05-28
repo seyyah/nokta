@@ -91,3 +91,31 @@ agent:
 | 9 | `audit-reports/inbox/2026-05-19T19-20-54-491Z-bug-report-2026-05-19-19-20.md` | The selected Core Loop card should show the requested blue bullet color immediately. | success | app/App.tsx | npm run typecheck passed | aeb8652 | 1 | 0 |
 | 10 | `audit-reports/inbox/2026-05-19T19-21-19-330Z-bug-report-2026-05-19-19-21.md` | The selected Core Loop card should show the requested green bullet color immediately. | success | app/App.tsx | npm run typecheck passed | d91c827 | 1 | 0 |
 | 11 | `audit-reports/inbox/2026-05-19T19-21-37-695Z-bug-report-2026-05-19-19-21.md` | The selected Feature Creep Warnings card should show the requested green bullet color immediately. | success | app/App.tsx | npm run typecheck passed | 4311092 | 1 | 0 |
+
+## Final Week Voice-Avatar Cycles
+
+Each cycle is boxed to 20 minutes. These cycles close the loop from voice input
+to avatar feedback and expert escalation.
+
+| Cycle | Report | Hypothesis | Result | Changed files | Test result | Commit hash | kg | Human touch points |
+|---|---|---|---|---|---|---|---:|---:|
+| 12 | `audit-reports/report-05-voice-avatar-metering.md` | RMS/metering can drive a low-latency voice visualizer and GLB lipsync without changing the audit widget. | success | app voice/avatar files, app config, avatar assets | `npm run typecheck` passed; `npx expo install --check` passed | `f43b77b` | 3 | 1 |
+| 13 | `audit-reports/report-06-dictated-audit-note.md` | Dictated audit intent can be appended by the host adapter while preserving the drop-in widget boundary. | success | app/src/audit/audit-deps.tsx, app voice note service | `npm run typecheck` passed; markdown includes `Voice Dictated Audit Note` | `f43b77b` | 2 | 1 |
+| 14 | `audit-reports/report-07-stuck-bridge-trigger.md` | A full native WebRTC rewrite is too broad; a Jitsi WebView bridge is the bounded expert escalation path. | rollback | none retained from native rewrite | rejected at hypothesis; Jitsi bridge retained as bounded repair | rollback before commit | 0 | 1 |
+| 15 | `audit-reports/report-07-stuck-bridge-trigger.md` | Retrying provider-token automation without a real expert provider secret would repeat the failed hypothesis. | stuck | none retained | second consecutive rollback/fail state; expert bridge required before next repair | stuck before commit | 0 | 1 |
+
+## Final Week STUCK Ratchet
+
+`tools/forge-server.mjs` now reads the FORGE ledger and writes
+`tools/bridge-state.json` when two consecutive `rollback`, `fail`, or `stuck`
+cycles occur. The app polls `/bridge/status`; when `stuck: true`, the Voice
+Avatar screen enables **Uzmana Baglan** and opens the deterministic Jitsi room.
+
+Accepted final-week kg:
+
+```txt
+Cycle 12: 3kg
+Cycle 13: 5kg cumulative
+Cycle 14: rollback, cumulative kg remains 5kg
+Cycle 15: stuck, cumulative kg remains 5kg
+```

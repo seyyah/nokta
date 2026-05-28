@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="844" viewBox="0 0 390 844">
+  <rect width="390" height="844" fill="#F5F5F2"/>
+  <rect x="18" y="40" width="354" height="220" rx="8" fill="#FFFFFF"/>
+  <text x="36" y="84" font-family="Arial" font-size="26" font-weight="700" fill="#1A1C1B">Next audit note</text>
+  <text x="36" y="122" font-family="Arial" font-size="15" fill="#626A74">Burn-in: report-06 / dictated markdown</text>
+  <rect x="36" y="146" width="318" height="82" rx="8" fill="#F5F5F2" stroke="#ECEDE7"/>
+  <text x="52" y="180" font-family="Arial" font-size="15" fill="#1A1C1B">"Avatar mouth moves, but audit export</text>
+  <text x="52" y="204" font-family="Arial" font-size="15" fill="#1A1C1B">must include my dictated reason."</text>
+  <rect x="18" y="286" width="354" height="320" rx="8" fill="#FFFFFF"/>
+  <text x="36" y="330" font-family="Arial" font-size="22" font-weight="700" fill="#1A1C1B">Audit FAB</text>
+  <circle cx="318" cy="548" r="34" fill="#0055FF"/>
+  <text x="307" y="560" font-family="Arial" font-size="32" font-weight="700" fill="#FFFFFF">!</text>
+  <rect x="34" y="150" width="322" height="82" fill="none" stroke="#FACC15" stroke-width="5"/>
+</svg>

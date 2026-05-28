@@ -14,6 +14,7 @@ AuditWidget export
 -> npm run typecheck
 -> commit on success or restore rollback on failure
 -> append FORGE.md ledger row
+-> expose /bridge/status when consecutive rollback/fail cycles are STUCK
 ```
 
 ## Why Local Server Instead Of In-App Code Mutation
@@ -49,6 +50,12 @@ The default endpoint is:
 
 ```txt
 http://localhost:8787/audit
+```
+
+Bridge status is available at:
+
+```txt
+http://localhost:8787/bridge/status
 ```
 
 Useful environment variables:
@@ -103,12 +110,15 @@ The server rejects or rolls back unsafe work:
 - runs `npm run typecheck`
 - restores backups or reverse-applies the patch if typecheck fails
 - logs success or rollback in `FORGE.md`
+- writes ignored `tools/bridge-state.json` for app polling when two consecutive
+  rollback/fail/stuck cycles occur
 
 Runtime outputs are ignored:
 
 ```txt
 audit-reports/inbox/
 tools/forge-runs/
+tools/bridge-state.json
 ```
 
 ## Demo Script
@@ -120,6 +130,8 @@ tools/forge-runs/
 5. Use the audit FAB and export markdown.
 6. Watch the server save the report, ask Ollama, run typecheck, and either
    commit or rollback.
+7. After two consecutive rollback/fail cycles, open Voice Avatar and tap
+   **Uzmana Baglan**.
 
 This makes the assignment loop concrete:
 

@@ -14,6 +14,7 @@ import {
 import {
   Pressable,
   LayoutChangeEvent,
+  LogBox,
   ScrollView,
   StyleSheet,
   Text,
@@ -28,6 +29,8 @@ import { LockedBriefCard } from './src/components/LockedBriefCard';
 import { NextDecisionCard } from './src/components/NextDecisionCard';
 import { ResultHeader } from './src/components/ResultHeader';
 import { UndefinedAreaCard } from './src/components/UndefinedAreaCard';
+import { BridgeScreen } from './src/components/BridgeScreen';
+import { VoiceAvatarScreen } from './src/components/VoiceAvatarScreen';
 import { AuditWidgetHost } from './src/audit/AuditWidgetHost';
 import { createAuditWidgetDeps } from './src/audit/audit-deps';
 import { sampleInput } from './src/data/sampleInput';
@@ -36,12 +39,21 @@ import {
   buildMentorFeedbackWriteback,
   distill,
 } from './src/engine/distill';
+
+LogBox.ignoreLogs([
+  '[expo-av]: Expo AV has been deprecated',
+  'THREE.WARNING: Multiple instances of Three.js',
+  'THREE.Clock: This module has been deprecated',
+  'THREE.WebGLProgram: Program Info Log',
+  'EXGL: gl.pixelStorei()',
+]);
 import {
   loadGamePitchStore,
   saveGamePitchStore,
 } from './src/services/gamePitchStore';
 import { distillGamePitchWithGroq, hasGroqKey } from './src/services/groqGamePitch';
 import { palette, shadows } from './src/theme';
+import type { BridgeStatus } from './src/services/bridge';
 import {
   DistillationResult,
   DraftSection,
@@ -53,7 +65,7 @@ import {
   SavedGameBrief,
 } from './src/types/draft';
 
-type Screen = 'home' | 'user' | 'newBrief' | 'mentor' | 'savedBrief';
+type Screen = 'home' | 'user' | 'newBrief' | 'mentor' | 'savedBrief' | 'voiceAvatar' | 'bridge';
 type AuditCardLayout = { title: string; y: number; height: number };
 type AuditNoteWithBounds = {
   highlightBounds?: {
@@ -79,6 +91,14 @@ function getAuditScreenName(
 
   if (screen === 'savedBrief') {
     return 'savedBrief.detail';
+  }
+
+  if (screen === 'voiceAvatar') {
+    return 'voiceAvatar';
+  }
+
+  if (screen === 'bridge') {
+    return 'bridge.expertCall';
   }
 
   return screen;
@@ -167,6 +187,7 @@ export default function App() {
   const [activeBriefId, setActiveBriefId] = useState<string | null>(null);
   const [activeTicketId, setActiveTicketId] = useState<string | null>(null);
   const [mentorTicketFeedback, setMentorTicketFeedback] = useState('');
+  const [activeBridgeStatus, setActiveBridgeStatus] = useState<BridgeStatus | null>(null);
   const [rawInput, setRawInput] = useState('');
   const [result, setResult] = useState<DistillationResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -279,6 +300,7 @@ export default function App() {
     setScreen('home');
     setActiveBriefId(null);
     setActiveTicketId(null);
+    setActiveBridgeStatus(null);
     setMentorTicketFeedback('');
   };
 
@@ -298,6 +320,18 @@ export default function App() {
     setActiveTicketId(null);
     setMentorTicketFeedback('');
     setScreen('mentor');
+  };
+
+  const openVoiceAvatar = () => {
+    setActiveBriefId(null);
+    setActiveTicketId(null);
+    setMentorTicketFeedback('');
+    setScreen('voiceAvatar');
+  };
+
+  const openBridge = (status: BridgeStatus | null) => {
+    setActiveBridgeStatus(status);
+    setScreen('bridge');
   };
 
   const handleDistill = async () => {
@@ -529,6 +563,9 @@ export default function App() {
             </Text>
           </Pressable>
         </View>
+        <Pressable style={styles.voiceBridgeButton} onPress={openVoiceAvatar}>
+          <Text style={styles.voiceBridgeButtonText}>Voice Mentor + Expert Bridge</Text>
+        </Pressable>
       </View>
     </ScrollView>
   );
@@ -971,6 +1008,12 @@ export default function App() {
         {screen === 'newBrief' ? renderNewBriefFlow() : null}
         {screen === 'mentor' ? renderMentorFlow() : null}
         {screen === 'savedBrief' ? renderSavedBrief() : null}
+        {screen === 'voiceAvatar' ? (
+          <VoiceAvatarScreen onBack={openHome} onOpenBridge={openBridge} />
+        ) : null}
+        {screen === 'bridge' ? (
+          <BridgeScreen fallbackStatus={activeBridgeStatus} onBack={openVoiceAvatar} />
+        ) : null}
         <AuditWidgetHost
           deps={auditWidgetDeps}
           appName="Nokta Game Pitch"
@@ -1024,6 +1067,19 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 23,
     color: palette.inkSoft,
+  },
+  voiceBridgeButton: {
+    alignItems: 'center',
+    backgroundColor: palette.ink,
+    borderRadius: 8,
+    marginTop: 2,
+    paddingHorizontal: 16,
+    paddingVertical: 13,
+  },
+  voiceBridgeButtonText: {
+    color: '#FFFFFF',
+    fontFamily: 'Manrope_700Bold',
+    fontSize: 14,
   },
   roleRow: {
     gap: 10,

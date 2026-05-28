@@ -14,3 +14,4 @@ example/
 # Optional local forge automation runtime output
 audit-reports/inbox/
 tools/forge-runs/
+tools/bridge-state.json

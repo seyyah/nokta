@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="844" viewBox="0 0 390 844">
+  <rect width="390" height="844" fill="#F5F5F2"/>
+  <rect x="18" y="32" width="354" height="164" rx="20" fill="#FFFFFF"/>
+  <text x="36" y="78" font-family="Arial" font-size="32" font-weight="700" fill="#1A1C1B">Voice Avatar Forge</text>
+  <text x="36" y="116" font-family="Arial" font-size="16" fill="#626A74">Burn-in: report-05 / voice metering</text>
+  <rect x="18" y="220" width="354" height="292" rx="8" fill="#EDF3FF"/>
+  <circle cx="196" cy="344" r="96" fill="#DCE4FF"/>
+  <circle cx="196" cy="344" r="62" fill="#0055FF" opacity="0.82"/>
+  <rect x="42" y="548" width="306" height="168" rx="8" fill="#FFFFFF"/>
+  <g fill="#0055FF">
+    <rect x="78" y="652" width="10" height="28" rx="5"/>
+    <rect x="96" y="618" width="10" height="62" rx="5"/>
+    <rect x="114" y="594" width="10" height="86" rx="5"/>
+    <rect x="132" y="570" width="10" height="110" rx="5"/>
+    <rect x="150" y="552" width="10" height="128" rx="5"/>
+    <rect x="168" y="540" width="10" height="140" rx="5"/>
+    <rect x="186" y="566" width="10" height="114" rx="5"/>
+    <rect x="204" y="586" width="10" height="94" rx="5"/>
+    <rect x="222" y="606" width="10" height="74" rx="5"/>
+    <rect x="240" y="578" width="10" height="102" rx="5"/>
+    <rect x="258" y="624" width="10" height="56" rx="5"/>
+    <rect x="276" y="638" width="10" height="42" rx="5"/>
+    <rect x="294" y="656" width="10" height="24" rx="5"/>
+  </g>
+  <rect x="46" y="254" width="150" height="88" fill="none" stroke="#FACC15" stroke-width="5"/>
+</svg>

@@ -1,0 +1,230 @@
+{
+  "id": "realisticmodel",
+  "label": "Realisticmodel",
+  "source": "apps/mobile/assets/models/realisticmodel.glb",
+  "model": "apps/mobile/assets/models/realisticmodel-mobile/model.gltf",
+  "compressed": false,
+  "meshCount": 11,
+  "skinCount": 1,
+  "supportsLipSync": true,
+  "lipSync": {
+    "combinedMouthScale": 0.43,
+    "opennessScale": 1.12,
+    "roundedMouthScale": 1.45,
+    "roundedVisemeScale": 1.18,
+    "switchIntervalScale": 1.14,
+    "transitionAttack": 0.42,
+    "transitionRelease": 0.2,
+    "visemeScale": 1
+  },
+  "lipSyncTargets": [
+    "jawOpen",
+    "mouthClose",
+    "mouthFunnel",
+    "mouthLowerDownLeft",
+    "mouthLowerDownRight",
+    "mouthOpen",
+    "mouthPucker",
+    "mouthSmile",
+    "mouthSmileLeft",
+    "mouthSmileRight",
+    "mouthUpperUpLeft",
+    "mouthUpperUpRight",
+    "viseme_CH",
+    "viseme_DD",
+    "viseme_E",
+    "viseme_FF",
+    "viseme_I",
+    "viseme_O",
+    "viseme_PP",
+    "viseme_RR",
+    "viseme_SS",
+    "viseme_TH",
+    "viseme_U",
+    "viseme_aa",
+    "viseme_kk",
+    "viseme_nn",
+    "viseme_sil"
+  ],
+  "framing": {
+    "kind": "humanoid-bust",
+    "reason": "lip-sync-visemes",
+    "transform": {
+      "position": [
+        0,
+        -6.42,
+        0
+      ],
+      "rotation": [
+        0,
+        0.5,
+        0
+      ],
+      "scale": 1
+    }
+  },
+  "images": [
+    {
+      "bytes": 38304,
+      "file": "textures/texture-0-0.jpg",
+      "index": 0,
+      "name": ""
+    },
+    {
+      "bytes": 159236,
+      "file": "textures/texture-1-1.jpg",
+      "index": 1,
+      "name": ""
+    },
+    {
+      "bytes": 111272,
+      "file": "textures/texture-2-2.jpg",
+      "index": 2,
+      "name": ""
+    },
+    {
+      "bytes": 7800,
+      "file": "textures/texture-3-3.jpg",
+      "index": 3,
+      "name": ""
+    },
+    {
+      "bytes": 119892,
+      "file": "textures/texture-4-4.png",
+      "index": 4,
+      "name": ""
+    },
+    {
+      "bytes": 417312,
+      "file": "textures/texture-5-5.png",
+      "index": 5,
+      "name": ""
+    },
+    {
+      "bytes": 7800,
+      "file": "textures/texture-6-6.jpg",
+      "index": 6,
+      "name": ""
+    },
+    {
+      "bytes": 80732,
+      "file": "textures/texture-7-7.png",
+      "index": 7,
+      "name": ""
+    },
+    {
+      "bytes": 70128,
+      "file": "textures/texture-8-8.png",
+      "index": 8,
+      "name": ""
+    },
+    {
+      "bytes": 7800,
+      "file": "textures/texture-9-9.jpg",
+      "index": 9,
+      "name": ""
+    },
+    {
+      "bytes": 25884,
+      "file": "textures/texture-10-10.jpg",
+      "index": 10,
+      "name": ""
+    },
+    {
+      "bytes": 283580,
+      "file": "textures/texture-11-11.jpg",
+      "index": 11,
+      "name": ""
+    },
+    {
+      "bytes": 141200,
+      "file": "textures/texture-12-12.jpg",
+      "index": 12,
+      "name": ""
+    },
+    {
+      "bytes": 16180,
+      "file": "textures/texture-13-13.jpg",
+      "index": 13,
+      "name": ""
+    },
+    {
+      "bytes": 81196,
+      "file": "textures/texture-14-14.png",
+      "index": 14,
+      "name": ""
+    },
+    {
+      "bytes": 97220,
+      "file": "textures/texture-15-15.png",
+      "index": 15,
+      "name": ""
+    },
+    {
+      "bytes": 16180,
+      "file": "textures/texture-16-16.jpg",
+      "index": 16,
+      "name": ""
+    },
+    {
+      "bytes": 1557016,
+      "file": "textures/texture-17-17.png",
+      "index": 17,
+      "name": ""
+    },
+    {
+      "bytes": 224896,
+      "file": "textures/texture-18-18.jpg",
+      "index": 18,
+      "name": ""
+    },
+    {
+      "bytes": 37780,
+      "file": "textures/texture-19-19.jpg",
+      "index": 19,
+      "name": ""
+    },
+    {
+      "bytes": 229288,
+      "file": "textures/texture-20-20.jpg",
+      "index": 20,
+      "name": ""
+    },
+    {
+      "bytes": 320768,
+      "file": "textures/texture-21-21.jpg",
+      "index": 21,
+      "name": ""
+    },
+    {
+      "bytes": 19848,
+      "file": "textures/texture-22-22.jpg",
+      "index": 22,
+      "name": ""
+    },
+    {
+      "bytes": 164296,
+      "file": "textures/texture-23-23.jpg",
+      "index": 23,
+      "name": ""
+    },
+    {
+      "bytes": 231416,
+      "file": "textures/texture-24-24.jpg",
+      "index": 24,
+      "name": ""
+    },
+    {
+      "bytes": 325568,
+      "file": "textures/texture-25-25.jpg",
+      "index": 25,
+      "name": ""
+    },
+    {
+      "bytes": 62680,
+      "file": "textures/texture-26-26.jpg",
+      "index": 26,
+      "name": ""
+    }
+  ]
+}
