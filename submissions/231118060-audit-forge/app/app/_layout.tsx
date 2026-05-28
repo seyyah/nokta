@@ -77,7 +77,7 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: "#f7f3ea"
+    backgroundColor: "#f4f5f2"
   },
   shell: {
     flex: 1

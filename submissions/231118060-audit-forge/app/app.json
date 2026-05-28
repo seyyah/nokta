@@ -9,10 +9,19 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-asset"
     ],
+    "ios": {
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Nokta Audit Forge uses the microphone to visualize live speech level and drive avatar mouth response."
+      }
+    },
     "android": {
       "package": "com.aliordek.noktaauditforge",
+      "permissions": [
+        "RECORD_AUDIO"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#f7f3ea"
