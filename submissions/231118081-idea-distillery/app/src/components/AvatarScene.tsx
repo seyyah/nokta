@@ -12,6 +12,7 @@ import {
   type Object3D,
 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { palette } from '../theme';
 
 type AvatarSceneProps = {
   bands: number[];
@@ -68,25 +69,34 @@ export function AvatarScene({ bands, level, listening }: AvatarSceneProps) {
 
   return (
     <View style={styles.container}>
+      <View style={styles.sceneHeader}>
+        <Text style={styles.sceneTitle}>Pitch Mentor</Text>
+        <Text style={[styles.sceneState, listening ? styles.sceneStateActive : null]}>
+          {listening ? 'listening' : 'idle'}
+        </Text>
+      </View>
       <Canvas
-        camera={{ position: [0, 0, 5.4], fov: 34 }}
+        camera={{ position: [0, 0, 3.8], fov: 30 }}
         onCreated={({ gl }) => {
           gl.outputColorSpace = SRGBColorSpace;
           gl.toneMapping = ACESFilmicToneMapping;
-          gl.toneMappingExposure = 1.04;
+          gl.toneMappingExposure = 1.08;
         }}
         style={styles.canvas}
       >
-        <color args={['#edf3ff']} attach="background" />
-        <ambientLight intensity={0.78} />
-        <hemisphereLight args={['#f7fbff', '#d6dbe7', 1.18]} position={[0, 3, 0]} />
-        <directionalLight intensity={1.42} position={[3.5, 5.5, 6]} />
-        <directionalLight intensity={0.32} position={[-4, 2, 4]} />
-        <pointLight color="#f4dcc2" intensity={0.5} position={[0, 2.4, 3.2]} />
+        <color args={['#f4f5ef']} attach="background" />
+        <ambientLight intensity={0.86} />
+        <hemisphereLight args={['#fff8ee', '#d5ded2', 1.28]} position={[0, 3, 0]} />
+        <directionalLight intensity={1.65} position={[2.8, 4.8, 4.8]} />
+        <directionalLight intensity={0.42} position={[-3.5, 2.2, 4]} />
+        <pointLight color="#fff0d6" intensity={0.58} position={[0, 1.4, 2.8]} />
         {model ? (
           <ReactiveAvatar bands={bands} level={level} listening={listening} model={model.scene} />
         ) : null}
       </Canvas>
+      <View style={styles.sceneFooter}>
+        <Text style={styles.sceneFootnote}>voice note to audit report to mentor review</Text>
+      </View>
       {!model ? (
         <View style={styles.overlay}>
           <Text style={[styles.overlayText, error ? styles.errorText : null]}>
@@ -165,10 +175,10 @@ function ReactiveAvatar({
     const voice = smoothedLevel.current < 0.015 ? 0 : smoothedLevel.current;
 
     if (group.current) {
-      const scale = 1 + voice * 0.035;
+      const scale = 1 + voice * 0.028;
       group.current.scale.setScalar(scale);
-      group.current.position.y = Math.sin(time * 1.15) * 0.025;
-      group.current.rotation.y = Math.sin(time * 0.4) * 0.045;
+      group.current.position.y = Math.sin(time * 1.15) * 0.018;
+      group.current.rotation.y = Math.sin(time * 0.42) * 0.038;
     }
 
     if (time >= nextSwitchAt.current) {
@@ -193,17 +203,43 @@ function ReactiveAvatar({
 }
 
 function normalizeModel(scene: Object3D) {
-  const box = new Box3().setFromObject(scene);
+  hideFullBodyMeshes(scene);
+
+  const box = visibleMeshBox(scene);
   const size = box.getSize(new Vector3());
   const center = box.getCenter(new Vector3());
   const maxAxis = Math.max(size.x, size.y, size.z, 1);
-  const scale = 2.9 / maxAxis;
+  const scale = 1.86 / maxAxis;
 
-  scene.position.x -= center.x;
-  scene.position.y -= center.y + size.y * 0.1;
-  scene.position.z -= center.z;
   scene.scale.setScalar(scale);
-  scene.rotation.y = 0.2;
+  scene.position.set(-center.x * scale, -center.y * scale - 0.08, -center.z * scale);
+  scene.rotation.y = 0.08;
+}
+
+function hideFullBodyMeshes(scene: Object3D) {
+  const hiddenNames = new Set(['Body_Mesh', 'avaturn_shoes_0', 'avaturn_look_0']);
+
+  scene.traverse((object) => {
+    if (hiddenNames.has(object.name)) {
+      object.visible = false;
+    }
+  });
+}
+
+function visibleMeshBox(scene: Object3D) {
+  const box = new Box3();
+
+  scene.traverse((object) => {
+    const mesh = object as Mesh & { isMesh?: boolean };
+
+    if (!mesh.isMesh || !mesh.visible) {
+      return;
+    }
+
+    box.expandByObject(mesh);
+  });
+
+  return box.isEmpty() ? new Box3().setFromObject(scene) : box;
 }
 
 function collectLipTargets(scene: Object3D): LipTarget[] {
@@ -321,14 +357,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   container: {
-    backgroundColor: '#edf3ff',
+    backgroundColor: '#f4f5ef',
     borderRadius: 8,
-    height: 310,
+    borderColor: palette.surfaceMuted,
+    borderWidth: 1,
+    height: 286,
     overflow: 'hidden',
     position: 'relative',
   },
   errorText: {
-    color: '#9A4A36',
+    color: palette.rust,
   },
   overlay: {
     alignItems: 'center',
@@ -336,7 +374,52 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   overlayText: {
-    color: '#626A74',
+    color: palette.muted,
+    fontFamily: 'Manrope_700Bold',
+    fontSize: 13,
+  },
+  sceneFooter: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.72)',
+    borderTopColor: palette.surfaceMuted,
+    borderTopWidth: 1,
+    bottom: 0,
+    left: 0,
+    paddingVertical: 8,
+    position: 'absolute',
+    right: 0,
+  },
+  sceneFootnote: {
+    color: palette.muted,
+    fontFamily: 'Manrope_700Bold',
+    fontSize: 11,
+  },
+  sceneHeader: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    left: 12,
+    position: 'absolute',
+    right: 12,
+    top: 12,
+    zIndex: 2,
+  },
+  sceneState: {
+    backgroundColor: palette.surfaceMuted,
+    borderRadius: 999,
+    color: palette.muted,
+    fontFamily: 'Manrope_700Bold',
+    fontSize: 11,
+    overflow: 'hidden',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  sceneStateActive: {
+    backgroundColor: palette.successSoft,
+    color: palette.success,
+  },
+  sceneTitle: {
+    color: palette.ink,
     fontFamily: 'Manrope_700Bold',
     fontSize: 13,
   },

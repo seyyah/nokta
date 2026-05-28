@@ -138,25 +138,30 @@ export function VoiceAvatarScreen({ onBack, onOpenBridge }: VoiceAvatarScreenPro
   const bridgeReady = Boolean(bridgeStatus?.stuck);
 
   return (
-    <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
+      style={styles.screen}
+    >
       <View style={styles.topBar}>
         <Pressable onPress={onBack} style={styles.backButton}>
           <Text style={styles.backButtonText}>Back</Text>
         </Pressable>
-        <Text style={styles.eyebrow}>Voice Avatar Forge</Text>
+        <Text style={styles.eyebrow}>Pitch Mentor Voice</Text>
       </View>
 
       <View style={styles.hero}>
-        <Text style={styles.title}>Speak to the forge avatar.</Text>
+        <Text style={styles.title}>Talk your game pitch into shape.</Text>
         <Text style={styles.subtitle}>
-          Microphone RMS drives the bars and your Avaturn face. Dictated notes are attached to the next audit markdown.
+          Dictate game notes, audit requests, or mentor context. The avatar reacts while
+          the transcript is saved into the next audit report.
         </Text>
       </View>
 
       <AvatarScene bands={meter.bands} level={meter.level} listening={meter.recording} />
       <View style={styles.card}>
         <View style={styles.cardHeader}>
-          <Text style={styles.cardTitle}>Live voice energy</Text>
+          <Text style={styles.cardTitle}>Mentor voice meter</Text>
           <Text style={styles.latencyText}>target &lt; 200ms</Text>
         </View>
         <VoiceBars bands={meter.bands} level={meter.level} />
@@ -175,9 +180,10 @@ export function VoiceAvatarScreen({ onBack, onOpenBridge }: VoiceAvatarScreenPro
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>Next audit note by voice</Text>
+        <Text style={styles.cardTitle}>Dictate next audit request</Text>
         <Text style={styles.helperText}>
-          Dictate the report intent before opening the audit FAB. The host adapter injects this transcript into exported markdown.
+          Say what should change in the brief, mentor ticket, or prototype readiness card.
+          The exported audit markdown will include this transcript.
         </Text>
         <View style={styles.noteBox}>
           <Text style={noteDraft ? styles.noteText : styles.notePlaceholder}>
@@ -203,11 +209,12 @@ export function VoiceAvatarScreen({ onBack, onOpenBridge }: VoiceAvatarScreenPro
 
       <View style={styles.card}>
         <View style={styles.cardHeader}>
-          <Text style={styles.cardTitle}>Expert bridge</Text>
+          <Text style={styles.cardTitle}>Mentor escalation bridge</Text>
           {bridgeLoading ? <ActivityIndicator color={palette.blue} size="small" /> : null}
         </View>
         <Text style={styles.helperText}>
-          The local forge server opens this when two cycles in a row fail or rollback.
+          If the forge loop cannot resolve two cycles in a row, this opens a Jitsi room
+          for a human mentor call.
         </Text>
         <View style={[styles.bridgeState, bridgeReady ? styles.bridgeStateHot : null]}>
           <Text style={styles.bridgeStateTitle}>
@@ -502,6 +509,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Manrope_700Bold',
     fontSize: 13,
   },
+  screen: {
+    backgroundColor: palette.background,
+    flex: 1,
+  },
   stopAction: {
     backgroundColor: palette.rust,
   },
@@ -521,8 +532,8 @@ const styles = StyleSheet.create({
   title: {
     color: palette.ink,
     fontFamily: 'Newsreader_700Bold',
-    fontSize: 38,
-    lineHeight: 40,
+    fontSize: 34,
+    lineHeight: 36,
   },
   topBar: {
     alignItems: 'center',

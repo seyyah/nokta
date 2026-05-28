@@ -555,7 +555,7 @@ export default function App() {
           </Pressable>
         </View>
         <Pressable style={styles.voiceBridgeButton} onPress={openVoiceAvatar}>
-          <Text style={styles.voiceBridgeButtonText}>Voice Avatar + Expert Bridge</Text>
+          <Text style={styles.voiceBridgeButtonText}>Voice Mentor + Expert Bridge</Text>
         </Pressable>
       </View>
     </ScrollView>
