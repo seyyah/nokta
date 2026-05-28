@@ -149,7 +149,9 @@ Flow:
 
 ## 13. APK Usage
 
-`app-release.apk` is rebuilt for this week's native changes. The build was produced from an ASCII temp path because the Android NDK/CMake toolchain failed on the Turkish-character workspace path. The APK zip contains `AndroidManifest.xml`, `classes.dex`, signing metadata and the bundled GLB asset under Android resources.
+`app-release.apk` is the release artifact for this submission. The earlier native build was produced from an ASCII temp path because the Android NDK/CMake toolchain failed on the Turkish-character workspace path.
+
+After the resumed JS hardening pass, a full Gradle rebuild was attempted again but the local Gradle/Prefab cache blocked it. Because the native shell and native dependencies did not change, the APK was refreshed by embedding the current Hermes `assets/index.android.bundle` into the existing release shell, then running `zipalign` and `apksigner verify`. The resulting APK contains `AndroidManifest.xml`, `classes.dex`, the updated Hermes bundle and the bundled GLB asset.
 
 ## 14. AI Tool Usage Log
 
@@ -169,6 +171,7 @@ Flow:
 - Jitsi is launched externally; it is a real bridge, but not embedded in a native WebView.
 - Expo GLB loading should be verified on a physical Android device because emulator/browser behavior can differ.
 - The demo artifact is an evidence walkthrough, not a phone screen recording, unless a device recording is produced later.
+- The latest APK was JS-bundle refreshed and re-signed after full Gradle rebuild hit a local Prefab/toolchain issue; native code was not changed in that hardening pass.
 
 ## 17. Next Cleanup Opportunities
 

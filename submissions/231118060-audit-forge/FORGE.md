@@ -13,6 +13,7 @@ Track A ledger. Her cycle 15 dakika kutulu tutuldu; commit edilen cycle'lar mini
 | 23:31 | 12 | audit-continuity.md | New evidence and docs can deepen the audit loop without touching repo root or other submissions. | success | `README.md`, `DECISIONS.md`, `BRIDGE.md`, `VERIFY.md`, `audit-reports/*`, `demo/demo-60s.mp4` | `npm run typecheck` pass; `npx expo install --check` pass; demo duration 60.0s | `838ecf7` |
 | 23:35 | 13 | release-apk | Native mic/GL changes require a rebuilt APK, but the workspace path may break Android CMake. | rollback then success | `app-release.apk` | first prebuild failed on Turkish path; ASCII temp path + SDK junction build passed; APK zip check passed | `838ecf7` |
 | 00:16 | 14 | voice-avatar-lipsync.md | The live path should expose recorder, avatar and bridge failures instead of reading as false silence. | success | `app/src/audio/useMicrophoneLevel.ts`, `app/src/components/AvatarStage.tsx`, `app/src/components/BridgePanel.tsx`, docs | `npm run typecheck` pass; `npx expo install --check` pass; `npx expo export --platform android` pass with Three export warnings; guard grep pass | `cc5ce91` |
+| 00:47 | 15 | release-apk | JS-only hardening should be reflected in the APK without pretending the blocked Gradle rebuild succeeded. | rollback then success | `app-release.apk`, docs | full Gradle rebuild blocked by local Prefab/toolchain cache; `expo export:embed --bytecode` bundle injected into existing native shell; `apksigner verify` v2/v3 pass; `zipalign -c -p 4` pass | pending |
 
 Notes:
 
@@ -21,6 +22,7 @@ Notes:
 - Cycle 11 deliberately uses an external bridge so the app does not fake audio/video/screen share.
 - Cycle 13 repeats the baseline workaround: Android build tooling needs an ASCII path for NDK/CMake on this machine.
 - Cycle 14 is a hardening pass after resume: it keeps the same product surface, but makes the live mic, avatar asset and bridge launch failure states explicit.
+- Cycle 15 is honest about the APK path: native rebuild was attempted and blocked locally, so only the changed JS bundle was refreshed inside the already-built native shell and then re-signed.
 
 ## Previous Baseline Ledger
 

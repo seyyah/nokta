@@ -7,6 +7,7 @@ npm install
 npm run typecheck
 npx expo install --check
 npx expo export --platform android
+npx expo export:embed --platform android --dev false --minify true --bytecode --entry-file node_modules/expo-router/entry.js --bundle-output C:\codex_tmp\apkpatch-231118060\assets\index.android.bundle --assets-dest C:\codex_tmp\apkpatch-231118060\rn-assets
 ```
 
 Run these checks from the repo root.
@@ -24,6 +25,13 @@ APK artifact check:
 python -c "import zipfile; z=zipfile.ZipFile('submissions/231118060-audit-forge/app-release.apk'); print('AndroidManifest.xml' in z.namelist(), 'classes.dex' in z.namelist(), any(n.endswith('.glb') for n in z.namelist()))"
 ```
 
+Latest APK refresh checks:
+
+```bash
+apksigner verify --verbose --print-certs submissions/231118060-audit-forge/app-release.apk
+zipalign -c -p 4 submissions/231118060-audit-forge/app-release.apk
+```
+
 Expected `AuditWidget` result:
 
 ```text
@@ -39,4 +47,4 @@ Manual checks:
 - Reports route keeps audit evidence readable.
 - Bridge route opens the Jitsi room, not a fake local call screen, and reports URL-handler failure inline.
 - Diff stays inside `submissions/231118060-audit-forge/`.
-- `app-release.apk` is the rebuilt release artifact, not the previous baseline APK.
+- `app-release.apk` is signed, zipaligned and carries the current Hermes bundle.
