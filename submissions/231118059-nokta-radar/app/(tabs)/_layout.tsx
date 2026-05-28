@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Compass, Radar, Terminal, MessageCircle, ShieldCheck } from 'lucide-react-native';
+import { Compass, Radar, Terminal, MessageCircle, ShieldCheck, Mic } from 'lucide-react-native';
 
 export default function TabLayout() {
   return (
@@ -17,20 +17,28 @@ export default function TabLayout() {
         },
         tabBarActiveTintColor: '#00FF41',
         tabBarInactiveTintColor: '#555',
-        tabBarLabelStyle: { fontFamily: 'monospace', fontSize: 10 },
+        tabBarLabelStyle: { fontFamily: 'monospace', fontSize: 9 },
       }}>
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Fikir Keşfi',
-          tabBarIcon: ({ color }) => <Compass color={color} size={24} />,
+          title: 'Keşif',
+          tabBarIcon: ({ color }) => <Compass color={color} size={22} />,
         }}
       />
       <Tabs.Screen
         name="analyze"
         options={{
-          title: 'Radar Analiz',
-          tabBarIcon: ({ color }) => <Radar color={color} size={24} />,
+          title: 'Radar',
+          tabBarIcon: ({ color }) => <Radar color={color} size={22} />,
+        }}
+      />
+      <Tabs.Screen
+        name="voice"
+        options={{
+          title: 'Voice Lab',
+          headerTitle: '🎙 VOICE LAB',
+          tabBarIcon: ({ color }) => <Mic color={color} size={22} />,
         }}
       />
       <Tabs.Screen
@@ -38,14 +46,14 @@ export default function TabLayout() {
         options={{
           title: 'AI Chat',
           headerTitle: '⚡ RADAR AI',
-          tabBarIcon: ({ color }) => <MessageCircle color={color} size={24} />,
+          tabBarIcon: ({ color }) => <MessageCircle color={color} size={22} />,
         }}
       />
       <Tabs.Screen
         name="manifesto"
         options={{
           title: 'Manifesto',
-          tabBarIcon: ({ color }) => <Terminal color={color} size={24} />,
+          tabBarIcon: ({ color }) => <Terminal color={color} size={22} />,
         }}
       />
       <Tabs.Screen
@@ -53,7 +61,7 @@ export default function TabLayout() {
         options={{
           title: 'Admin',
           headerTitle: '🛡 ADMIN PANELİ',
-          tabBarIcon: ({ color }) => <ShieldCheck color={color} size={24} />,
+          tabBarIcon: ({ color }) => <ShieldCheck color={color} size={22} />,
         }}
       />
     </Tabs>

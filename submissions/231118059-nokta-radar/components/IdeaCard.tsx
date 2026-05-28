@@ -18,9 +18,10 @@ interface IdeaCardProps {
 export default function IdeaCard({ idea }: IdeaCardProps) {
   return (
     <BlurView intensity={80} tint="dark" style={styles.card}>
-      {/* Decorative Watermarks (No overlap over text) */}
+      {/* Watermarks */}
       <View style={styles.watermarkContainer} pointerEvents="none">
-        <Text style={styles.watermarkText}>// PITCH_CAPTURE</Text>
+        {/* PITCH_CAPTURE */}
+        <Text style={styles.watermarkText}>{'// PITCH_CAPTURE'}</Text>
         <Text style={styles.watermarkId}>{idea.id}</Text>
       </View>
       

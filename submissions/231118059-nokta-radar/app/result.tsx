@@ -44,7 +44,7 @@ export default function ResultScreen() {
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.header}>
         <Text style={styles.ideaTextHeader}>TARANAN PROFİL:</Text>
-        <Text style={styles.ideaText}>"{ideaText}"</Text>
+        <Text style={styles.ideaText}>&ldquo;{ideaText}&rdquo;</Text>
       </View>
 
       <View style={styles.gaugeContainer}>

@@ -16,6 +16,8 @@ import {
 } from 'react-native';
 import { Send, Bot, ShieldAlert, ShieldCheck } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import ExpertBridge from '../components/ExpertBridge';
+import { forgeMonitor } from '../services/forgeMonitor';
 
 import ChatBubble, { Message, MessageRole } from '../components/ChatBubble';
 import RadarBackground from '../components/RadarBackground';
@@ -180,7 +182,7 @@ export default function ChatScreen() {
     >
       <RadarBackground />
 
-      {/* HITL Banner + Admin Butonu */}
+      {/* HITL Banner + Admin Butonu + Expert Bridge */}
       <View style={styles.topBar}>
         {pendingCount > 0 && (
           <View style={styles.hitlBanner}>
@@ -190,6 +192,10 @@ export default function ChatScreen() {
             </Text>
           </View>
         )}
+        <ExpertBridge
+          cycleId={`chat-${Date.now().toString(36)}`}
+          style={styles.bridgeInline}
+        />
         <TouchableOpacity
           style={styles.adminBtn}
           onPress={() => router.push('/admin' as any)}
@@ -263,6 +269,9 @@ const styles = StyleSheet.create({
   adminBtn: {
     padding: 8,
     borderRadius: 8,
+  },
+  bridgeInline: {
+    marginRight: 4,
   },
   hitlBanner: {
     flex: 1,
