@@ -46,6 +46,55 @@ after a brief exists with readiness, mentor packet, and any user decisions.
 
 This scenario is the rollback ratchet from cycle 4.
 
+## EV-05 Voice Visualizer Reacts To Microphone Energy
+
+Given the Voice Avatar screen is open and microphone permission is granted, live
+voice energy must drive a 13-band visualizer. The bars must decay to silence
+when the user stops speaking.
+
+Checks:
+
+- microphone state can be started and stopped from the screen
+- bands are derived from RMS/metering and update faster than 100ms
+- visible level returns to zero during silence
+
+## EV-06 Avatar Uses The Submitted Face Model
+
+The avatar screen must load the submitted Avaturn GLB, not a generic placeholder
+as the primary path. Mouth/viseme morph targets should react to the same audio
+bands used by the visualizer, with a subtle fallback motion if a morph target is
+missing.
+
+Checks:
+
+- `avatar.glb` exists at submission root
+- app bundles `app/assets/models/avatar.glb`
+- avatar scene uses `@react-three/fiber/native` and `three`
+
+## EV-07 Dictated Audit Notes Stay Host-Side
+
+The drop-in audit widget must not import STT or native microphone packages.
+Dictated audit text is stored by the host app and appended by `audit-deps.tsx`
+when markdown is written.
+
+Checks:
+
+- exported markdown contains `Voice Dictated Audit Note`
+- host adapter still owns file writing and sharing
+- widget package boundary remains unchanged
+
+## EV-08 Consecutive Forge Failures Trigger Expert Bridge
+
+If the forge ledger has two consecutive `rollback`, `fail`, or `stuck` results,
+the local forge server must expose a STUCK bridge state and deterministic Jitsi
+room URL.
+
+Checks:
+
+- `GET /bridge/status` returns `stuck: true` after two failed cycles
+- app enables `Uzmana Baglan` only when STUCK is active
+- bridge recap can be saved to `BRIDGE.md`
+
 ## Verification Command
 
 ```bash
@@ -60,4 +109,6 @@ User Login -> Add Notes / Idea -> Load Sample -> Distill Game Pitch
 -> select decisions -> Save Brief and Create Mentor Ticket
 -> Mentor Login -> Review Ticket -> paste feedback -> Resolve Ticket
 -> User Workspace -> Open Future Plan
+-> Home -> Voice Avatar + Expert Bridge -> Start Mic -> Dictate Audit Note
+-> Refresh Bridge -> Uzmana Baglan when STUCK is active
 ```

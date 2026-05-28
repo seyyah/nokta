@@ -56,6 +56,24 @@ notebook's `Review -> Repair -> Validate` loop maps to this app as
 - Audit FAB is mounted as a drop-in widget and can export markdown reports.
 - If `EXPO_PUBLIC_FORGE_ENDPOINT` is set, markdown reports are also sent to a
   local forge server for autonomous repair.
+- Voice Avatar screen captures microphone metering and animates 13 voice bars.
+- The submitted Avaturn face model (`avatar.glb`) is loaded with
+  react-three-fiber and driven by the same voice energy for lipsync.
+- Dictated audit notes are appended to exported markdown by the host adapter.
+- Consecutive forge rollback/fail cycles expose a STUCK bridge state and open a
+  Jitsi expert call from inside the app.
+
+## Final Week Layer
+
+```txt
+microphone -> RMS bands -> voice visualizer -> avatar lipsync
+dictated note -> AuditWidget markdown -> forge server
+2x rollback/fail -> STUCK -> Jitsi expert bridge -> BRIDGE.md
+```
+
+The final week keeps Track C: the important capability is not only the avatar,
+but the autonomy ratchet. When the local agent cannot close the loop twice in a
+row, the app exposes an expert bridge instead of pretending the cycle succeeded.
 
 ## Audit Integration
 
@@ -103,6 +121,13 @@ EXPO_PUBLIC_FORGE_ENDPOINT=http://10.0.2.2:8787/audit
 Use `localhost` for web/iOS simulator and the computer LAN IP for a physical
 phone.
 
+Bridge endpoints:
+
+```txt
+GET  /bridge/status
+POST /bridge/transcript
+```
+
 ## Audit Reports
 
 Committed reports:
@@ -111,6 +136,9 @@ Committed reports:
 - `audit-reports/report-02-new-brief-creep-actions.md`
 - `audit-reports/report-03-mentor-decision-context.md`
 - `audit-reports/report-04-rollback-home-ticket.md`
+- `audit-reports/report-05-voice-avatar-metering.md`
+- `audit-reports/report-06-dictated-audit-note.md`
+- `audit-reports/report-07-stuck-bridge-trigger.md`
 
 The first three reports produced accepted repairs. The fourth is the rollback:
 creating mentor tickets directly from Home was rejected because a valid ticket
@@ -202,6 +230,12 @@ npx expo install --check
 10. Resolve the ticket and return to the user workspace.
 11. Open the reviewed saved brief and inspect the future plan.
 12. Use the audit FAB to capture any screen and export a markdown report.
+13. Open **Voice Avatar + Expert Bridge**.
+14. Start the microphone and speak; the bars and avatar mouth react.
+15. Dictate the next audit note, then export an audit report.
+16. Trigger/refresh STUCK bridge state and tap **Uzmana Baglan**.
+17. Join the Jitsi room with a classmate from desktop and show screen sharing.
+18. Dictate the bridge recap and save it to `BRIDGE.md`.
 
 ## Expo QR Link
 
@@ -212,15 +246,21 @@ The Expo slug stays `nokta-draft-231118081` to keep the existing EAS project id.
 The visible app name is **Nokta Game Pitch**.
 
 Latest Android EAS build:
-https://expo.dev/accounts/samsun081/projects/nokta-draft-231118081/builds/81d8c52a-f728-41b2-a2d8-9cf7027e4558
+https://expo.dev/accounts/samsun081/projects/nokta-draft-231118081/builds/f3134973-677d-4275-977b-0e7021e4640d
 
-Latest APK artifact:
-https://expo.dev/artifacts/eas/h2YtVctehFqg89a4Bzcbeo.apk
+Final-week APK artifact:
+`submissions/231118081-idea-distillery/app-release.apk`
 
-## 60 Second Demo
+The EAS build above was submitted on 2026-05-28. Because the remote queue was
+still pending during packaging, the included APK was rebuilt locally from the
+same Expo app with `expo prebuild` + Gradle `assembleRelease`.
 
-Demo video link:
+## Demo Video
+
+Current demo video link:
 https://youtube.com/shorts/SQF166ex9W8?feature=share
+
+Final-week 3 minute demo link: `TBD after recording`.
 
 ## APK
 
@@ -228,7 +268,8 @@ APK file in submission:
 
 `submissions/231118081-idea-distillery/app-release.apk`
 
-This APK was rebuilt on 2026-05-19 after adding the audit native dependencies.
+This APK was rebuilt on 2026-05-28 after adding voice, speech-recognition,
+avatar, and Jitsi WebView dependencies.
 
 ## Decision Log
 
@@ -245,6 +286,11 @@ This APK was rebuilt on 2026-05-19 after adding the audit native dependencies.
 - Rejected direct Home mentor ticket creation because it breaks the saved brief
   lifecycle.
 - Added `EVAL.md` so future cycles cannot regress accepted behavior.
+- Added the final-week voice/avatar/bridge layer.
+- Chose Jitsi WebView for the expert bridge to keep the escalation path bounded
+  and demoable without adding a custom WebRTC backend.
+- Kept STT and microphone code in the host app; the audit widget remains a
+  drop-in package.
 
 ## AI Tool Log
 
@@ -254,12 +300,14 @@ This APK was rebuilt on 2026-05-19 after adding the audit native dependencies.
   shared chat history is required or stored by the app.
 - Groq API: optional runtime analyst for game pitch distillation; local fallback
   is used when no API key is configured.
+- Jitsi Meet: expert bridge room opened in-app through `react-native-webview`.
 
 ## Known Limits
 
 - Audit exports are local files shared from the device; there is no backend.
 - The local forge server is a developer-machine automation tool, not a hosted
   production backend.
-- Mentor connection is an in-app review queue, not a real video call.
+- Expert bridge uses Jitsi WebView; screen share is expected from the expert's
+  desktop browser during the demo.
 - The EAS build was run from an app-only temporary copy so the monorepo's other
   submission folders were not uploaded into the build archive.
