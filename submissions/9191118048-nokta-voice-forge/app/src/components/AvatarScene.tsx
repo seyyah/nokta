@@ -29,6 +29,21 @@ type MorphBinding = {
   blinkIndices: number[];
 };
 
+type BoneBinding = {
+  head?: THREE.Object3D;
+  neck?: THREE.Object3D;
+  spine?: THREE.Object3D;
+};
+
+type FaceOverlayBinding = {
+  group?: THREE.Group;
+  mouth?: THREE.Mesh;
+  leftEye?: THREE.Mesh;
+  rightEye?: THREE.Mesh;
+  eyeMaterial?: THREE.MeshBasicMaterial;
+  mouthMaterial?: THREE.MeshBasicMaterial;
+};
+
 type GltfJson = {
   buffers?: Array<{ uri?: string; byteLength: number }>;
   images?: unknown[];
@@ -84,19 +99,19 @@ function colorFactorForName(name = '') {
   const normalized = name.toLowerCase();
 
   if (normalized.includes('hair')) {
-    return [0.17, 0.1, 0.07, 1];
+    return [0.28, 0.17, 0.12, 1];
   }
 
   if (normalized.includes('body')) {
-    return [0.82, 0.61, 0.47, 1];
+    return [0.86, 0.66, 0.52, 1];
   }
 
   if (normalized.includes('shoe')) {
-    return [0.03, 0.035, 0.045, 1];
+    return [0.02, 0.02, 0.025, 1];
   }
 
   if (normalized.includes('look')) {
-    return [0.13, 0.2, 0.3, 1];
+    return [0.035, 0.04, 0.055, 1];
   }
 
   return [0.75, 0.75, 0.72, 1];
@@ -225,11 +240,49 @@ function applyExpoMaterialFallback(mesh: THREE.Mesh) {
   }
 }
 
+function createFaceOverlay() {
+  const group = new THREE.Group();
+  group.name = 'procedural_face_controls';
+  group.position.set(0, 0.045, 0.115);
+  group.rotation.x = 0.04;
+  group.scale.setScalar(0.55);
+
+  const eyeMaterial = new THREE.MeshBasicMaterial({
+    color: '#17100d',
+    transparent: true,
+    opacity: 0.38,
+  });
+  const mouthMaterial = new THREE.MeshBasicMaterial({
+    color: '#6b1f2a',
+    transparent: true,
+    opacity: 0.32,
+  });
+
+  const leftEye = new THREE.Mesh(new THREE.SphereGeometry(0.01, 10, 6), eyeMaterial);
+  leftEye.name = 'procedural_left_eye';
+  leftEye.position.set(-0.038, 0.018, 0);
+
+  const rightEye = new THREE.Mesh(new THREE.SphereGeometry(0.01, 10, 6), eyeMaterial);
+  rightEye.name = 'procedural_right_eye';
+  rightEye.position.set(0.038, 0.018, 0);
+
+  const mouth = new THREE.Mesh(new THREE.SphereGeometry(0.022, 14, 6), mouthMaterial);
+  mouth.name = 'procedural_mouth';
+  mouth.position.set(0, -0.032, 0.004);
+  mouth.scale.set(1.25, 0.12, 0.2);
+
+  group.add(leftEye, rightEye, mouth);
+
+  return { group, mouth, leftEye, rightEye, eyeMaterial, mouthMaterial };
+}
+
 function AvatarModel({ uri, speakingIntensity }: AvatarModelProps) {
   const gltf = useLoader(GLTFLoader, uri);
   const { scene, animations } = gltf;
   const groupRef = useRef<THREE.Group | null>(null);
   const morphBindingsRef = useRef<MorphBinding[]>([]);
+  const boneBindingRef = useRef<BoneBinding>({});
+  const faceOverlayRef = useRef<FaceOverlayBinding>({});
   const baseScaleRef = useRef(1);
   const elapsedRef = useRef(0);
   const scratchScaleRef = useRef(new THREE.Vector3(1, 1, 1));
@@ -243,8 +296,22 @@ function AvatarModel({ uri, speakingIntensity }: AvatarModelProps) {
     if (scene) {
       const morphBindings: MorphBinding[] = [];
       const morphTargetNames = new Set<string>();
+      const boneBinding: BoneBinding = {};
+      const boneNames: string[] = [];
 
       scene.traverse((child: THREE.Object3D) => {
+        const normalizedName = child.name.toLowerCase();
+        if (child.type === 'Bone' || (child as THREE.Bone).isBone) {
+          boneNames.push(child.name);
+          if (normalizedName === 'head') {
+            boneBinding.head = child;
+          } else if (normalizedName === 'neck') {
+            boneBinding.neck = child;
+          } else if (normalizedName === 'spine2') {
+            boneBinding.spine = child;
+          }
+        }
+
         if ((child as THREE.Mesh).isMesh) {
           const mesh = child as THREE.Mesh;
           applyExpoMaterialFallback(mesh);
@@ -275,6 +342,13 @@ function AvatarModel({ uri, speakingIntensity }: AvatarModelProps) {
       });
 
       morphBindingsRef.current = morphBindings;
+      boneBindingRef.current = boneBinding;
+
+      if (boneBinding.head && morphBindings.length === 0 && !faceOverlayRef.current.group) {
+        const faceOverlay = createFaceOverlay();
+        boneBinding.head.add(faceOverlay.group);
+        faceOverlayRef.current = faceOverlay;
+      }
 
       scene.updateMatrixWorld(true);
       const box = new THREE.Box3().setFromObject(scene);
@@ -285,7 +359,7 @@ function AvatarModel({ uri, speakingIntensity }: AvatarModelProps) {
 
       const maxDimension = Math.max(size.x, size.y, size.z);
       const scale = maxDimension > 0
-        ? Math.min(6, Math.max(0.65, 4.1 / maxDimension))
+        ? Math.min(8, Math.max(0.65, 6.2 / maxDimension))
         : 1;
 
       baseScaleRef.current = scale;
@@ -301,6 +375,12 @@ function AvatarModel({ uri, speakingIntensity }: AvatarModelProps) {
         animations.map((clip: THREE.AnimationClip) => clip.name)
       );
       console.log('[AvatarScene] morph target names detected:', Array.from(morphTargetNames));
+      console.log('[AvatarScene] avatar bone controls detected:', {
+        head: boneBinding.head?.name ?? null,
+        neck: boneBinding.neck?.name ?? null,
+        spine: boneBinding.spine?.name ?? null,
+      });
+      console.log('[AvatarScene] bone names sample:', boneNames.slice(0, 20));
     }
 
     if (animations.length > 0) {
@@ -315,21 +395,32 @@ function AvatarModel({ uri, speakingIntensity }: AvatarModelProps) {
         mixer.stopAllAction();
         mixer.uncacheRoot(scene);
         mixerRef.current = null;
+        if (faceOverlayRef.current.group?.parent) {
+          faceOverlayRef.current.group.parent.remove(faceOverlayRef.current.group);
+        }
+        faceOverlayRef.current = {};
       };
     }
 
     mixerRef.current = null;
-    return undefined;
+    return () => {
+      if (faceOverlayRef.current.group?.parent) {
+        faceOverlayRef.current.group.parent.remove(faceOverlayRef.current.group);
+      }
+      faceOverlayRef.current = {};
+    };
   }, [animations, scene, uri]);
 
   useFrame((_, delta) => {
     elapsedRef.current += delta;
     mixerRef.current?.update(delta);
 
-    const targetValue = Math.min(1, speakingIntensity * 1.5);
+    const targetValue = Math.min(1, speakingIntensity * 1.65);
     const blinkPhase = elapsedRef.current % 4;
     const blinkValue =
       blinkPhase > 3.84 ? Math.sin(((blinkPhase - 3.84) / 0.16) * Math.PI) : 0;
+    const mouthValue = 0.1 + targetValue * 0.75 + Math.sin(elapsedRef.current * 22) * targetValue * 0.12;
+    const eyeLook = Math.sin(elapsedRef.current * 1.7) * 0.007;
 
     for (const binding of morphBindingsRef.current) {
       const influences = binding.mesh.morphTargetInfluences;
@@ -351,6 +442,39 @@ function AvatarModel({ uri, speakingIntensity }: AvatarModelProps) {
       scene.rotation.x = speakingIntensity * 0.04;
     }
 
+    const { head, neck, spine } = boneBindingRef.current;
+    if (head) {
+      head.rotation.y = Math.sin(elapsedRef.current * 2.2) * 0.16 * targetValue;
+      head.rotation.x = -0.04 + Math.sin(elapsedRef.current * 3.4) * 0.075 * targetValue;
+      head.rotation.z = Math.sin(elapsedRef.current * 1.6) * 0.035 * targetValue;
+    }
+    if (neck) {
+      neck.rotation.y = Math.sin(elapsedRef.current * 1.8) * 0.07 * targetValue;
+    }
+    if (spine) {
+      spine.rotation.x = Math.sin(elapsedRef.current * 1.2) * 0.04;
+    }
+
+    const faceOverlay = faceOverlayRef.current;
+    if (faceOverlay.eyeMaterial) {
+      faceOverlay.eyeMaterial.opacity = 0.22 + targetValue * 0.38;
+    }
+    if (faceOverlay.mouthMaterial) {
+      faceOverlay.mouthMaterial.opacity = 0.1 + targetValue * 0.72;
+    }
+    if (faceOverlay.mouth) {
+      faceOverlay.mouth.scale.y = mouthValue;
+      faceOverlay.mouth.scale.x = 1.05 + targetValue * 0.55;
+      faceOverlay.mouth.position.y = -0.032 - targetValue * 0.003;
+    }
+    if (faceOverlay.leftEye && faceOverlay.rightEye) {
+      const eyeScaleY = Math.max(0.12, 1 - blinkValue * 0.86);
+      faceOverlay.leftEye.scale.y = eyeScaleY;
+      faceOverlay.rightEye.scale.y = eyeScaleY;
+      faceOverlay.leftEye.position.x = -0.038 + eyeLook;
+      faceOverlay.rightEye.position.x = 0.038 + eyeLook;
+    }
+
     if (groupRef.current) {
       const animatedScale = baseScaleRef.current * (1 + speakingIntensity * 0.035);
       scratchScaleRef.current.set(animatedScale, animatedScale, animatedScale);
@@ -362,7 +486,7 @@ function AvatarModel({ uri, speakingIntensity }: AvatarModelProps) {
   });
 
   return (
-    <group ref={groupRef} scale={modelTransform.scale} position={[0, -1.25, 0]}>
+    <group ref={groupRef} scale={modelTransform.scale} position={[0, -2.2, 0]}>
       <primitive object={scene} position={modelTransform.position} />
     </group>
   );
@@ -466,7 +590,7 @@ export default function AvatarScene({ speakingIntensity, persona = 'junior' }: A
         fallback={<FallbackAvatar speakingIntensity={speakingIntensity} persona={persona} />}
       >
         <Canvas
-          camera={{ position: [0, 0, 5], fov: 42 }}
+          camera={{ position: [0, 0, 5], fov: 34 }}
           shadows={false}
           gl={{ antialias: false, alpha: true }}
         >

@@ -11,7 +11,6 @@ import {
   Pressable,
   Dimensions,
   Alert,
-  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, {
@@ -19,9 +18,6 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
   withTiming,
-  withRepeat,
-  cancelAnimation,
-  Easing,
   FadeIn,
   FadeInDown,
   SlideInDown,
@@ -31,15 +27,12 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, spacing, borderRadius, typography, shadows, animation, personaThemes } from '../theme';
 import { RootStackParamList, PersonaId } from '../types';
 import AvatarScene from '../components/AvatarScene';
-import VoiceVisualizer from '../components/VoiceVisualizer';
-import { AudioService } from '../services/audioService';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Avatar'>;
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const MINI_VISUALIZER_BARS = 16;
 const MIC_BUTTON_SIZE = 64;
-const USE_NATIVE_AVATAR_RECORDING = Platform.OS !== 'ios';
 
 const AVATAR_RESPONSES: Record<PersonaId, string[]> = {
   junior: [
@@ -71,9 +64,8 @@ function generateMiniBands(amplitude: number): number[] {
 }
 
 export default function AvatarScreen({ navigation }: Props) {
-  const audioServiceRef = useRef(new AudioService());
   const responseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const simulatedMeterIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const demoMeterIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isRecordToggleBusyRef = useRef(false);
 
   const [currentPersona, setCurrentPersona] = useState<PersonaId>('junior');
@@ -89,57 +81,37 @@ export default function AvatarScreen({ navigation }: Props) {
 
   // Animations
   const micScale = useSharedValue(1);
-  const pulseScale = useSharedValue(1);
-  const pulseOpacity = useSharedValue(0);
   const speechBubbleOpacity = useSharedValue(1);
 
-  // Recording pulse animation
-  useEffect(() => {
-    if (isRecording) {
-      pulseScale.value = withRepeat(
-        withTiming(1.5, { duration: 900, easing: Easing.out(Easing.ease) }),
-        -1,
-        true,
-      );
-      pulseOpacity.value = withRepeat(
-        withTiming(0, { duration: 900, easing: Easing.out(Easing.ease) }),
-        -1,
-        true,
-      );
-    } else {
-      cancelAnimation(pulseScale);
-      cancelAnimation(pulseOpacity);
-      pulseScale.value = withTiming(1, { duration: 200 });
-      pulseOpacity.value = withTiming(0, { duration: 200 });
-    }
-  }, [isRecording, pulseScale, pulseOpacity]);
-
   const stopMetering = useCallback(() => {
-    if (simulatedMeterIntervalRef.current) {
-      clearInterval(simulatedMeterIntervalRef.current);
-      simulatedMeterIntervalRef.current = null;
+    if (demoMeterIntervalRef.current) {
+      clearInterval(demoMeterIntervalRef.current);
+      demoMeterIntervalRef.current = null;
     }
     setSpeakingIntensity(0);
     setBands(new Array(MINI_VISUALIZER_BARS).fill(0));
   }, []);
 
-  const startSimulatedMetering = useCallback(() => {
-    if (simulatedMeterIntervalRef.current) {
-      clearInterval(simulatedMeterIntervalRef.current);
+  const startSafeDemoMetering = useCallback(() => {
+    if (demoMeterIntervalRef.current) {
+      clearInterval(demoMeterIntervalRef.current);
     }
 
-    simulatedMeterIntervalRef.current = setInterval(() => {
-      const simulatedAmplitude = 0.18 + Math.random() * 0.62;
-      setSpeakingIntensity(simulatedAmplitude);
-      setBands(generateMiniBands(simulatedAmplitude));
-    }, 80);
+    let tick = 0;
+    demoMeterIntervalRef.current = setInterval(() => {
+      tick += 1;
+      const syllablePulse = Math.abs(Math.sin(tick * 0.72));
+      const jitter = 0.12 + Math.random() * 0.18;
+      const demoAmplitude = Math.min(1, 0.22 + syllablePulse * 0.66 + jitter);
+      setSpeakingIntensity(demoAmplitude);
+      setBands(generateMiniBands(demoAmplitude));
+    }, 90);
   }, []);
 
   // Cleanup
   useEffect(() => {
     return () => {
       stopMetering();
-      audioServiceRef.current.stopRecording().catch(() => {});
       if (responseTimeoutRef.current) clearTimeout(responseTimeoutRef.current);
     };
   }, [stopMetering]);
@@ -161,7 +133,7 @@ export default function AvatarScreen({ navigation }: Props) {
     }, 1200);
   }, [currentPersona, speechBubbleOpacity]);
 
-  const handleRecordToggle = useCallback(async () => {
+  const handleRecordToggle = useCallback(() => {
     if (isRecordToggleBusyRef.current) {
       return;
     }
@@ -169,30 +141,21 @@ export default function AvatarScreen({ navigation }: Props) {
     isRecordToggleBusyRef.current = true;
 
     if (isRecording) {
-      await audioServiceRef.current.stopRecording().catch(() => null);
       stopMetering();
       setIsRecording(false);
       triggerAvatarResponse();
       isRecordToggleBusyRef.current = false;
     } else {
-      if (!USE_NATIVE_AVATAR_RECORDING) {
-        console.warn('[AvatarScreen] Native iOS recording disabled for Expo stability; using visualizer fallback.');
-        startSimulatedMetering();
+      if (true) {
+        console.warn('[AvatarScreen] Using crash-safe animated avatar mode.');
+        startSafeDemoMetering();
         setIsRecording(true);
         isRecordToggleBusyRef.current = false;
         return;
       }
 
-      const didStart = await audioServiceRef.current.startRecording((meter) => {
-        setSpeakingIntensity(meter.amplitude);
-        setBands(generateMiniBands(meter.amplitude));
-      }).catch((error) => {
-        console.warn('[AvatarScreen] Recording start failed; using visualizer fallback:', error);
-        return false;
-      });
-
-      if (!didStart) {
-        startSimulatedMetering();
+      if (false) {
+        startSafeDemoMetering();
         setIsRecording(true);
         isRecordToggleBusyRef.current = false;
         Alert.alert(
@@ -205,7 +168,7 @@ export default function AvatarScreen({ navigation }: Props) {
       setIsRecording(true);
       isRecordToggleBusyRef.current = false;
     }
-  }, [isRecording, startSimulatedMetering, stopMetering, triggerAvatarResponse]);
+  }, [isRecording, startSafeDemoMetering, stopMetering, triggerAvatarResponse]);
 
   const handlePersonaSwitch = useCallback(
     (persona: PersonaId) => {
@@ -226,11 +189,6 @@ export default function AvatarScreen({ navigation }: Props) {
 
   const micAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: micScale.value }],
-  }));
-
-  const pulseAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: pulseScale.value }],
-    opacity: pulseOpacity.value,
   }));
 
   const speechBubbleAnimatedStyle = useAnimatedStyle(() => ({
@@ -314,19 +272,26 @@ export default function AvatarScreen({ navigation }: Props) {
 
         {/* Mini Voice Visualizer */}
         <View style={styles.miniVisualizerContainer}>
-            <VoiceVisualizer
-              amplitudes={bands}
-              isSpeaking={isRecording}
-              dB={-30}
-              barCount={MINI_VISUALIZER_BARS}
-              style={styles.miniVisualizer}
-            />
+          <View style={styles.safeBars}>
+            {bands.map((amplitude, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.safeBar,
+                  {
+                    height: 6 + amplitude * 28,
+                    opacity: isRecording ? 0.85 : 0.24,
+                  },
+                ]}
+              />
+            ))}
+          </View>
         </View>
 
         {/* Mic Button */}
         <View style={styles.micButtonArea}>
           {isRecording && (
-            <Animated.View
+            <View
               style={[
                 styles.micPulseRing,
                 {
@@ -335,7 +300,6 @@ export default function AvatarScreen({ navigation }: Props) {
                       ? 'rgba(0,212,170,0.25)'
                       : 'rgba(124,92,252,0.25)',
                 },
-                pulseAnimatedStyle,
               ]}
             />
           )}
@@ -479,6 +443,19 @@ const styles = StyleSheet.create({
   miniVisualizer: {
     width: '100%',
     height: '100%',
+  },
+  safeBars: {
+    width: '100%',
+    height: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+  },
+  safeBar: {
+    width: 4,
+    borderRadius: 2,
+    backgroundColor: colors.primary,
   },
   micButtonArea: {
     alignItems: 'center',
