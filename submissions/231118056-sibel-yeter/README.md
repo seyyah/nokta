@@ -51,11 +51,9 @@ pnpm web --no-dev
 ```
 Tarayıcıda otomatik olarak `http://localhost:8081` adresinde uygulama açılacaktır.
 
-### 3. Tek Videoda Demo Nasıl Çekilir?
-Welcome ekranının en üstündeki **"Tek Videoluk Demo Kontrol Hub"** panelini kullanın:
-* **Phase A (Voice Viz)** butonuna basın. Mikrofonu açıp konuşun, dalgalanan neon çizgileri gösterin.
-* **Phase B (Lipsync)** butonuna basın. Junior ve Senior personas geçişlerini, konuşmaları ve ağız hareketlerini kaydedin.
-* **Phase C (Stuck Jitsi)** butonuna basın. Simülatörde 2 kez FAIL/ROLLBACK koşturarak STUCK uyarısını, Jitsi kamerasını açıp kapatmayı ve BRIDGE.md özetiyle kilidi kırmayı kaydedin.
+### 3. Demo Video
+Uygulamanın çalışır halini (Voice Viz, Lipsync, Stuck Jitsi akışlarını) aşağıdaki videodan izleyebilirsiniz:
+[![Demo Video](https://img.youtube.com/vi/_4HO7VpDPpA/0.jpg)](https://youtu.be/_4HO7VpDPpA)
 
 ---
 
