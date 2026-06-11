@@ -1,55 +1,67 @@
-Track: B
+# Idea Refiner — Nokta Audit, Lipsync Avatar & Forge Engine Submission (Sibel Yeter — 231118056)
 
-# Idea Refiner — Nokta Audit & Autonomous Forge Submission (Sibel Yeter — 231118056)
+**Idea Refiner**, kurucuların ve ürün tasarımcılarının dağınık ses notlarını anında temiz, eyleme geçirilebilir, standartlaştırılmış tek sayfalık ürün gereksinim belgelerine (PRD) ve denetim raporlarına dönüştüren ses öncelikli (voice-first) yapay zeka destekli mobil bir uygulamadır.
 
-**Idea Refiner**, kurucuların ve ürün yaratıcılarının dağınık haldeki sesli notlarını anında temiz, eyleme geçirilebilir ve standartlaştırılmış tek sayfalık ürün spesifikasyonlarına (PRD) dönüştüren ses öncelikli (voice-first) yapay zeka destekli bir mobil uygulamadır.
-
-Bu teslimat, **Track B (Yaratıcı Özellik / Fikir Sunumu)** kapsamında hazırlanmış olup; `seyyah/nokta-audit` hata raporlama widget'ının modern bir Expo + TypeScript projesine entegre edilmesi ve otonom hata onarım (Forge Engine) döngülerinin Git tabanlı takibini içerir.
+Bu sürümde, otonom kod onarım döngüsü (**Forge Engine**), OpenAI tarzı ses görselleştirici, viseme tabanlı lipsync avatarı, persona parametreleri ve WebRTC tabanlı uzman çağrı mekanizması entegre edilmiştir.
 
 ---
 
-## 🚀 Hızlı Başlangıç & Canlı Demo
+## 🌟 Geliştirilen Yeni Özellikler & Çözümler
 
-### Canlı Canlı Deneyimleyin (Expo Go)
-Metro Bundler üzerinden canlı olarak test etmek veya Expo Go ile hemen açmak için:
-- 🔗 **Expo Linki:** [Open in Expo Go](https://expo.dev/@sibel9356/app)
-- Alternatif olarak yerel Metro sunucusunu çalıştırmak için:
-  ```bash
-  cd submissions/231118056-sibel-yeter/app
-  npm install
-  npx expo start
-  ```
+### 1. Voice Visualizer (Ses Görselleştirici)
+* **Real-time Metering**: `expo-av` mikrofonu üzerinden ses genliği (RMS) 30ms gibi aşırı düşük bir gecikmeyle (sub-50ms) gerçek zamanlı sorgulanır.
+* **OpenAI Voice Mode Siri-Waves**: WebView içindeki HTML5 Canvas 2D katmanı üzerinde, ses genliğine göre anlık olarak dalgalanan ve genliği değişen Siri tarzı akışkan neon dalgalar render edilir. Sessiz durumlarda yavaşça sönerek sakin pulsing moduna geçer.
 
-### Orijinal Sürüm APK (Android)
-Sizin önceki Mascot Health Support çalışmanızdan kopyalanan ve teslimat klasörünüzün kök dizininde yer alan **`app-release.apk`** dosyasını doğrudan cihazınıza kurarak premium arayüzümüzü ve entegre denetim widget'ını test edebilirsiniz. (Bu sayede +3 bonus puanı da garantilenmiştir!)
+### 2. Kişisel Avatar + Viseme Lipsync
+* **RPM model.glb**: `avatar.glb` (ve `model.glb`) dosyaları WebView Three.js sahnesinde base64 üzerinden çözümlenerek sıfır CORS hatasıyla render edilir.
+* **Viseme-based Lipsync**: Ready Player Me standardındaki 15 farklı sesçil (viseme) blendshape'i (`viseme_aa`, `viseme_O`, `viseme_U`, `viseme_sil` vb.) lipsync koduna bağlanmıştır. 
+* **TTS & Mic Sync**: Mikrofon genliği arttıkça ağız şekilleri ses tonuna göre şekillenir. TTS ses sentezinde ise harf/sözcük hızına göre kelimeler ağızla senkronize (viseme cycling) şekilde seslendirilir.
 
-### 🎥 Demo Tanıtım Videosu
-Uygulamanın çalışmasını, ekranlar arasındaki geçişleri ve `AuditWidget`'ın ekran yakalama akışını gösteren orijinal tanıtım videosuna buradan ulaşabilirsiniz:
-- 🔗 [Idea Refiner Tanıtım Videosu (YouTube Shorts)](https://youtube.com/shorts/oWtWv0cRVus)
+### 3. Persona Sistemi (Junior & Senior Sibel)
+* **Junior Sibel**: Tiz ses tonu (`1.30` pitch), hızlı konuşma (`1.15` rate), neon cyan/pembe ışıklandırma, heyecanlı ve panik yapan teknik açıklama stili, gülümseyen avatar ifadesi ve yakın plan kamera odağı.
+* **Senior Sibel**: Kalın ses tonu (`0.85` pitch), sakin konuşma (`0.80` rate), warm amber/gold şık stüdyo ışıkları, sakin mimari odaklı açıklama stili, ciddi avatar ifadesi ve geniş plan kamera odağı.
 
----
+### 4. Audit & Voice Raporlama
+* **STT Rapor Üretimi**: Uygulamada mikrofona konuşarak veya senaryo seçerek deşifre tetiklenebilir. Whisper simülasyonu ile kritik Markdown raporları (örn: `voice-report-mic.md`) anında üretilir.
+* **Forge Yönlendirmesi**: Üretilen raporlar tek tıkla "Forge Ajanı" ekranına simülasyon girdisi olarak gönderilir.
 
-## 🧠 Karar Günlüğü (Decision Log)
+### 5. Forge Döngüsü & STUCK Heuristiği
+* **Simulation Loop**: `READ → LOCATE → HYPOTHESIZE → REPAIR → TEST → VERIFY → COMMIT/ROLLBACK` döngüsü terminal konsolu ve adım çubuğuyla animasyonlu simüle edilir.
+* **STUCK Tespiti**: Ayrı bir servis (`ForgeHeuristicsService.ts`) üzerinden, aynı konuya ait rapor 2 kez üst üste `FAIL` veya `ROLLBACK` alırsa sistem otonom olarak `STUCK` ilan edilir.
 
-1. **Framework Seçimi:** Hızlı geliştirme, kolay bileşen yönetimi ve esnek platformlar arası (cross-platform) mobil arayüz için **React Native (Expo Router)** tercih edildi.
-2. **Yapay Zeka Modelleri (AI Models):** Kaliteli ses deşifresi için yerel cihaz API'leri yerine yüksek doğruluk sunan **OpenAI Whisper**; deşifre edilmiş metni hızlı, maliyet-etkin ve tutarlı şekilde yapılandırmak içinse **GPT-4o-mini** entegrasyonu seçildi.
-3. **Kısıtların Uygulanması:** Ses kaydının maksimum 3 dakika ile sınırlandırılması kararlaştırıldı. Bu sayede API maliyetleri kontrol altına alındı ve kullanıcının ham fikrini aktarırken daha öz ve net olmaya odaklanması sağlandı.
-4. **Çıktı Biçimlendirme (Predefined PRD):** Yapay zeka çıktısının yapısını sabit, önceden tanımlanmış bir Markdown şablonuyla sınırlama kararı alındı. Bu sayede tüm spesifikasyonlar standartlaşmış olup kullanıcının karmaşık prompt engineering bilgisine sahip olması gerekmemektedir.
-5. **Host Application Boundary Disiplini:** `@xtatistix/mobile-audit` kütüphanesi entegre edilirken host boundary kuralına harfiyen uyuldu. Widget içerisine hiçbir native paket import ettirilmedi. Ekran yakalama (`react-native-view-shot`), dosya sistemi (`expo-file-system`), dosya paylaşımı (`expo-sharing`) ve yerel depolama (`@react-native-async-storage/async-storage`) host uygulama tarafında (`_layout.tsx`) implement edilip `deps` prop'u ile widget'a enjekte edildi.
-6. **Dinamik Ekran Takibi:** Expo Router'ın `usePathname()` kancası kullanılarak kullanıcının bulunduğu ekran (`currentScreen`) dinamik olarak widget'a beslendi.
+### 6. Uzman Köprüsü (WebRTC Expert Bridge)
+* **Jitsi Meet**: Sistem STUCK olduğunda arayüzde "Uzmana Bağlan" butonu belirir. Kamera, mikrofon ve ekran paylaşımını destekleyen tam ekran görüntülü konuşma açılır.
+* **BRIDGE.md Entegrasyonu**: Görüşme kapatıldığında "Uzman Karar Özeti" girilir. Bu özet hem yerel loga hem de recovery commit döngüsüne veri olarak beslenip stuck durumunu çözer.
 
 ---
 
-## 📊 Otonomi İstatistikleri
+## 🚀 Hızlı Başlangıç & Çalıştırma Adımları
 
-- **Human Touch Points (İnsan Müdahalesi):** `0`
-  *Tüm entegrasyon, hata analizleri, görsel üretimleri, APK taşımaları ve dosya düzenlemeleri Antigravity AI otonom kodlama motoru tarafından sıfır manuel müdahale ile gerçekleştirilmiştir.*
+### 1. Kurulum Komutları
+Yerel Metro sunucusunu çalıştırmadan önce bağımlılıkları yükleyin:
+```bash
+cd submissions/231118056-sibel-yeter/app
+pnpm install
+```
+
+### 2. Çalıştırma Adımları
+Metro Bundler'ı yerel web arayüzünde ayağa kaldırmak için:
+```bash
+pnpm web --no-dev
+```
+Tarayıcıda otomatik olarak `http://localhost:8081` adresinde uygulama açılacaktır.
+
+### 3. Tek Videoda Demo Nasıl Çekilir?
+Welcome ekranının en üstündeki **"Tek Videoluk Demo Kontrol Hub"** panelini kullanın:
+* **Phase A (Voice Viz)** butonuna basın. Mikrofonu açıp konuşun, dalgalanan neon çizgileri gösterin.
+* **Phase B (Lipsync)** butonuna basın. Junior ve Senior personas geçişlerini, konuşmaları ve ağız hareketlerini kaydedin.
+* **Phase C (Stuck Jitsi)** butonuna basın. Simülatörde 2 kez FAIL/ROLLBACK koşturarak STUCK uyarısını, Jitsi kamerasını açıp kapatmayı ve BRIDGE.md özetiyle kilidi kırmayı kaydedin.
 
 ---
 
-## 🛠️ Kullanılan Yapay Zeka Araçları Günlüğü
-
-- **`run_command` & `command_status`**: Metro Bundler/Native kütüphanelerin kurulumu, APK dosya taramaları ve Git işlemlerinin otonom yürütülmesinde kullanıldı.
-- **`write_to_file` & `replace_file_content`**: Arayüz kodlarının (`index.tsx`, `ideas.tsx`, `[id].tsx`, `agent.tsx`, `_layout.tsx`) ve ödev belgelerinin (`FORGE.md`, `IDEA.md`, `README.md`) hatasız yazılmasında kullanıldı.
-- **`generate_image`**: Denetim raporlarına gömülecek premium mobil ekran görüntülerinin otonom olarak tasarlanması için kullanıldı.
-- **`list_dir` & `view_file`**: Eski teslimat yapısının ve `@xtatistix/mobile-audit` kütüphanesinin deşifre edilmesinde kullanıldı.
+## 🛠️ Dosya Yapısı (Üretilen Dosyalar)
+1. `submissions/231118056-sibel-yeter/avatar.glb` - Kişisel avatar modeli
+2. `submissions/231118056-sibel-yeter/FORGE.md` - Otonom Forge ledger tablosu
+3. `submissions/231118056-sibel-yeter/PERSONAS.md` - Persona parametre dokümantasyonu
+4. `submissions/231118056-sibel-yeter/BRIDGE.md` - Uzman kararları logu
+5. `submissions/231118056-sibel-yeter/app/services/ForgeHeuristicsService.ts` - STUCK tespit servisi

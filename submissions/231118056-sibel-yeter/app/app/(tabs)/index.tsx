@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity, useColorScheme, Dimensions } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity, useColorScheme, Dimensions, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
@@ -8,11 +8,56 @@ const { width } = Dimensions.get('window');
 export default function WelcomeScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
-
   const router = useRouter();
 
   const handleStart = () => {
     router.push('/ideas');
+  };
+
+  // Demo Scenarios Automation navigators
+  const runDemoPhaseA = () => {
+    Alert.alert(
+      'Demo Phase A',
+      'Voice Visualizer test edilecek. Avatar ekranına yönlendiriliyorsunuz. Lütfen mikrofon butonuna basarak sesinizi dikte edin veya simüle edin.',
+      [
+        {
+          text: 'Başlat',
+          onPress: () => {
+            router.push('/avatar');
+          },
+        },
+      ]
+    );
+  };
+
+  const runDemoPhaseB = () => {
+    Alert.alert(
+      'Demo Phase B',
+      'Avatar Lipsync & Persona test edilecek. Avatar ekranına yönlendiriliyorsunuz. Junior/Senior butonlarına basarak farklı ışık, ses hızı ve viseme lipsync animasyonunu inceleyin.',
+      [
+        {
+          text: 'Başlat',
+          onPress: () => {
+            router.push('/avatar');
+          },
+        },
+      ]
+    );
+  };
+
+  const runDemoPhaseC = () => {
+    Alert.alert(
+      'Demo Phase C',
+      'STUCK ve Uzman Köprüsü (WebRTC) test edilecek. Forge Agent ekranına yönlendiriliyorsunuz. Lütfen "Forge Döngüsünü Koştur" butonunu 2 kez üst üste ROLLBACK veya FAIL olarak çalıştırın. STUCK durumu tetiklenecek ve "Uzmana Bağlan" butonu çıkacaktır.',
+      [
+        {
+          text: 'Başlat',
+          onPress: () => {
+            router.push('/agent');
+          },
+        },
+      ]
+    );
   };
 
   return (
@@ -31,6 +76,34 @@ export default function WelcomeScreen() {
         <Text style={[styles.subtitle, { color: isDark ? '#94a3b8' : '#64748b' }]}>
           İki Repo, İki Rol, Bir Kapalı Döngü: Müşteri Yakalar, Agent Onarır, Sen Review Edersin.
         </Text>
+      </View>
+
+      {/* Demo Hub Controls Dashboard */}
+      <View style={[styles.demoSection, { backgroundColor: isDark ? '#1e1b29' : '#faf5ff', borderColor: isDark ? '#4c1d95' : '#e9d5ff' }]}>
+        <View style={styles.demoHeader}>
+          <Ionicons name="play-circle" size={20} color="#8b5cf6" />
+          <Text style={[styles.demoTitle, { color: isDark ? '#d8b4fe' : '#6b21a8' }]}>Tek Videoluk Demo Kontrol Hub</Text>
+        </View>
+        <Text style={[styles.demoDesc, { color: isDark ? '#c084fc' : '#7c3aed' }]}>
+          Aşağıdaki fazları sırasıyla tıklayarak tüm ödev senaryolarını tek videoda kolayca kaydedebilirsiniz:
+        </Text>
+
+        <View style={styles.demoBtnGrid}>
+          <TouchableOpacity style={[styles.demoBtn, { backgroundColor: '#3b82f6' }]} onPress={runDemoPhaseA}>
+            <Ionicons name="mic" size={16} color="#fff" />
+            <Text style={styles.demoBtnText}>Phase A: Voice Viz</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[styles.demoBtn, { backgroundColor: '#a855f7' }]} onPress={runDemoPhaseB}>
+            <Ionicons name="body" size={16} color="#fff" />
+            <Text style={styles.demoBtnText}>Phase B: Lipsync</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[styles.demoBtn, { backgroundColor: '#ef4444' }]} onPress={runDemoPhaseC}>
+            <Ionicons name="warning" size={16} color="#fff" />
+            <Text style={styles.demoBtnText}>Phase C: Stuck Jitsi</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Steps List */}
@@ -110,7 +183,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 10,
     elevation: 2,
-    marginBottom: 20,
+    marginBottom: 16,
   },
   logoContainer: {
     position: 'relative',
@@ -141,6 +214,45 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 22,
     paddingHorizontal: 10,
+  },
+  demoSection: {
+    margin: 16,
+    padding: 16,
+    borderRadius: 20,
+    borderWidth: 1,
+    gap: 8,
+  },
+  demoHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  demoTitle: {
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
+  demoDesc: {
+    fontSize: 11,
+    lineHeight: 16,
+  },
+  demoBtnGrid: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 6,
+  },
+  demoBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    borderRadius: 10,
+    gap: 6,
+  },
+  demoBtnText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: 'bold',
   },
   section: {
     paddingHorizontal: 20,

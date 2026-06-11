@@ -59,6 +59,27 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="avatar"
+        options={{
+          title: 'Avatar',
+          headerTitle: 'Nokta Lipsync Avatar',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? 'body' : 'body-outline'} size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="bridge"
+        options={{
+          title: 'Uzman',
+          headerTitle: 'Expert Bridge — WebRTC',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? 'videocam' : 'videocam-outline'} size={24} color={color} />
+          ),
+          tabBarBadge: undefined,
+        }}
+      />
     </Tabs>
   );
 }

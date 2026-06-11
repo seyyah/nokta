@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>GLB Morph Target Inspector</title>
+  <style>
+    body { margin:0; background:#0f172a; color:#e2e8f0; font-family:monospace; padding:20px; }
+    canvas { display:block; width:100%; height:400px; }
+    #info { margin-top:10px; }
+    .morph-row { display:flex; align-items:center; gap:10px; margin:4px 0; }
+    .morph-row input[type=range] { flex:1; }
+    .morph-row label { width:220px; font-size:12px; }
+    .morph-row span { width:40px; font-size:12px; text-align:right; }
+    h3 { color:#a855f7; margin-top:20px; }
+    button { background:#6366f1; color:#fff; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; margin:4px; }
+    button:hover { background:#4f46e5; }
+    #jaw-test { background:#ec4899; }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+  <h2>🔍 GLB Morph Target Inspector</h2>
+  <p>Loads <code>avatar.glb</code> from same folder and lists all morph targets.</p>
+  <canvas id="c"></canvas>
+  <div>
+    <button onclick="testAllMorphs()">🎭 Test ALL Morphs (Animate All)</button>
+    <button id="jaw-test" onclick="testJaw()">👄 Force Jaw Open</button>
+    <button onclick="stopTest()">⏹ Stop Test</button>
+  </div>
+  <div id="info">Loading model...</div>
+  <div id="sliders"></div>
+
+  <script>
+    const canvas = document.getElementById('c');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias:true });
+    renderer.setPixelRatio(devicePixelRatio);
+    renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x1e293b);
+
+    const camera = new THREE.PerspectiveCamera(45, canvas.clientWidth/canvas.clientHeight, 0.01, 100);
+    camera.position.set(0, 1.6, 0.8);
+
+    const hemi = new THREE.HemisphereLight(0xffffff, 0x444444, 1.2);
+    scene.add(hemi);
+    const dir = new THREE.DirectionalLight(0xffffff, 1.5);
+    dir.position.set(3, 8, 5);
+    scene.add(dir);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.target.set(0, 1.5, 0);
+    controls.update();
+
+    let headMesh = null;
+    let allMeshesWithMorphs = [];
+    let animInterval = null;
+
+    const loader = new THREE.GLTFLoader();
+    loader.load('avatar.glb', function(gltf) {
+      const model = gltf.scene;
+      model.rotation.y = Math.PI;
+      scene.add(model);
+
+      // Auto-frame
+      const box = new THREE.Box3().setFromObject(model);
+      const size = box.getSize(new THREE.Vector3());
+      const center = box.getCenter(new THREE.Vector3());
+      camera.position.set(center.x, box.max.y - size.y * 0.1, center.z + 0.6);
+      controls.target.set(center.x, box.max.y - size.y * 0.1, center.z);
+      controls.update();
+
+      model.traverse(function(child) {
+        if (child.isMesh && child.morphTargetDictionary) {
+          allMeshesWithMorphs.push(child);
+          if (!headMesh || Object.keys(child.morphTargetDictionary).length > Object.keys(headMesh.morphTargetDictionary).length) {
+            headMesh = child;
+          }
+        }
+      });
+
+      let infoHtml = `<h3>Found ${allMeshesWithMorphs.length} mesh(es) with morphs</h3>`;
+      let slidersHtml = '';
+
+      allMeshesWithMorphs.forEach(mesh => {
+        const keys = Object.keys(mesh.morphTargetDictionary);
+        infoHtml += `<div><strong>${mesh.name}</strong>: ${keys.length} morphs</div>`;
+        infoHtml += `<div style="color:#94a3b8;font-size:11px;word-break:break-all">${keys.join(', ')}</div>`;
+
+        slidersHtml += `<h3>${mesh.name}</h3>`;
+        keys.forEach(key => {
+          const idx = mesh.morphTargetDictionary[key];
+          const safeId = 'morph_' + mesh.name.replace(/[^a-zA-Z0-9]/g,'_') + '_' + key.replace(/[^a-zA-Z0-9]/g,'_');
+          slidersHtml += `
+            <div class="morph-row">
+              <label>${key}</label>
+              <input type="range" id="${safeId}" min="0" max="1" step="0.01" value="0"
+                oninput="setMorph('${mesh.name}', '${key}', this.value); document.getElementById('${safeId}_val').textContent = (+this.value).toFixed(2)">
+              <span id="${safeId}_val">0.00</span>
+            </div>`;
+        });
+      });
+
+      document.getElementById('info').innerHTML = infoHtml;
+      document.getElementById('sliders').innerHTML = slidersHtml;
+    }, undefined, function(err) {
+      document.getElementById('info').innerHTML = '<span style="color:red">Error loading GLB: ' + err + '</span>';
+    });
+
+    function setMorph(meshName, morphKey, val) {
+      allMeshesWithMorphs.forEach(mesh => {
+        if (mesh.name === meshName && mesh.morphTargetDictionary[morphKey] !== undefined) {
+          mesh.morphTargetInfluences[mesh.morphTargetDictionary[morphKey]] = +val;
+        }
+      });
+    }
+
+    function testAllMorphs() {
+      stopTest();
+      let t = 0;
+      animInterval = setInterval(() => {
+        t += 0.05;
+        allMeshesWithMorphs.forEach(mesh => {
+          Object.values(mesh.morphTargetDictionary).forEach(idx => {
+            mesh.morphTargetInfluences[idx] = Math.abs(Math.sin(t)) * 0.8;
+          });
+        });
+      }, 30);
+    }
+
+    function testJaw() {
+      stopTest();
+      let t = 0;
+      animInterval = setInterval(() => {
+        t += 0.08;
+        const val = Math.abs(Math.sin(t)) * 0.9;
+        allMeshesWithMorphs.forEach(mesh => {
+          const d = mesh.morphTargetDictionary;
+          // Try every possible jaw/mouth key
+          ['jawOpen','mouthOpen','Mouth_Open','mouthOpen_','viseme_aa','viseme_O','viseme_E',
+           'mouth_open','jaw_open','jaw','mouth'].forEach(k => {
+            if (d[k] !== undefined) {
+              mesh.morphTargetInfluences[d[k]] = val;
+            }
+          });
+        });
+      }, 30);
+    }
+
+    function stopTest() {
+      if (animInterval) { clearInterval(animInterval); animInterval = null; }
+      allMeshesWithMorphs.forEach(mesh => {
+        if (mesh.morphTargetInfluences) {
+          mesh.morphTargetInfluences.fill(0);
+        }
+      });
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+  </script>
+</body>
+</html>
