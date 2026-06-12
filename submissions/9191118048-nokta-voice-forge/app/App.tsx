@@ -1,7 +1,5 @@
 /**
- * Nokta Voice Forge — Root Application Component
- * Premium dark-themed Expo Go app with voice visualization,
- * avatar lipsync, forge cycle tracking, and expert bridge.
+ * Voice Forge — Root Application Component
  */
 
 import React from 'react';
@@ -71,7 +69,7 @@ export default function App() {
             name="Voice"
             component={VoiceScreen}
             options={{
-              title: '🎙️ Voice Visualizer',
+              title: 'Voice Visualizer',
               headerBackTitle: 'Geri',
             }}
           />
@@ -79,7 +77,7 @@ export default function App() {
             name="Avatar"
             component={AvatarScreen}
             options={{
-              title: '🪞 Avatar Chat',
+              title: 'Avatar Chat',
               headerBackTitle: 'Geri',
             }}
           />
@@ -87,7 +85,7 @@ export default function App() {
             name="Forge"
             component={ForgeScreen}
             options={{
-              title: '🛠️ Forge Dashboard',
+              title: 'Forge Dashboard',
               headerBackTitle: 'Geri',
             }}
           />
@@ -95,7 +93,7 @@ export default function App() {
             name="Audit"
             component={AuditScreen}
             options={{
-              title: '📋 Audit Reports',
+              title: 'Audit Reports',
               headerBackTitle: 'Geri',
             }}
           />
@@ -103,7 +101,7 @@ export default function App() {
             name="ExpertCall"
             component={ExpertCallScreen}
             options={{
-              title: '📞 Uzmana Bağlan',
+              title: 'Expert Bridge',
               headerBackTitle: 'Geri',
               headerStyle: {
                 backgroundColor: colors.surface,
