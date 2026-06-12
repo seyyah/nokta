@@ -225,7 +225,7 @@ export default function AvatarScene({ speakingIntensity }: { speakingIntensity: 
     (async () => {
       try {
         // 1. Download bundled GLB via expo-asset
-        const asset = Asset.fromModule(require('../../assets/avatar.glb'));
+        const asset = Asset.fromModule(require('../../assets/avatar.mobile.glb'));
         await asset.downloadAsync();
         const rawUri = asset.localUri || asset.uri;
         if (!rawUri) throw new Error('Asset URI is null');
