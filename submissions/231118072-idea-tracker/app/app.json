@@ -1,0 +1,59 @@
+{
+  "expo": {
+    "name": "Idea Tracker",
+    "slug": "idea-tracker",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0F0F1A"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.zeynepyardimci.ideatracker",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Bu uygulama sesinizi kaydetmek ve görselleştirmek için mikrofonu kullanır.",
+        "NSCameraUsageDescription": "Bu uygulama uzmana görüntülü bağlanmak için kamerayı kullanır."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0F0F1A"
+      },
+      "package": "com.zeynepyardimci.ideatracker",
+      "permissions": [
+        "RECORD_AUDIO",
+        "CAMERA",
+        "MODIFY_AUDIO_SETTINGS"
+      ]
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "scheme": "idea-tracker",
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "cf3163b8-bab7-4d59-8988-8da0558c7268"
+      }
+    },
+    "owner": "zeynep4"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "consecutiveFailures": 0,
+  "history": [
+    { "cycle": 1, "status": "COMPLETED" },
+    { "cycle": 2, "status": "COMPLETED" }
+  ]
+}
