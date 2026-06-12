@@ -22,7 +22,8 @@ import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { Asset } from 'expo-asset';
-import { File as ExpoFile, Directory, Paths } from 'expo-file-system';
+import * as FileSystem from 'expo-file-system';
+import { Directory, Paths } from 'expo-file-system/next';
 
 // ── GLB constants ────────────────────────────────────────────────
 const GLB_MAGIC  = 0x46546C67; // 'glTF'
@@ -53,13 +54,38 @@ function b64ToBytes(b64: string): Uint8Array {
   return out;
 }
 
+function uint8ToBase64(u8Arr: Uint8Array): string {
+  const CHUNK_SIZE = 0x8000;
+  let c: string[] = [];
+  for (let i = 0; i < u8Arr.length; i += CHUNK_SIZE) {
+    c.push(String.fromCharCode.apply(null, u8Arr.subarray(i, i + CHUNK_SIZE) as any));
+  }
+  return btoa(c.join(''));
+}
+
 // ── GLB texture extraction ───────────────────────────────────────
-function extractGlbTextures(resolvedUri: string): string {
+async function extractGlbTextures(resolvedUri: string): Promise<string> {
   console.log('[AvatarScene] Inspecting GLB for embedded textures…');
 
-  const srcFile = new ExpoFile(resolvedUri);
-  const raw: Uint8Array = srcFile.bytes();
-  const view = new DataView(raw.buffer, raw.byteOffset, raw.byteLength);
+  let raw: Uint8Array;
+  try {
+    const res = await fetch(resolvedUri);
+    const ab = await res.arrayBuffer();
+    raw = new Uint8Array(ab);
+  } catch (err) {
+    console.warn('[AvatarScene] fetch arrayBuffer failed, trying FileSystem base64:', err);
+    try {
+      const b64 = await FileSystem.readAsStringAsync(resolvedUri, { encoding: FileSystem.EncodingType.Base64 });
+      raw = b64ToBytes(b64);
+    } catch (fsErr) {
+      console.warn('[AvatarScene] all read methods failed:', fsErr);
+      return resolvedUri; // Fallback to original
+    }
+  }
+
+  // Ensure buffer is an ArrayBuffer
+  const buffer = raw.buffer instanceof ArrayBuffer ? raw.buffer : new Uint8Array(raw).buffer;
+  const view = new DataView(buffer, raw.byteOffset, raw.byteLength);
 
   // ── verify magic ──
   if (raw.byteLength < 12 || view.getUint32(0, true) !== GLB_MAGIC) {
@@ -99,8 +125,11 @@ function extractGlbTextures(resolvedUri: string): string {
   }
 
   // ── create cache dir ──
-  const cacheDir = new Directory(Paths.cache, 'avatar-tex-cache');
-  cacheDir.create({ intermediates: true, idempotent: true });
+  const cacheDirUri = `${FileSystem.cacheDirectory}avatar-tex-cache/`;
+  const dirInfo = await FileSystem.getInfoAsync(cacheDirUri);
+  if (!dirInfo.exists) {
+    await FileSystem.makeDirectoryAsync(cacheDirUri, { intermediates: true });
+  }
 
   let count = 0;
   for (let i = 0; i < images.length; i++) {
@@ -113,13 +142,12 @@ function extractGlbTextures(resolvedUri: string): string {
         const ext  = m[1].toLowerCase().replace('jpeg', 'jpg');
         const name = `tex_${i}.${ext}`;
         try {
-          const bytes = b64ToBytes(m[2]);
-          new ExpoFile(cacheDir, name).write(bytes);
+          await FileSystem.writeAsStringAsync(`${FileSystem.cacheDirectory}avatar-tex-cache/${name}`, m[2], { encoding: FileSystem.EncodingType.Base64 });
           img.uri = name;
           count++;
-          console.log(`[AvatarScene] extracted data-URI → ${name}  (${bytes.length} B)`);
+          console.log(`[AvatarScene] extracted data-URI → ${name}`);
         } catch (e) {
-          console.warn(`[AvatarScene] base64 decode failed for image ${i}`, e);
+          console.warn(`[AvatarScene] base64 write failed for image ${i}`, e);
         }
       }
       continue;
@@ -135,7 +163,9 @@ function extractGlbTextures(resolvedUri: string): string {
         const mime = img.mimeType ?? 'image/png';
         const ext  = /jpe?g/i.test(mime) ? 'jpg' : 'png';
         const name = `tex_${i}.${ext}`;
-        new ExpoFile(cacheDir, name).write(slice);
+        try {
+          await FileSystem.writeAsStringAsync(`${FileSystem.cacheDirectory}avatar-tex-cache/${name}`, uint8ToBase64(slice as Uint8Array), { encoding: FileSystem.EncodingType.Base64 });
+        } catch (e) { console.warn('write error', e); }
         img.uri = name;
         delete img.bufferView;
         delete img.mimeType;
@@ -147,7 +177,7 @@ function extractGlbTextures(resolvedUri: string): string {
 
   // ── write BIN ──
   if (binBytes) {
-    new ExpoFile(cacheDir, 'avatar.bin').write(binBytes);
+    await FileSystem.writeAsStringAsync(`${FileSystem.cacheDirectory}avatar-tex-cache/avatar.bin`, uint8ToBase64(binBytes as Uint8Array), { encoding: FileSystem.EncodingType.Base64 });
     if (gltf.buffers?.[0]) {
       gltf.buffers[0].uri = 'avatar.bin';
       gltf.buffers[0].byteLength = binBytes.byteLength;
@@ -155,10 +185,9 @@ function extractGlbTextures(resolvedUri: string): string {
   }
 
   // ── write modified GLTF ──
-  const gltfFile = new ExpoFile(cacheDir, 'avatar.gltf');
-  gltfFile.write(JSON.stringify(gltf));
+  await FileSystem.writeAsStringAsync(`${FileSystem.cacheDirectory}avatar-tex-cache/avatar.gltf`, JSON.stringify(gltf));
   console.log(`[AvatarScene] ✅ Prepared mobile GLTF (${count} textures extracted)`);
-  return gltfFile.uri;
+  return `${FileSystem.cacheDirectory}avatar-tex-cache/avatar.gltf`;
 }
 
 // ── Material fixer ───────────────────────────────────────────────
@@ -322,7 +351,7 @@ export default function AvatarScene({ speakingIntensity }: { speakingIntensity: 
         if (!rawUri) throw new Error('Asset URI is null');
 
         // 2. Extract embedded textures → mobile-compatible GLTF
-        const preparedUri = extractGlbTextures(rawUri);
+        const preparedUri = await extractGlbTextures(rawUri);
         setModelUri(preparedUri);
       } catch (err) {
         console.warn('[AvatarScene] asset error:', err);

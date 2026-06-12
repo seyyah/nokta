@@ -5,7 +5,6 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
-    "newArchEnabled": false,
     "splash": {
       "backgroundColor": "#0A0A0F",
       "resizeMode": "contain"
