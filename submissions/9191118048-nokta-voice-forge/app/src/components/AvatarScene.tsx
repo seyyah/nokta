@@ -22,8 +22,6 @@ import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { Asset } from 'expo-asset';
-import * as FileSystem from 'expo-file-system';
-import { Directory, Paths } from 'expo-file-system/next';
 
 // ── GLB constants ────────────────────────────────────────────────
 const GLB_MAGIC  = 0x46546C67; // 'glTF'
@@ -46,148 +44,30 @@ interface MorphBinding {
   blinkIdx: number[];
 }
 
-// ── Helpers ──────────────────────────────────────────────────────
-function b64ToBytes(b64: string): Uint8Array {
-  const raw = atob(b64);
-  const out = new Uint8Array(raw.length);
-  for (let i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i);
-  return out;
-}
-
-function uint8ToBase64(u8Arr: Uint8Array): string {
-  const CHUNK_SIZE = 0x8000;
-  let c: string[] = [];
-  for (let i = 0; i < u8Arr.length; i += CHUNK_SIZE) {
-    c.push(String.fromCharCode.apply(null, u8Arr.subarray(i, i + CHUNK_SIZE) as any));
-  }
-  return btoa(c.join(''));
-}
-
-// ── GLB texture extraction ───────────────────────────────────────
-async function extractGlbTextures(resolvedUri: string): Promise<string> {
-  console.log('[AvatarScene] Inspecting GLB for embedded textures…');
-
-  let raw: Uint8Array;
+// ── GLB Inspection ───────────────────────────────────────────────
+// We only inspect the GLB to detect if it's valid or if it has base64.
+// If inspection fails, we just warn and proceed with the raw URI.
+async function inspectGlbSafe(resolvedUri: string): Promise<string> {
   try {
     const res = await fetch(resolvedUri);
-    const ab = await res.arrayBuffer();
-    raw = new Uint8Array(ab);
-  } catch (err) {
-    console.warn('[AvatarScene] fetch arrayBuffer failed, trying FileSystem base64:', err);
-    try {
-      const b64 = await FileSystem.readAsStringAsync(resolvedUri, { encoding: FileSystem.EncodingType.Base64 });
-      raw = b64ToBytes(b64);
-    } catch (fsErr) {
-      console.warn('[AvatarScene] all read methods failed:', fsErr);
-      return resolvedUri; // Fallback to original
-    }
-  }
-
-  // Ensure buffer is an ArrayBuffer
-  const buffer = raw.buffer instanceof ArrayBuffer ? raw.buffer : new Uint8Array(raw).buffer;
-  const view = new DataView(buffer, raw.byteOffset, raw.byteLength);
-
-  // ── verify magic ──
-  if (raw.byteLength < 12 || view.getUint32(0, true) !== GLB_MAGIC) {
-    console.log('[AvatarScene] Not a GLB — loading as-is');
-    return resolvedUri;
-  }
-
-  // ── parse chunks ──
-  let jsonBytes: Uint8Array | null = null;
-  let binBytes:  Uint8Array | null = null;
-  let off = 12;
-  while (off + 8 <= raw.byteLength) {
-    const len   = view.getUint32(off, true);
-    const type  = view.getUint32(off + 4, true);
-    const start = off + 8;
-    const end   = start + len;
-    if (end > raw.byteLength) break;
-    if (type === JSON_CHUNK) jsonBytes = raw.slice(start, end);
-    else if (type === BIN_CHUNK) binBytes = raw.slice(start, end);
-    off = end;
-  }
-  if (!jsonBytes) { console.warn('[AvatarScene] no JSON chunk'); return resolvedUri; }
-
-  // ── parse GLTF JSON ──
-  const jsonStr = new TextDecoder().decode(jsonBytes).replace(/\0+$/, '');
-  const gltf: any = JSON.parse(jsonStr);
-  const images: any[] = gltf.images ?? [];
-
-  const needsExtraction = images.some(
-    (img: any) =>
-      (typeof img.uri === 'string' && img.uri.startsWith('data:')) ||
-      img.bufferView !== undefined,
-  );
-  if (!needsExtraction) {
-    console.log('[AvatarScene] No embedded textures — loading original');
-    return resolvedUri;
-  }
-
-  // ── create cache dir ──
-  const cacheDirUri = `${FileSystem.cacheDirectory}avatar-tex-cache/`;
-  const dirInfo = await FileSystem.getInfoAsync(cacheDirUri);
-  if (!dirInfo.exists) {
-    await FileSystem.makeDirectoryAsync(cacheDirUri, { intermediates: true });
-  }
-
-  let count = 0;
-  for (let i = 0; i < images.length; i++) {
-    const img = images[i];
-
-    // — data URI ———————————————————————————
-    if (typeof img.uri === 'string' && img.uri.startsWith('data:image/')) {
-      const m = img.uri.match(/^data:image\/(png|jpe?g|webp);base64,(.+)$/i);
-      if (m) {
-        const ext  = m[1].toLowerCase().replace('jpeg', 'jpg');
-        const name = `tex_${i}.${ext}`;
-        try {
-          await FileSystem.writeAsStringAsync(`${FileSystem.cacheDirectory}avatar-tex-cache/${name}`, m[2], { encoding: FileSystem.EncodingType.Base64 });
-          img.uri = name;
-          count++;
-          console.log(`[AvatarScene] extracted data-URI → ${name}`);
-        } catch (e) {
-          console.warn(`[AvatarScene] base64 write failed for image ${i}`, e);
-        }
-      }
-      continue;
+    const buffer = await res.arrayBuffer();
+    
+    if (!(buffer instanceof ArrayBuffer)) {
+      throw new Error("GLB buffer is not ArrayBuffer");
     }
 
-    // — bufferView ————————————————————————————
-    if (img.bufferView !== undefined && binBytes) {
-      const bv = gltf.bufferViews?.[img.bufferView];
-      if (bv) {
-        const bOff = bv.byteOffset ?? 0;
-        const bLen = bv.byteLength;
-        const slice = binBytes.slice(bOff, bOff + bLen);
-        const mime = img.mimeType ?? 'image/png';
-        const ext  = /jpe?g/i.test(mime) ? 'jpg' : 'png';
-        const name = `tex_${i}.${ext}`;
-        try {
-          await FileSystem.writeAsStringAsync(`${FileSystem.cacheDirectory}avatar-tex-cache/${name}`, uint8ToBase64(slice as Uint8Array), { encoding: FileSystem.EncodingType.Base64 });
-        } catch (e) { console.warn('write error', e); }
-        img.uri = name;
-        delete img.bufferView;
-        delete img.mimeType;
-        count++;
-        console.log(`[AvatarScene] extracted bufferView → ${name}  (${slice.length} B)`);
-      }
+    const view = new DataView(buffer);
+    if (buffer.byteLength < 12 || view.getUint32(0, true) !== GLB_MAGIC) {
+      console.log('[AvatarScene] Not a GLB, or missing magic bytes.');
+      return resolvedUri;
     }
+    
+    console.log('[AvatarScene] GLB validation passed. Ready to render.');
+  } catch (error) {
+    console.warn('[AvatarScene] GLB inspection failed, continuing render:', error);
   }
-
-  // ── write BIN ──
-  if (binBytes) {
-    await FileSystem.writeAsStringAsync(`${FileSystem.cacheDirectory}avatar-tex-cache/avatar.bin`, uint8ToBase64(binBytes as Uint8Array), { encoding: FileSystem.EncodingType.Base64 });
-    if (gltf.buffers?.[0]) {
-      gltf.buffers[0].uri = 'avatar.bin';
-      gltf.buffers[0].byteLength = binBytes.byteLength;
-    }
-  }
-
-  // ── write modified GLTF ──
-  await FileSystem.writeAsStringAsync(`${FileSystem.cacheDirectory}avatar-tex-cache/avatar.gltf`, JSON.stringify(gltf));
-  console.log(`[AvatarScene] ✅ Prepared mobile GLTF (${count} textures extracted)`);
-  return `${FileSystem.cacheDirectory}avatar-tex-cache/avatar.gltf`;
+  
+  return resolvedUri;
 }
 
 // ── Material fixer ───────────────────────────────────────────────
@@ -350,11 +230,17 @@ export default function AvatarScene({ speakingIntensity }: { speakingIntensity: 
         const rawUri = asset.localUri || asset.uri;
         if (!rawUri) throw new Error('Asset URI is null');
 
-        // 2. Extract embedded textures → mobile-compatible GLTF
-        const preparedUri = await extractGlbTextures(rawUri);
+        // 2. Safely inspect (errors here won't block rendering)
+        let preparedUri = rawUri;
+        try {
+          preparedUri = await inspectGlbSafe(rawUri);
+        } catch (inspectError) {
+          console.warn('[AvatarScene] inspect wrapper caught error:', inspectError);
+        }
+
         setModelUri(preparedUri);
       } catch (err) {
-        console.warn('[AvatarScene] asset error:', err);
+        console.warn('[AvatarScene] asset download error:', err);
         setLoadError(true);
       }
     })();
