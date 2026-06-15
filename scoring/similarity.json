@@ -4,112 +4,112 @@
     {
       "original": "231118023-busenur",
       "copycat": "191118022-audit-forge",
-      "similarity": 0.8246,
+      "similarity": 0.8286,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "231118036-ali-nursin-karacan",
       "copycat": "191118022-audit-forge",
-      "similarity": 0.8069,
+      "similarity": 0.811,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "9211118091-mohammed-almashhor",
       "copycat": "191118022-audit-forge",
-      "similarity": 0.8151,
+      "similarity": 0.8242,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "9221118097-note-migrator",
       "copycat": "191118022-audit-forge",
-      "similarity": 0.8032,
+      "similarity": 0.8096,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "231118036-ali-nursin-karacan",
       "copycat": "231118009-audit-track-a-",
-      "similarity": 0.8042,
+      "similarity": 0.8055,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "231118011-faruk-emre-ok",
       "copycat": "231118040-audit-forge",
-      "similarity": 0.8241,
+      "similarity": 0.8264,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "231118036-ali-nursin-karacan",
       "copycat": "231118023-busenur",
-      "similarity": 0.8307,
+      "similarity": 0.8306,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "231118072-idea-tracker",
       "copycat": "231118023-busenur",
-      "similarity": 0.8175,
+      "similarity": 0.8245,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "9211118091-mohammed-almashhor",
       "copycat": "231118023-busenur",
-      "similarity": 0.8495,
+      "similarity": 0.8556,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "9221118097-note-migrator",
       "copycat": "231118023-busenur",
-      "similarity": 0.8179,
+      "similarity": 0.8209,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "231118072-idea-tracker",
       "copycat": "231118036-ali-nursin-karacan",
-      "similarity": 0.8273,
+      "similarity": 0.8349,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "9211118091-mohammed-almashhor",
       "copycat": "231118036-ali-nursin-karacan",
-      "similarity": 0.8336,
+      "similarity": 0.84,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "231118036-ali-nursin-karacan",
       "copycat": "9221118097-note-migrator",
-      "similarity": 0.8185,
+      "similarity": 0.8218,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "231118072-idea-tracker",
       "copycat": "9211118091-mohammed-almashhor",
-      "similarity": 0.8553,
+      "similarity": 0.8687,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "231118072-idea-tracker",
       "copycat": "9221118097-note-migrator",
-      "similarity": 0.8146,
+      "similarity": 0.8245,
       "penalty_percent": 35.0,
       "note": "different students"
     },
     {
       "original": "9211118091-mohammed-almashhor",
       "copycat": "9221118097-note-migrator",
-      "similarity": 0.8661,
+      "similarity": 0.8732,
       "penalty_percent": 35.0,
       "note": "different students"
     }
@@ -119,6 +119,11 @@
       "similarity_points": 20,
       "penalty_applied": true,
       "penalty_percent": 35
+    },
+    "201118062-mergen-wolfscatt-audit": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
     },
     "2026-05-05-hoop": {
       "similarity_points": 20,
@@ -240,6 +245,11 @@
       "penalty_applied": true,
       "penalty_percent": 35
     },
+    "231118040-nokta-final": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
     "231118044-slopdetec-audit": {
       "similarity_points": 20,
       "penalty_applied": false,
@@ -271,6 +281,11 @@
       "penalty_percent": 0
     },
     "231118057-nokta-cleaner": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118057-nokta-cleaner-final": {
       "similarity_points": 20,
       "penalty_applied": false,
       "penalty_percent": 0
