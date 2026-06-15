@@ -1,0 +1,329 @@
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import {
+  Animated,
+  Easing,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import * as Speech from "expo-speech";
+import type { Screen } from "../../App";
+import { AuditWidget } from "../audit/AuditWidget";
+
+type Props = {
+  navigate: (screen: Screen) => void;
+  onReport: (markdown: string) => void;
+  onExpertCall: () => void;
+};
+
+function randBetween(min: number, max: number) {
+  return min + Math.random() * (max - min);
+}
+
+export function AvatarScreen({ navigate, onReport, onExpertCall }: Props) {
+  const [text, setText] = useState("Merhaba! Ben ForgeApp avatarıyım.");
+  const [speaking, setSpeaking] = useState(false);
+
+  const bob = useRef(new Animated.Value(0)).current;
+  const leftBlink = useRef(new Animated.Value(1)).current;
+  const rightBlink = useRef(new Animated.Value(1)).current;
+  const mouthH = useRef(new Animated.Value(2)).current;
+  const mouthUpRef = useRef(false);
+  const mouthIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const faceShadow = useMemo(
+    () => ({
+      shadowColor: "#7b8cde",
+      shadowOpacity: 0.35,
+      shadowRadius: 14,
+      shadowOffset: { width: 0, height: 8 },
+      elevation: 10,
+    }),
+    []
+  );
+
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(bob, {
+          toValue: 1,
+          duration: 1200,
+          easing: Easing.inOut(Easing.quad),
+          useNativeDriver: false,
+        }),
+        Animated.timing(bob, {
+          toValue: 0,
+          duration: 1200,
+          easing: Easing.inOut(Easing.quad),
+          useNativeDriver: false,
+        }),
+      ])
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [bob]);
+
+  useEffect(() => {
+    let mounted = true;
+    let timeout: ReturnType<typeof setTimeout> | null = null;
+
+    const schedule = () => {
+      const wait = randBetween(2000, 4000);
+      timeout = setTimeout(() => {
+        if (!mounted) return;
+        Animated.sequence([
+          Animated.timing(leftBlink, {
+            toValue: 0.1,
+            duration: 80,
+            useNativeDriver: false,
+          }),
+          Animated.timing(leftBlink, {
+            toValue: 1,
+            duration: 120,
+            useNativeDriver: false,
+          }),
+        ]).start();
+        Animated.sequence([
+          Animated.timing(rightBlink, {
+            toValue: 0.1,
+            duration: 90,
+            useNativeDriver: false,
+          }),
+          Animated.timing(rightBlink, {
+            toValue: 1,
+            duration: 130,
+            useNativeDriver: false,
+          }),
+        ]).start();
+        schedule();
+      }, wait);
+    };
+
+    schedule();
+    return () => {
+      mounted = false;
+      if (timeout) clearTimeout(timeout);
+    };
+  }, [leftBlink, rightBlink]);
+
+  useEffect(() => {
+    return () => {
+      if (mouthIntervalRef.current) clearInterval(mouthIntervalRef.current);
+      mouthIntervalRef.current = null;
+    };
+  }, [mouthH]);
+
+  const startMouth = () => {
+    if (mouthIntervalRef.current) return;
+    mouthIntervalRef.current = setInterval(() => {
+      mouthUpRef.current = !mouthUpRef.current;
+      Animated.timing(mouthH, {
+        toValue: mouthUpRef.current ? 14 : 2,
+        duration: 140,
+        easing: Easing.inOut(Easing.quad),
+        useNativeDriver: false,
+      }).start();
+    }, 160);
+  };
+
+  const stopMouth = () => {
+    if (mouthIntervalRef.current) clearInterval(mouthIntervalRef.current);
+    mouthIntervalRef.current = null;
+    mouthUpRef.current = false;
+    Animated.timing(mouthH, {
+      toValue: 2,
+      duration: 140,
+      easing: Easing.inOut(Easing.quad),
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const speak = () => {
+    if (!text.trim()) return;
+    Speech.stop();
+    setSpeaking(true);
+    startMouth();
+    Speech.speak(text.trim(), {
+      language: "tr-TR",
+      pitch: 1.1,
+      rate: 0.85,
+      onDone: () => {
+        setSpeaking(false);
+        stopMouth();
+      },
+      onStopped: () => {
+        setSpeaking(false);
+        stopMouth();
+      },
+      onError: () => {
+        setSpeaking(false);
+        stopMouth();
+      },
+    });
+  };
+
+  const stop = () => {
+    Speech.stop();
+    setSpeaking(false);
+    stopMouth();
+  };
+
+  const translateY = bob.interpolate({ inputRange: [0, 1], outputRange: [-4, 4] });
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.headerRow}>
+        <Pressable onPress={() => navigate("Home")} style={styles.backBtn}>
+          <Text style={styles.backText}>← Ana Sayfa</Text>
+        </Pressable>
+        <Pressable onPress={onExpertCall} style={styles.headerBtn}>
+          <Text style={styles.headerBtnText}>Uzman Görüşmesi</Text>
+        </Pressable>
+      </View>
+
+      <Text style={styles.title}>Avatar</Text>
+
+      <View style={styles.center}>
+        <Animated.View
+          style={[
+            styles.face,
+            faceShadow,
+            {
+              transform: [{ translateY }],
+            },
+          ]}
+        >
+          <View style={styles.eyesRow}>
+            <Animated.View
+              style={[
+                styles.eye,
+                { transform: [{ scaleY: leftBlink }] },
+              ]}
+            />
+            <Animated.View
+              style={[
+                styles.eye,
+                { transform: [{ scaleY: rightBlink }] },
+              ]}
+            />
+          </View>
+          <View style={styles.nose} />
+          <Animated.View style={[styles.mouth, { height: mouthH }]} />
+        </Animated.View>
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Metni seslendir (tr-TR)</Text>
+        <TextInput
+          value={text}
+          onChangeText={setText}
+          placeholder="Bir şey yaz…"
+          placeholderTextColor="#6f6f86"
+          multiline
+          style={styles.input}
+        />
+        <View style={styles.btnRow}>
+          <Pressable
+            onPress={speaking ? stop : speak}
+            style={[styles.btn, speaking ? styles.stopBtn : styles.speakBtn]}
+          >
+            <Text style={styles.btnText}>{speaking ? "Durdur" : "Konuştur"}</Text>
+          </Pressable>
+        </View>
+        <Text style={styles.hint}>
+          Ağız aralığı: 160ms · Kafa bob: Easing.inOut döngü · Göz kırpma: 2–4 sn
+        </Text>
+      </View>
+
+      <AuditWidget screenName="Avatar" onReport={(md) => onReport(md)} />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: "#0a0a14", padding: 18 },
+  headerRow: { flexDirection: "row", justifyContent: "space-between" },
+  backBtn: {
+    backgroundColor: "#121226",
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 14,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: "#242443",
+  },
+  backText: { color: "#e8e8ff", fontWeight: "800" },
+  headerBtn: {
+    backgroundColor: "#1a1a2e",
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 14,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: "#2a2a45",
+  },
+  headerBtnText: { color: "#9aa0ff", fontWeight: "900" },
+  title: { marginTop: 14, color: "#f2f2ff", fontSize: 26, fontWeight: "900" },
+  center: { alignItems: "center", marginTop: 20 },
+  face: {
+    width: 200,
+    height: 240,
+    borderRadius: 120,
+    backgroundColor: "#f4c2a1",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    paddingTop: 52,
+  },
+  eyesRow: { flexDirection: "row", gap: 44, alignItems: "center" },
+  eye: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "#11111f",
+  },
+  nose: {
+    marginTop: 18,
+    width: 8,
+    height: 10,
+    borderRadius: 4,
+    backgroundColor: "#c9956b",
+  },
+  mouth: {
+    marginTop: 26,
+    width: 60,
+    borderRadius: 10,
+    backgroundColor: "#b14b4b",
+  },
+  card: {
+    marginTop: 20,
+    backgroundColor: "#0f0f1f",
+    borderRadius: 18,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: "#242443",
+    padding: 14,
+  },
+  cardTitle: { color: "#f2f2ff", fontWeight: "900" },
+  input: {
+    marginTop: 10,
+    minHeight: 90,
+    borderRadius: 14,
+    backgroundColor: "#121226",
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: "#242443",
+    padding: 12,
+    color: "#f2f2ff",
+    textAlignVertical: "top",
+  },
+  btnRow: { flexDirection: "row", marginTop: 12 },
+  btn: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 16,
+    alignItems: "center",
+  },
+  speakBtn: { backgroundColor: "#2a6df5" },
+  stopBtn: { backgroundColor: "#d64545" },
+  btnText: { color: "#fff", fontWeight: "900", fontSize: 16 },
+  hint: { marginTop: 10, color: "#8a90c8", fontWeight: "700" },
+});
+
