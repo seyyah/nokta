@@ -10,6 +10,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **14 merged submissions** under `submissions/`:
+  - `201118062-mergen-wolfscatt-audit` by @wolfscatt (PR #300)
+  - `211118068-audit-forge` by @mrkarahann (PR #297)
+  - `231118040-nokta-final` by @mehmetalisahingm (PR #308)
+  - `231118044-slopdetec-audit` by @Yilmazurun (PR #295)
+  - `231118046-nokta-spec-builder` by @Ravza-nurr (PR #309)
+  - `231118055-mustafaemirkincal` by @memirkincal (PR #311)
+  - `231118057-nokta-cleaner-final` by @eraycubukcu (PR #303)
+  - `231118060-audit-forge` by @aliordek1 (PR #320)
+  - `231118062-spec-agent` by @Utkuuzun14 (PR #302)
+  - `231118066-forge-app` by @Alpereneri12 (PR #315)
+  - `231118070-audit-forge` by @mrtynk (PR #304)
+  - `231118072-idea-tracker` by @zeynepyardimci (PR #325)
+  - `241478074-safiyeozkan` by @sayko89 (PR #316)
+  - `9191118048-nokta-voice-forge` by @19e9 (PR #313)
 - Implementation CI workflow (Path C) — to be completed in Phase 0
 
 ---

@@ -18,6 +18,7 @@ show "—" in the PR / Author columns.
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 from collections import defaultdict
 from datetime import datetime, timezone
@@ -40,24 +41,64 @@ def pr_map_from_gh() -> dict[str, dict]:
         result = subprocess.run(
             [
                 "gh", "pr", "list", "--state", "merged", "--limit", "500",
-                "--json", "number,author,files,mergedAt",
+                "--json", "number,author,mergedAt",
             ],
             capture_output=True, text=True, check=True,
         )
         prs = json.loads(result.stdout)
     except (subprocess.CalledProcessError, FileNotFoundError, json.JSONDecodeError) as e:
-        print(f"WARN: gh pr list failed — author/PR columns will be empty: {e}")
-        return {}
+        print(f"WARN: gh pr list failed: {e}")
+        prs = []
 
-    mapping: dict[str, dict] = {}
-    prs.sort(key=lambda p: p.get("mergedAt") or "")
+    # Map PR number -> author username
+    pr_to_author = {}
     for pr in prs:
         author = (pr.get("author") or {}).get("login", "")
-        number = pr["number"]
-        for f in pr.get("files", []):
-            parts = f.get("path", "").split("/")
-            if len(parts) >= 2 and parts[0] == "submissions":
-                mapping[parts[1]] = {"pr": number, "author": author}
+        pr_to_author[pr["number"]] = author
+
+    mapping: dict[str, dict] = {}
+    
+    # Iterate through all folders in submissions/ and find their PR info using git log
+    submissions_dir = Path("submissions")
+    if submissions_dir.exists():
+        for sub_dir in sorted(submissions_dir.iterdir()):
+            if not sub_dir.is_dir():
+                continue
+            folder_name = sub_dir.name
+            
+            try:
+                # Find the commit message and author of the latest change to this folder
+                res = subprocess.run(
+                    ["git", "log", "-n", "1", "--format=%s|%an", "--", str(sub_dir)],
+                    capture_output=True, text=True, check=True
+                )
+                output = res.stdout.strip()
+                if output:
+                    subject, git_author = output.split("|", 1)
+                    # Extract PR number like (#302) from the end of the subject
+                    match = re.search(r"\(#(\d+)\)\s*$", subject)
+                    if match:
+                        pr_num = int(match.group(1))
+                        # Look up author from gh pr list mapping
+                        author = pr_to_author.get(pr_num)
+                        if not author:
+                            # Fallback: query PR details specifically
+                            try:
+                                pr_details_res = subprocess.run(
+                                    ["gh", "pr", "view", str(pr_num), "--json", "author"],
+                                    capture_output=True, text=True, check=True
+                                )
+                                pr_details = json.loads(pr_details_res.stdout)
+                                author = (pr_details.get("author") or {}).get("login", "")
+                            except Exception:
+                                author = git_author
+                        mapping[folder_name] = {"pr": pr_num, "author": author}
+                    else:
+                        # Direct commit or no PR number found in message, use git author as author
+                        mapping[folder_name] = {"pr": None, "author": git_author}
+            except Exception as e:
+                print(f"Error mapping {folder_name}: {e}")
+                
     return mapping
 
 
