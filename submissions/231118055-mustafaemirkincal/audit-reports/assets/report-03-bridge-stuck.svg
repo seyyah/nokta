@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+  <rect width="1200" height="900" fill="#07111d"/>
+  <rect x="80" y="90" width="1040" height="720" rx="36" fill="#0f172a" stroke="#fb7185" stroke-opacity="0.22"/>
+  <rect x="140" y="160" width="260" height="430" rx="28" fill="#111827" stroke="#94a3b8" stroke-opacity="0.18"/>
+  <rect x="450" y="160" width="620" height="190" rx="28" fill="#0b1220" stroke="#fb7185" stroke-opacity="0.35" stroke-width="4"/>
+  <rect x="450" y="380" width="620" height="210" rx="28" fill="#0b1220" stroke="#67e8f9" stroke-opacity="0.3" stroke-width="4"/>
+  <text x="170" y="250" fill="#f8fafc" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">Cycle 4</text>
+  <text x="170" y="300" fill="#fb7185" font-family="Arial, Helvetica, sans-serif" font-size="20">ROLLBACK</text>
+  <text x="170" y="350" fill="#fb7185" font-family="Arial, Helvetica, sans-serif" font-size="20">Cycle 5</text>
+  <text x="170" y="400" fill="#fb7185" font-family="Arial, Helvetica, sans-serif" font-size="20">ROLLBACK</text>
+  <text x="490" y="255" fill="#f8fafc" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700">Two failures trigger human bridge</text>
+  <text x="490" y="310" fill="#cbd5e1" font-family="Arial, Helvetica, sans-serif" font-size="20">Jitsi room opens with summary + transcript</text>
+  <text x="490" y="455" fill="#67e8f9" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">Bridge context flows into BRIDGE.md</text>
+</svg>

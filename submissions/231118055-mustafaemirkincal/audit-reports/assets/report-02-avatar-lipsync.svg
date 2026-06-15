@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+  <rect width="1200" height="900" fill="#07111d"/>
+  <rect x="90" y="80" width="1020" height="740" rx="36" fill="#0f172a" stroke="#a78bfa" stroke-opacity="0.22"/>
+  <circle cx="600" cy="410" r="180" fill="#1f2937" stroke="#67e8f9" stroke-opacity="0.3" stroke-width="6"/>
+  <circle cx="540" cy="380" r="16" fill="#050a14"/>
+  <circle cx="660" cy="380" r="16" fill="#050a14"/>
+  <rect x="535" y="455" width="130" height="26" rx="13" fill="#c4b5fd"/>
+  <rect x="495" y="255" width="210" height="84" rx="36" fill="#111827" stroke="#94a3b8" stroke-opacity="0.18"/>
+  <text x="120" y="150" fill="#f8fafc" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">Avatar Lipsync</text>
+  <text x="120" y="190" fill="#94a3b8" font-family="Arial, Helvetica, sans-serif" font-size="18">Mouth reacts to voice amplitude</text>
+</svg>
