@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="844" viewBox="0 0 390 844">
+  <rect width="390" height="844" fill="#0a0a0a"/>
+  <text x="24" y="74" fill="#7cf7c4" font-family="Arial" font-size="13" font-weight="800">PHASE C</text>
+  <text x="24" y="112" fill="#fff" font-family="Arial" font-size="34" font-weight="900">Expert Bridge</text>
+  <rect x="22" y="162" width="346" height="210" rx="12" fill="#241116" stroke="#ef4444"/>
+  <text x="64" y="220" fill="#fff" font-family="Arial" font-size="25" font-weight="900">STUCK tespit edildi</text>
+  <text x="134" y="252" fill="#cbd5e1" font-family="Arial" font-size="14" font-weight="800">2/2 bloklayici cycle</text>
+  <rect x="100" y="292" width="190" height="50" rx="8" fill="#22c55e"/>
+  <text x="142" y="323" fill="#06111d" font-family="Arial" font-size="15" font-weight="900">Uzmana Baglan</text>
+  <rect x="97" y="289" width="196" height="56" rx="10" fill="none" stroke="#f6e05e" stroke-width="6"/>
+  <rect x="22" y="414" width="346" height="126" rx="12" fill="#121a27" stroke="#2c3a4f"/>
+  <text x="42" y="454" fill="#fff" font-family="Arial" font-size="18" font-weight="900">Oda</text>
+  <text x="42" y="486" fill="#93c5fd" font-family="Arial" font-size="14">https://meet.jit.si/nokta-231118044-slopdetec-bridge</text>
+  <rect x="22" y="574" width="346" height="126" rx="12" fill="#121a27" stroke="#2c3a4f"/>
+  <text x="42" y="616" fill="#7cf7c4" font-family="Arial" font-size="13" font-weight="900">ROLLBACK</text>
+  <text x="130" y="616" fill="#cbd5e1" font-family="Arial" font-size="13">GLB-only lipsync hipotezi</text>
+  <text x="42" y="654" fill="#7cf7c4" font-family="Arial" font-size="13" font-weight="900">FAIL</text>
+  <text x="130" y="654" fill="#cbd5e1" font-family="Arial" font-size="13">STT mobil fallback sorunu</text>
+</svg>
