@@ -14,6 +14,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.0-challenge] - 2026-05-21
+
+Second community-driven submission round for **Challenge 2: Audit-Forge Mission** (Tracks A–D). Repo continued the "student challenge" workflow established in 0.2.0; this entry captures the Ch2 grading round, supporting CI/scoring fixes, and the close-out of stale Ch1 carry-over PRs.
+
+### Added
+- **29 merged Ch2 submissions** under `submissions/<id>-<slug>/`. Highest auto-score: 88/110 (14 submissions tied — Engineering Trace rubric is stricter for Ch2 so 100/103 ceiling not yet reached). See `LEADERBOARD.md` → "Challenge 2: Audit-Forge Mission".
+- **`scoring/scores_ch1.json`** — frozen Ch1 results snapshot. Future scoring runs preserve Ch1 entries verbatim and only re-score Ch2 (`.github/scripts/score.py` reads this file when present).
+- **Same-student similarity exemption** in `.github/scripts/similarity_check.py` — submissions sharing the same `\d{6,}-` student-id prefix no longer flag each other as copycats (a student authoring multiple tracks should not penalise themselves).
+
+### Changed
+- **`.github/scripts/score.py`** — Ch2-aware scoring: detects Ch2 submissions, enforces `FORGE.md` presence (Engineering Trace → 0 if missing) and `audit-reports/` minimum of 3 `.md` files (−10 from Çalışır Teslim if not met). Ch1 entries continue to use the original rubric, sourced from frozen snapshot.
+- **`.github/workflows/score.yml`** — runs on all `submissions/**` pushes with `[skip ci]` tag on the auto-commit to prevent recursive triggering.
+
+### Closed (without merge)
+- **40 Ch2 PRs closed** across two maintainer sessions:
+  - 22 in first sweep (validate-pr.yml gate failures: folder format, non-`submissions/` files, merge conflicts, exact duplicates of already-merged folders).
+  - 6 two-level path / Turkish-character folder names (`submissions/2026-05-05-hoop/<id>-<slug>/`, `submissions/231118042-KevserTavlı/`, etc.).
+  - 8 stale-base + same-student duplicate (validate failed on `Check only submissions/ touched` step, or folder duplicated a folder merged earlier in the same round).
+  - 4 stale-base after first-time-contributor CI approval surfaced the underlying validate failure.
+- Each closed PR received a templated Turkish comment naming the specific failure (stale base, two-level path, folder format, exact duplicate, no submission) and the fix recipe (rebase / rename / fresh-branch instructions).
+
+### Notes
+- First-time contributor CI runs (`action_required` state) were approved in batch for the final 15 candidate PRs after triage; 11 then passed validate and were merged, 4 surfaced as stale-base and were closed.
+- `scoring/scores.json` total submissions: 100 (71 Ch1 + 29 Ch2). Anti-slop similarity report unchanged from Ch1 round (same 17 copycat pairs ≥ 0.80; no new flags in Ch2 entries).
+- Manual "Çılgınlık +10" demo-day bonus still pending application; LEADERBOARD shows auto-score only.
+
+---
+
 ## [0.2.0-challenge] - 2026-05-13
 
 Round of community-driven submission grading. Repo briefly pivoted to a
