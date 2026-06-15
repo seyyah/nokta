@@ -1,70 +1,125 @@
-# Audit Forge Companion App
+Track: A
 
-**Student:** Eslen Gül Akbulut  
-**Student ID:** 231118028  
-**Challenge:** Audit Forge Challenge (Phase A Submission)
+# Nokta Forge Mobile Application
 
----
-
-## 1. Project Overview
-This project is an Expo + TypeScript React Native mobile application designed to act as a test-bed for the `nokta-audit` widget. The app consists of a premium developer statistics dashboard with 3 screens (Home, Profile, Settings) and intentional UI/UX bugs introduced to test on-device audit logging, annotations, and reporting capabilities.
+**Öğrenci:** Eslen Gül Akbulut  
+**Öğrenci Numarası:** 231118028  
+**Challenge:** Nokta-Nokta Challenge (Track A)
 
 ---
 
-## 2. Architecture & Nokta-Audit Integration
-The integration of `nokta-audit` follows clean architecture boundaries:
-1. **Dependency Injection (DI):** The host application injects native capabilities (screenshotting, filesystem access, and file sharing) into the widget in `app/_layout.tsx` so the widget remains platform-agnostic and modular.
-2. **Local Storage Adaptor:** A custom, filesystem-backed JSON storage adaptor (`components/auditStorage.ts`) is injected to persist captured audit notes across app restarts without requiring heavy third-party storage libraries.
-3. **Screen Path Mapping:** Route path changes are listened to dynamically using Expo Router's `usePathname()`, passing clean, user-friendly screen names into the widget.
+## 1. Proje Özeti (Project Overview)
+Bu proje, Nokta-Nokta mobil ekosistemi için geliştirilmiş, Expo + TypeScript tabanlı bir mobil uygulamadır. Uygulama, ses düzeyi analizi (RMS), ses dalgası görselleştiricisi (Voice Visualizer), dudak senkronizasyonu yapan avatar (Lipsync Fallback), uzmana harici video konferans köprüsü (Jitsi Expert Bridge) ve yerel test-raporlama aracı (AuditWidget) barındırır.
 
 ---
 
-## 3. Bug Catalog
-To facilitate the testing of the audit widget, the following intentional bugs have been introduced:
+## 2. Kurulum ve Çalıştırma (Installation & Running)
 
-| ID | Screen | Bug Type | Description |
-|---|---|---|---|
-| **BUG-01** | Home | Accessibility (Contrast) | System warning banner uses dark grey text on an almost black background in dark mode, making it illegible. |
-| **BUG-02** | Home | Layout Overlap | Recent Activity section header overlaps with the activity subtitle. |
-| **BUG-03** | Profile | Visual Regression | Profile avatar is stretched horizontally due to asymmetric dimensions (`180x80`) and `resizeMode="stretch"`. |
-| **BUG-04** | Profile | Content Typo | Section title contains a spelling typo: `"Proflie Settings"`. |
-| **BUG-05** | Profile | Content Typo | Input label contains a spelling typo: `"E-mial Address"`. |
-| **BUG-06** | Profile | Scroll / Layout | The save button is inside a container with `height: 25` and `overflow: "hidden"`, cutting it off and making it unclickable. |
-| **BUG-07** | Settings | Layout Overlap | The auto-update toggle switch overlaps the setting text label. |
-| **BUG-08** | Settings | Visual & Click Block | The red "Reset All Data" button is absolutely positioned over the "Privacy Policy" button, blocking user clicks. |
-
----
-
-## 4. Run & Test Instructions
-
-### Prerequisites
+### Gereksinimler (Prerequisites)
 - Node.js (v18+)
-- npm / yarn
-- Expo Go app installed on your physical iOS/Android device or emulator.
+- npm veya yarn
+- Mobil cihazınızda **Expo Go** uygulaması (Android/iOS)
 
-### Installation
-1. Navigate to the project folder:
+### Kurulum (Installation)
+1. Uygulama dizinine gidin:
    ```bash
-   cd nokta/submissions/231118028-eslen-gul-akbulut/app
+   cd nokta-nokta/submissions/231118028-eslen-gul-akbulut/app
    ```
-2. Install dependencies:
+2. Bağımlılıkları yükleyin:
    ```bash
-   npm install --legacy-peer-deps
+   npm install
    ```
 
-### Running the Application
-To launch the Expo packager:
-```bash
-npm run start
-```
-- Press `a` for Android Emulator.
-- Press `i` for iOS Simulator.
-- Scan the QR code with your physical device to open the application in Expo Go.
+### Çalıştırma (Running)
+1. Expo paketleyicisini başlatın:
+   ```bash
+   npm run start
+   ```
+2. Ekrandaki QR kodunu **Expo Go** uygulamasıyla taratın.
+3. Simülatörde çalıştırmak için `a` (Android) veya `i` (iOS) tuşuna basın.
 
 ---
 
-## 5. Audit Reports
-The mock screenshot bug logs generated using the widget for Phase A can be viewed here:
-1. [report-01-home-contrast.md](./audit-reports/report-01-home-contrast.md)
-2. [report-02-profile-avatar.md](./audit-reports/report-02-profile-avatar.md)
-3. [report-03-settings-overlap.md](./audit-reports/report-03-settings-overlap.md)
+## 3. Uygulama Ekranları ve Demo Akışı (Demo Flow)
+
+Uygulama, alt kısımda yer alan modern, neon ve akıcı bir navigasyon barıyla 5 ana ekrandan oluşur:
+
+1. **Home Screen (Ana Sayfa)**:
+   - Sistem durumunu, Forge geliştirici istatistiklerini ve son aktiviteleri gösteren premium bir gösterge paneli (dashboard).
+2. **Voice Visualizer Screen (Ses Görselleştirici)**:
+   - "Microphone Permission" izni alınır.
+   - Gerçek zamanlı ses yüksekliğine (RMS) bağlı olarak 10 adet barın dinamik olarak yükselip alçaldığı bir ses visualizer animasyonu sunulur.
+   - Sessizlik anında sönük, yavaşça salınan bir `idle` dalga durumuna geçer.
+3. **Avatar Screen (Mascot & Lipsync)**:
+   - Uygulama, 3D model dosyasını (`avatar.glb`) arar.
+   - Bulamazsa, teslim klasöründeki `avatar2.png` görselini fallback olarak yükler.
+   - Mikrofon ses düzeyine (RMS) göre `avatar2.png` görseli dikey/yatay ölçekleme (squash & stretch) ile konuşma hareketini taklit eder (RMS-based lipsync).
+4. **Expert Bridge (Uzman Köprüsü)**:
+   - Uzman ile yapılacak olan 60 saniyelik görüşme planını gösterir.
+   - **Uzmana Bağlan** butonu, Jitsi Meet bağlantısını açar: `https://meet.jit.si/nokta-forge-231118028`
+5. **Audit / Forge Info (Forge Geçmişi)**:
+   - Projenin `FORGE.md` üzerindeki geliştirme döngülerini (COMMIT, ROLLBACK, STUCK) uygulama içinden okumanızı sağlar.
+
+---
+
+## 4. `avatar.glb` Nasıl Eklenir? (GLB Integration)
+
+Gerçekçi 3D Avatarınızı uygulamaya dahil etmek için:
+1. Kendi `.glb` formatındaki 3D model dosyanızı hazırlayın.
+2. Bu dosyayı `nokta-nokta/submissions/231118028-eslen-gul-akbulut/avatar.glb` konumuna yerleştirin.
+3. Uygulama, yükleme mekanizması üzerinden bu dosyayı okuyacak şekilde tasarlanmıştır. Dosya eksikse, çökme yerine `avatar2.png` görseli üzerinde dinamik animasyonlu Lipsync fallback ekranı devreye girer.
+
+---
+
+## 5. APK Build Notu (APK Compilation Note)
+
+Yerel veya CI ortamında release APK dosyası derlemek için:
+```bash
+# Proje kökünden app dizinine gidin
+cd app
+# Android release build alın
+npx expo run:android --variant release
+```
+EAS CLI kullanılarak preview build oluşturulması tavsiye edilir (`eas build --platform android`). Çıktı APK dosyası kök teslim dizinindeki `app-release.apk` yer tutucusunun yerine yerleştirilmelidir.
+
+---
+
+## 6. Demo Video Çekim Notu (Demo Video Guide)
+Uygulama çalışmasını gösteren tanıtım videosu (`demo.mp4`) aşağıdaki akışı kapsamalıdır:
+1. **Home Screen:** Challenge adı, Track: A bilgisi ve Eslen Gül Akbulut (231118028) öğrenci bilgisi gösterilir. Arayüzdeki 4 adet butona basılarak ilgili ekranlara geçiş yapılabildiği kanıtlanır.
+2. **Voice Visualizer:** Mikrofon izni onaylanır, ses algılandığında barların zıpladığı, sessizlikte ise sönük dalgalandığı gösterilir. Başlat/durdur butonları test edilir.
+3. **Avatar Lipsync:** 2D SVG Mascot Avatar ekranında "⚠️ avatar.glb bekleniyor / fallback avatar aktif" uyarısı gösterilir ve konuşurken ağız açıklığının dinamik değiştiği gösterilir.
+4. **Expert Bridge:** "Uzmana Bağlan" butonuna basılarak harici WebRTC Jitsi toplantısına (`https://meet.jit.si/nokta-forge-231118028`) yönlendirme yapılır. Videoda sesli, görüntülü ve ekran paylaşımlı görüşme simüle edilir.
+5. **Audit / Forge:** Yüzen `🐛` butonuyla bir ekran görüntüsü üzerinde hata alanı sürüklenerek işaretlenir, hata notu kaydedilir, modalda liste incelenir ve rapor Markdown olarak paylaşılır. Ayrıca bu raporların `FORGE.md` üzerindeki döngülerle ilişkisi açıklanır.
+
+Demo videosu çekildikten sonra teslim kök klasöründeki `demo.mp4` yer tutucusu ile değiştirilmelidir.
+
+---
+
+## 7. Jitsi Uzman Görüşmesi Linki (Jitsi Meeting Link)
+Uzmana tek tıkla bağlanmak için aşağıdaki bağlantı kullanılır:
+👉 **[https://meet.jit.si/nokta-forge-231118028](https://meet.jit.si/nokta-forge-231118028)**
+
+---
+
+## 8. AuditWidget Entegrasyonu ve Mock/Adapter Açıklaması
+
+### Neden Mock/Adapter Yapısı Tercih Edildi?
+`nokta-audit` reposunda bulunan orijinal `AuditWidget` bileşeni, doğrudan `react-native-view-shot` gibi native derleme gerektiren kütüphanelere bağımlıdır. Expo Go ortamında yerel modüllerin derlenememesi, farklı cihazlarda uyumluluk ve çökme sorunlarına (özellikle WebGL ve dosya paylaşım API'leri çakıştığında) yol açabilmektedir.
+
+Uygulamanın **her ortamda (iOS, Android ve Expo Go) sorunsuz ve sıfır çökme riskiyle çalışabilmesi** için `nokta-audit` widget mimarisini temel alan **Yüksek Sadakatli Pure JavaScript AuditWidget Adapter**'ı kodlanmıştır.
+
+### Yetenekleri:
+- **FAB (Floating Action Button):** Ekranın üstünde yüzen, sürüklenebilir bir 🐛 butonu.
+- **Screen Freeze & Box Selector:** Butona basıldığında ekranı dondurur ve sürükleyerek sarı odak/hata kutusu çizmenizi sağlar.
+- **Not Girişi & Yerel Depolama:** Belirlenen bölge için hata notu yazıp in-app storage'a ekleme.
+- **Rapor Yönetim Modalı:** Çift dokunma ile açılan rapor listesinde kayıtları düzenleme, silme ve **Markdown** formatında derleyerek `expo-sharing` ile dışa aktarma.
+
+Bu sayede, `nokta-audit` reposundaki tüm işlevsel akış drop-in mantığıyla korunmuş ve uygulamanın esnekliği garanti altına alınmıştır.
+
+---
+
+## 9. Mühendislik İzleme Bilgileri (Engineering Metrics)
+
+- **Kullanılan AI Kodlama Aracı:** Antigravity (Google DeepMind Advanced Agentic Coding)
+- **İnsan Müdahale Noktaları (Human Touch Points):** `0` (Otonom olarak döngüler simüle edilmiş, kod tasarımı ve entegrasyonu tamamen agent tarafından tamamlanmıştır.)

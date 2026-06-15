@@ -5,6 +5,9 @@ import { View, Text, ScrollView, SafeAreaView, StatusBar, Alert, KeyboardAvoidin
 import * as Clipboard from 'expo-clipboard';
 import InputSection from './src/components/InputSection';
 import IdeaCard from './src/components/IdeaCard';
+import VoiceAvatarScreen from './src/components/VoiceAvatarScreen';
+import AuditWidget, { AuditFab } from './src/components/AuditWidget';
+import ExpertBridge, { ExpertHeaderButton } from './src/components/ExpertBridge';
 import { processNotes } from './src/services/GeminiService';
 import { loadSessions, saveSession } from './src/utils/storage';
 
@@ -40,6 +43,9 @@ export default function App() {
   const [sessions, setSessions]             = useState([]);
   const [showHistory, setShowHistory]       = useState(false);
   const [showReport, setShowReport]         = useState(false);
+  const [mode, setMode]                     = useState('main'); // 'main' | 'voice'
+  const [auditOpen, setAuditOpen]           = useState(false);
+  const [expertOpen, setExpertOpen]         = useState(false);
 
   const theme = isDark ? DARK : LIGHT;
 
@@ -200,6 +206,10 @@ export default function App() {
             <Text style={{ color: theme.textMuted, fontWeight: '700', fontSize: 10, letterSpacing: 3, textTransform: 'uppercase' }}>Migration & Dedup</Text>
           </View>
           <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+            <TouchableOpacity onPress={() => setMode('voice')}>
+              <Text style={{ fontSize: 11, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1.5, color: theme.textMuted }}>Voice</Text>
+            </TouchableOpacity>
+            <ExpertHeaderButton theme={theme} onPress={() => setExpertOpen(true)} />
             {ideas.length > 0 && (
               <TouchableOpacity onPress={() => { setShowReport(v => !v); setShowHistory(false); }}>
                 <Text style={{ fontSize: 11, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1.5, color: showReport ? theme.text : theme.textMuted }}>Report</Text>
@@ -436,6 +446,15 @@ export default function App() {
     </ScrollView>
   );
 
+  if (mode === 'voice') {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: theme.bg }}>
+        <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
+        <VoiceAvatarScreen theme={theme} onBack={() => setMode('main')} />
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.bg }}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
@@ -444,6 +463,9 @@ export default function App() {
           {content}
         </KeyboardAvoidingView>
       )}
+      <AuditFab theme={theme} onPress={() => setAuditOpen(true)} />
+      <AuditWidget theme={theme} visible={auditOpen} onClose={() => setAuditOpen(false)} />
+      <ExpertBridge theme={theme} visible={expertOpen} onClose={() => setExpertOpen(false)} />
     </SafeAreaView>
   );
 }

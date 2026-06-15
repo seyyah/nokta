@@ -4,34 +4,41 @@
     "slug": "FitLoop",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "../assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
-    "splash": {
-      "image": "../assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
+    "newArchEnabled": false,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Bu uygulama sesli dikte ve görüntülü görüşme için mikrofona ihtiyaç duyar.",
+        "NSCameraUsageDescription": "Bu uygulama uzmana bağlanmak için kameraya ihtiyaç duyar.",
+        "NSSpeechRecognitionUsageDescription": "Bu uygulama sesinizi metne çevirmek için konuşma tanımaya ihtiyaç duyar."
+      }
     },
     "android": {
       "package": "com.elcinerdemir.fitloop",
-      "adaptiveIcon": {
-        "foregroundImage": "../assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
-    },
-    "web": {
-      "favicon": "../assets/favicon.png"
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.CAMERA",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ]
     },
     "extra": {
       "eas": {
         "projectId": "61e276fa-e029-4e24-9593-bace353154f1"
       }
     },
-    "owner": "eexnmy"
+    "owner": "eexnmy",
+    "plugins": [
+      "./withJetifier.js",
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Bu uygulama ses dalgalarını görselleştirmek için mikrofona ihtiyaç duyar."
+        }
+      ],
+      "expo-asset"
+    ]
   }
 }

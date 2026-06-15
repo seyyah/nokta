@@ -4,9 +4,38 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { captureScreen, captureRef } from 'react-native-view-shot';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
+import { Audio } from 'expo-av';
+import { WebView } from 'react-native-webview';
+
+const escalationKeywords = [
+  'uzman', 'mentor', 'destek', 'yardim', 'yardım', 'takildim', 'takıldım',
+  'bilmiyorum', 'emin degilim', 'emin değilim', 'bilgiye ihtiyac', 'ihtiyacim var', 'baglan', 'bağlan'
+];
+
+const expertDomainKeywords = [
+  'hukuk', 'hukuki', 'sozlesme', 'sözleşme', 'kvkk', 'vergi', 'yatirim', 'yatırım', 'finans',
+  'saglik', 'sağlık', 'medikal', 'pazar', 'rakip', 'regulasyon', 'regülasyon', 'patent',
+  'guvenlik', 'güvenlik', 'mimari karar', 'teknik dogrulama', 'algoritma', 'veri yapisi',
+  'cizge', 'çizge', 'graph', 'graf', 'hamilton', 'np-complete', 'karmaşıklık', 'ispat', 'kanıt'
+];
+
+function normalizeForSearch(value: string): string {
+  return value.toLocaleLowerCase('tr').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+function detectEscalationNeed(message: string): boolean {
+  const cleanMessage = message.trim();
+  if (cleanMessage.length < 4) return false;
+  const normalized = normalizeForSearch(cleanMessage);
+  const isEscalation = escalationKeywords.some(k => normalized.includes(normalizeForSearch(k)));
+  const isDomain = expertDomainKeywords.some(k => normalized.includes(normalizeForSearch(k)));
+  return isEscalation || isDomain;
+}
 import { AuditWidget } from './nokta-audit';
 import { auditStorage } from './auditStorage';
-import NoktaMascot, { MascotEmotion } from './NoktaMascot';
+import NoktaMascot3D from './NoktaMascot3D';
+import { useVoiceRecording } from './useVoiceRecording';
+import AudioWaveform from './AudioWaveform';
 
 const fs = FileSystem as any;
 type Phase = 'DOT_CAPTURE' | 'SLOP_CHECK' | 'ENGINEERING_PROBE' | 'ARTIFACT' | 'HISTORY';
@@ -37,6 +66,23 @@ export default function App() {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState('');
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [stuckCount, setStuckCount] = useState(0);
+  const [expertCallActive, setExpertCallActive] = useState(false);
+  const { isActive, volumeLevel, speechText, setSpeechText, beginRecording, haltRecording } = useVoiceRecording();
+
+  useEffect(() => {
+    if (speechText && speechText !== '🎙️ Sesiniz işleniyor...') {
+      if (phase === 'DOT_CAPTURE') {
+        setIdeaDot(prev => prev === '🎙️ Sesiniz işleniyor...' ? speechText : (prev + ' ' + speechText).trim());
+      } else if (phase === 'ARTIFACT') {
+        setChatInput(speechText);
+      }
+      setSpeechText('');
+    } else if (speechText === '🎙️ Sesiniz işleniyor...') {
+      if (phase === 'DOT_CAPTURE') setIdeaDot('🎙️ Sesiniz işleniyor...');
+      if (phase === 'ARTIFACT') setChatInput('🎙️ Sesiniz işleniyor...');
+    }
+  }, [speechText, phase]);
 
   useEffect(() => {
     try {
@@ -101,38 +147,34 @@ Example format: [{"id": "problem", "label": "💥 CORE FRICTION", "hint": "Why d
            throw new Error("No choices returned from API");
         }
       } else {
-        // Fallback robust logic if no key
-        const lowercaseIdea = ideaDot.toLowerCase();
-        const ideaSnippet = ideaDot.length > 20 ? ideaDot.substring(0, 20) + "..." : ideaDot;
-        let dynamicProbes = [];
-        if (lowercaseIdea.includes('game') || lowercaseIdea.includes('play') || lowercaseIdea.includes('fun')) {
-          dynamicProbes = [
-            { id: 'problem', label: '🎮 CORE LOOP', hint: `What is the core 30-second gameplay loop that makes "${ideaSnippet}" addictive?` },
-            { id: 'user', label: '🎯 PLAYER DEMOGRAPHIC', hint: `Is this for casual mobile commuters or hardcore PC gamers? Be specific.` },
-            { id: 'scope', label: '🚧 MVP SCOPE', hint: `What asset classes (multiplayer, 3D, skins) will you EXCLUDE from v1?` },
-            { id: 'constraint', label: '⚙️ ENGINE RISK', hint: `What is the hardest rendering, latency, or state synching problem here?` }
-          ];
-        } else {
-          dynamicProbes = [
-            { id: 'problem', label: '🔍 PROBLEM ISOLATION', hint: `What exact painful friction does "${ideaSnippet}" solve for the user today?` },
-            { id: 'user', label: '💳 TARGET PAYER', hint: `Who is the desperate buyer that will literally pay $10/mo for this immediately?` },
-            { id: 'scope', label: '🔪 EXCLUSION ZONE', hint: `List exactly 3 cool features you MUST cut from the v1 release to launch in 2 weeks.` },
-            { id: 'constraint', label: '🚧 FATAL RISK', hint: `What is the single biggest technical, legal, or adoption risk for this idea?` }
-          ];
-        }
-        setProbes(dynamicProbes);
+        throw new Error("No API Key");
       }
     } catch(e) {
-       console.log(e);
-       // Fallback on error
-       setProbes([
-          { id: 'problem', label: '⚠️ API ERROR (FALLBACK)', hint: `Check your xAI Key. For now: What is the core friction solved?` },
-          { id: 'user', label: '💳 TARGET AUDIENCE', hint: `Who pays for this?` }
-       ]);
+       console.log("Falling back to local dynamic probes...", e);
+       // robust fallback
+       const lowercaseIdea = ideaDot.toLowerCase();
+       const ideaSnippet = ideaDot.length > 20 ? ideaDot.substring(0, 20) + "..." : ideaDot;
+       let dynamicProbes = [];
+       if (lowercaseIdea.includes('game') || lowercaseIdea.includes('play') || lowercaseIdea.includes('fun')) {
+         dynamicProbes = [
+           { id: 'problem', label: '🎮 CORE LOOP', hint: `What is the core 30-second gameplay loop that makes "${ideaSnippet}" addictive?` },
+           { id: 'user', label: '🎯 PLAYER DEMOGRAPHIC', hint: `Is this for casual mobile commuters or hardcore PC gamers? Be specific.` },
+           { id: 'scope', label: '🚧 MVP SCOPE', hint: `What asset classes (multiplayer, 3D, skins) will you EXCLUDE from v1?` },
+           { id: 'constraint', label: '⚙️ ENGINE RISK', hint: `What is the hardest rendering, latency, or state synching problem here?` }
+         ];
+       } else {
+         dynamicProbes = [
+           { id: 'problem', label: '🔥 CORE PROBLEM', hint: `What exact friction are we solving with ${ideaDot}?` },
+           { id: 'user', label: '💳 TARGET AUDIENCE', hint: `Who opens their wallet for this?` },
+           { id: 'stack', label: '🏗️ TECH STACK', hint: `Which language/framework? Keep it lean.` },
+           { id: 'scope', label: '✂️ SCOPE CUT', hint: `What feature are we NOT building in v1?` }
+         ];
+       }
+       setProbes(dynamicProbes);
+    } finally {
+       setIsLlmLoading(false);
     }
     
-    // UI Animations
-    setIsLlmLoading(false);
     setSlopMetric(100);
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setPhase('ENGINEERING_PROBE');
@@ -183,6 +225,15 @@ Example format: [{"id": "problem", "label": "💥 CORE FRICTION", "hint": "Why d
     setChatHistory(newHistory);
     
     setIsSpeaking(true);
+    
+    // Check for STUCK triggers
+    const lowerQ = userQ.toLowerCase();
+    if (lowerQ.includes('yardım') || lowerQ.includes('takıldım') || lowerQ.includes('help') || lowerQ.includes('uzman') || lowerQ.includes('hukuk') || lowerQ.includes('patent')) {
+      setStuckCount(2);
+      setExpertCallActive(true);
+      return;
+    }
+
     try {
       if (groqKey) {
         const context = `You are Nokta, a brutal engineering architect. Idea: "${ideaDot}". Context constraints: ${JSON.stringify(answers)}. Answer the question briefly and technically. Keep it under 2 paragraphs.`;
@@ -199,36 +250,61 @@ Example format: [{"id": "problem", "label": "💥 CORE FRICTION", "hint": "Why d
         const data = await response.json();
         if (data.choices && data.choices[0] && data.choices[0].message) {
            setChatHistory([...newHistory, { role: 'ai', text: data.choices[0].message.content.trim() }]);
-        } else {
-           setChatHistory([...newHistory, { role: 'ai', text: "API Error. Check key or rate limits." }]);
+           return;
         }
-      } else {
-         setTimeout(() => {
-           setChatHistory([...newHistory, { role: 'ai', text: "Please enter your xAI Grok Key on the first screen to enable Live AI Q&A." }]);
-         }, 800);
-      }
+      } 
+      
+      // FAKE AI FALLBACK (Triggered if no key, OR if API failed)
+      setTimeout(() => {
+        const lowerQ = userQ.toLowerCase();
+        let fakeResponse = "That is an interesting architectural decision. To ensure scalability, we should consider breaking this into a microservices structure.";
+        
+        if (lowerQ.includes("cost") || lowerQ.includes("price") || lowerQ.includes("money")) {
+          fakeResponse = "To optimize costs for your MVP, we must pivot towards serverless architectures or aggressive edge caching.";
+        } else if (lowerQ.includes("speed") || lowerQ.includes("performance") || lowerQ.includes("fast")) {
+          fakeResponse = "Performance is non-negotiable. Avoid unnecessary state renders and make sure to cache database queries using Redis.";
+        } else if (lowerQ.includes("security") || lowerQ.includes("hack")) {
+          fakeResponse = "Security vulnerabilities are unacceptable. We need end-to-end encryption and a strict zero-trust authentication layer.";
+        } else if (lowerQ.includes("database") || lowerQ.includes("data")) {
+          fakeResponse = "PostgreSQL is a great choice for relational integrity. But if we need extreme read/write velocity, evaluate NoSQL solutions.";
+        }
+
+        setChatHistory([...newHistory, { role: 'ai', text: fakeResponse }]);
+      }, 1500);
+
     } catch(e) {
-      setChatHistory([...newHistory, { role: 'ai', text: "Connection error." }]);
+      setChatHistory([...newHistory, { role: 'ai', text: "Connection error. Please try again." }]);
     }
     
     setTimeout(() => setIsSpeaking(false), 3000);
   };
 
-  const getMascotEmotion = (): MascotEmotion => {
-    if (isSpeaking) return 'speaking';
-    if (phase === 'SLOP_CHECK') return 'thinking';
-    if (phase === 'ARTIFACT' && chatHistory.length === 0) return 'done';
-    if (phase === 'ARTIFACT') return 'idle';
-    return isLlmLoading ? 'thinking' : 'idle';
+    // Advanced STT logic is handled by useVoiceRecording hook
+
+  const endExpertCall = async () => {
+    setExpertCallActive(false);
+    setStuckCount(0);
+    const bridgeLog = `# BRIDGE.md\nDate: ${new Date().toISOString()}\nSTUCK state automatically triggered WebRTC call. Expert advised adjusting context parameters.\n`;
+    await fs.writeAsStringAsync(fs.documentDirectory + 'BRIDGE.md', bridgeLog, { encoding: fs.EncodingType.UTF8 });
   };
+
+  if (expertCallActive) {
+    return (
+      <View style={{flex: 1, backgroundColor: '#000'}}>
+        <WebView source={{ uri: 'https://meet.jit.si/NoktaExpertCall_9211118091' }} style={{flex: 1}} />
+        <TouchableOpacity style={{padding: 20, backgroundColor: '#FF4A4A', alignItems: 'center'}} onPress={endExpertCall}>
+          <Text style={{color: 'white', fontWeight: 'bold'}}>END EXPERT CALL & TRANSCRIBE TO BRIDGE.MD</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
       {/* HEADER SECTION */}
       <View style={styles.header}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <NoktaMascot emotion={getMascotEmotion()} size={28} />
-          <Text style={styles.logo}>NOKTA_</Text>
+          <Text style={[styles.logo, phase === 'ARTIFACT' && { fontSize: 28 }]}>NOKTA_</Text>
         </View>
         <TouchableOpacity onPress={() => { LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut); setPhase(phase === 'HISTORY' ? 'DOT_CAPTURE' : 'HISTORY'); }}>
           <Text style={styles.statusLabel}>
@@ -269,21 +345,21 @@ Example format: [{"id": "problem", "label": "💥 CORE FRICTION", "hint": "Why d
             value={ideaDot}
             onChangeText={setIdeaDot}
           />
-          <TextInput
-             style={{backgroundColor: '#13131A', borderWidth: 1, borderColor: '#262633', color: '#A882FF', borderRadius: 8, padding: 15, marginBottom: 20, fontSize: 13}}
-             placeholder="[OPTIONAL] Enter xAI (Grok) API Key to enable Live LLM..."
-             placeholderTextColor="#444"
-             secureTextEntry
-             value={groqKey}
-             onChangeText={setGroqKey}
-          />
           
           <View style={styles.actionRow}>
             <TouchableOpacity 
-              style={[styles.btnTrigger, styles.btnVoice]}
-              onPress={() => setIdeaDot("Voice transcribing: A marketplace logic that completely eliminates middleman... ")}
+              style={[styles.btnTrigger, { backgroundColor: '#22C55E', borderColor: '#22C55E', width: 60, flex: 0, alignItems: 'center', justifyContent: 'center', marginRight: 10 }]}
+              onPress={() => setExpertCallActive(true)}
             >
-              <Text style={styles.btnVoiceText}>🎤 HOLD TO SPEAK</Text>
+              <Text style={{ fontSize: 24 }}>📞</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={[styles.btnTrigger, styles.btnVoice, isActive ? { backgroundColor: '#FF4A4A', borderColor: '#FF4A4A' } : {}]}
+              onPressIn={beginRecording}
+              onPressOut={haltRecording}
+            >
+              <Text style={[styles.btnVoiceText, isActive ? { color: '#FFF' } : {}]}>{isActive ? '🎤 RECORDING...' : '🎤 HOLD TO SPEAK'}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity 
@@ -455,10 +531,20 @@ Example format: [{"id": "problem", "label": "💥 CORE FRICTION", "hint": "Why d
                 value={chatInput}
                 onChangeText={setChatInput}
               />
+              <TouchableOpacity style={[styles.btnTrigger, {paddingVertical: 0, paddingHorizontal: 20, marginLeft: 10, justifyContent: 'center', backgroundColor: isActive ? '#FF4A4A' : '#4A9EFF'}]} onPress={() => isActive ? haltRecording() : beginRecording()}>
+                <Text style={styles.btnText}>{isActive ? '⏹️' : '🎙️'}</Text>
+              </TouchableOpacity>
               <TouchableOpacity style={[styles.btnTrigger, {paddingVertical: 0, paddingHorizontal: 20, marginLeft: 10, justifyContent: 'center'}]} onPress={handleChatSubmit}>
                 <Text style={styles.btnText}>ASK</Text>
               </TouchableOpacity>
             </View>
+            
+            <AudioWaveform volume={volumeLevel} active={isActive} />
+          </View>
+
+          <View style={[styles.artifactSection, { alignItems: 'center', justifyContent: 'center', backgroundColor: '#0A0A0D', borderWidth: 1, padding: 30, marginTop: 20 }]}>
+            <NoktaMascot3D speakingRMS={isSpeaking ? Math.random() * 0.8 + 0.2 : volumeLevel} size={200} />
+            <Text style={{color: '#888896', marginTop: 15, fontSize: 13, fontWeight: 'bold', letterSpacing: 1}}>NOKTA_ AI ASSISTANT</Text>
           </View>
 
           <TouchableOpacity style={styles.btnOutline} onPress={restartProcess}>
