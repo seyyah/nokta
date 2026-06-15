@@ -21,6 +21,13 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="studio"
+        options={{
+          title: 'Studio',
+          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🎙️</Text>,
+        }}
+      />
+      <Tabs.Screen
         name="settings"
         options={{
           title: 'Ayarlar',
