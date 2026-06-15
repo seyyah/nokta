@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { NavigationContainer, useNavigationState } from '@react-navigation/native';
+import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Text, View, StyleSheet } from 'react-native';
@@ -17,6 +17,8 @@ import HomeScreen from './src/screens/HomeScreen';
 import AddIdeaScreen from './src/screens/AddIdeaScreen';
 import IdeaDetailScreen from './src/screens/IdeaDetailScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
+import MirrorScreen from './src/screens/MirrorScreen';
+import BridgeScreen from './src/screens/BridgeScreen';
 import { auditStorage } from './src/utils/auditStorage';
 import type { RootStackParamList, MainTabParamList } from './src/types';
 
@@ -26,6 +28,8 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 function TabIcon({ name, focused }: { name: string; focused: boolean }) {
   const icons: Record<string, string> = {
     Home: '💡',
+    Mirror: '🪞',
+    Bridge: '📞',
     Profile: '👤',
   };
   return (
@@ -73,24 +77,29 @@ function MainTabs() {
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} options={{ title: 'Fikirler' }} />
+      <Tab.Screen name="Mirror" component={MirrorScreen} options={{ title: 'Ayna' }} />
+      <Tab.Screen name="Bridge" component={BridgeScreen} options={{ title: 'Köprü' }} />
       <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: 'Profil' }} />
     </Tab.Navigator>
   );
 }
 
-function NavigationContent() {
-  const routeName = useNavigationState((state) => {
-    if (!state) return 'Home';
-    const route = state.routes[state.index];
-    if (route.name === 'MainTabs' && route.state) {
-      const tabRoute = route.state.routes[route.state.index ?? 0];
-      return tabRoute.name;
-    }
-    return route.name;
-  });
+export default function App() {
+  const navRef = useNavigationContainerRef<RootStackParamList>();
+  const [currentScreen, setCurrentScreen] = useState<string>('Home');
+
+  const syncRouteName = useCallback(() => {
+    const route = navRef.getCurrentRoute();
+    if (route?.name) setCurrentScreen(route.name);
+  }, [navRef]);
 
   return (
-    <>
+    <NavigationContainer
+      ref={navRef}
+      onReady={syncRouteName}
+      onStateChange={syncRouteName}
+    >
+      <StatusBar style="light" />
       <Stack.Navigator
         screenOptions={{
           headerStyle: { backgroundColor: '#1E293B' },
@@ -136,21 +145,12 @@ function NavigationContent() {
           },
           shareFile: (uri: string) => shareAsync(uri),
           storage: auditStorage,
-          currentScreen: routeName,
+          currentScreen,
           reporterId: '231118098',
           BugIcon: <BugIcon />,
         }}
         initialPosition={{ bottom: 180, right: 16 }}
       />
-    </>
-  );
-}
-
-export default function App() {
-  return (
-    <NavigationContainer>
-      <StatusBar style="light" />
-      <NavigationContent />
     </NavigationContainer>
   );
 }

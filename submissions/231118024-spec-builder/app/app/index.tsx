@@ -1,180 +1,425 @@
-import { useState } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import { useRouter } from 'expo-router';
+import React, { Suspense, useEffect, useRef, useState } from 'react';
+import { View, StyleSheet, TouchableOpacity, Text, ActivityIndicator, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { useGLTF, useAnimations } from '@react-three/drei/native';
+import { Audio } from 'expo-av';
+import * as THREE from 'three';
+import Animated, { useSharedValue, useAnimatedStyle, interpolate, withTiming, SharedValue } from 'react-native-reanimated';
+import { auditStorage } from '@/utils/auditStorage';
+import { WebView } from 'react-native-webview';
 
-import { Text, View } from '@/components/Themed';
-import Colors from '@/constants/Colors';
+// 3D Canvas'taki Avatar için ses şiddetini tutacağımız global değişken. 
+let currentVolume = 0;
 
-export default function CaptureScreen() {
-  const [spark] = useState(''); // Keep for binding if needed, but I'll use text state
-  const [text, setText] = useState('');
-  const router = useRouter();
-  const insets = useSafeAreaInsets();
+function Avatar() {
+  const { scene, nodes, animations } = useGLTF(require('../assets/avatar.glb') as any) as any;
+  const { actions } = useAnimations(animations, scene);
+  const meshRef = useRef<THREE.SkinnedMesh | null>(null);
 
-  const handleStartRefining = () => {
-    if (text.trim()) {
-      router.push({
-        pathname: '/chat',
-        params: { initialSpark: text }
+  useEffect(() => {
+    // 1. T-Pose Kodlarını Sil ve Animasyonu Oynat
+    if (actions && animations && animations.length > 0) {
+      const actionName = animations[0].name;
+      const action = actions[actionName];
+      if (action) {
+        action.play();
+      }
+    }
+
+    if (scene) {
+      scene.traverse((child: any) => {
+        // Lipsync Fix: Morph target'ı barındıran mesh'i bulma
+        if (child.isMesh && child.morphTargetDictionary) {
+          meshRef.current = child;
+        }
       });
+    }
+  }, [scene, actions, animations]);
+
+  useFrame(() => {
+    if (meshRef.current && meshRef.current.morphTargetInfluences && meshRef.current.morphTargetDictionary) {
+      const dict = meshRef.current.morphTargetDictionary;
+      const influences = meshRef.current.morphTargetInfluences;
+
+      // Tüm olası çene ve ağız hareketlerini yakala (büyük/küçük harf bağımsız)
+      const keys = Object.keys(dict).filter(k => {
+        const lower = k.toLowerCase();
+        return lower.includes('jawopen') || 
+               lower.includes('mouthopen') || 
+               lower.includes('viseme_aa') || 
+               lower.includes('viseme_o') || 
+               lower.includes('viseme_a');
+      });
+
+      keys.forEach(key => {
+        const targetIndex = dict[key];
+        if (targetIndex !== undefined) {
+          const currentInfluence = influences[targetIndex];
+          const targetInfluence = Math.min(currentVolume * 1.5, 1);
+          influences[targetIndex] = THREE.MathUtils.lerp(currentInfluence, targetInfluence, 0.4);
+        }
+      });
+    }
+  });
+
+  return <primitive object={scene} scale={2.2} position={[0, -2.2, 0]} />;
+}
+
+// Ses Görselleştirici Overlay Bileşeni
+function VoiceVisualizer({ volumeShared }: { volumeShared: SharedValue<number> }) {
+  const bars = [0, 1, 2, 3, 4];
+
+  return (
+    <View style={styles.visualizerContainer} pointerEvents="none">
+      {bars.map((i) => {
+        const rStyle = useAnimatedStyle(() => {
+          const multipliers = [0.3, 0.7, 1.0, 0.7, 0.3];
+          const factor = multipliers[i];
+          
+          const height = interpolate(
+            volumeShared.value * factor,
+            [0, 1],
+            [6, 80]
+          );
+
+          const opacity = interpolate(
+            volumeShared.value * factor,
+            [0, 1],
+            [0.4, 1.0]
+          );
+
+          return {
+            height,
+            opacity,
+          };
+        });
+
+        return <Animated.View key={i} style={[styles.bar, rStyle]} />;
+      })}
+    </View>
+  );
+}
+
+// Fallback yükleme ekranı
+function LoadingFallback() {
+  return (
+    <View style={styles.loadingContainer}>
+      <ActivityIndicator size="large" color="#ffffff" />
+      <Text style={styles.loadingText}>Avatar Yükleniyor...</Text>
+    </View>
+  );
+}
+
+// 🚨 UZMANA BAĞLAN (WebRTC Bridge) BİLEŞENİ
+function ExpertBridge({ onClose }: { onClose: () => void }) {
+  const webrtcUrl = "https://meet.jit.si/NoktaExpertSupportRoom_12345";
+  
+  return (
+    <View style={styles.bridgeContainer}>
+      <View style={[styles.bridgeHeader, { paddingTop: Platform.OS === 'ios' ? 40 : 10 }]}>
+        <View style={styles.bridgeHeaderInner}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={styles.recordingDot} />
+            <Text style={styles.bridgeTitle}> STUCK Durumu: Uzmana Bağlanıldı</Text>
+          </View>
+          <TouchableOpacity style={styles.closeBridgeBtn} onPress={onClose} activeOpacity={0.7}>
+            <Text style={styles.closeBridgeText}>Görüşmeyi Sonlandır</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      
+      <WebView 
+        source={{ uri: webrtcUrl }}
+        style={{ flex: 1 }}
+        allowsInlineMediaPlayback={true}
+        mediaPlaybackRequiresUserAction={false}
+        javaScriptEnabled={true}
+        domStorageEnabled={true}
+      />
+    </View>
+  );
+}
+
+export default function IndexScreen() {
+  const insets = useSafeAreaInsets();
+  const recordingRef = useRef<Audio.Recording | null>(null);
+  const volumeShared = useSharedValue(0);
+  
+  const [isDictating, setIsDictating] = useState(false);
+
+  // -----------------------------------------------------
+  // TRACK C (Otonomi): HEURISTIC STUCK DETECTION
+  // -----------------------------------------------------
+  const [consecutiveFails, setConsecutiveFails] = useState(0);
+  const isStuck = consecutiveFails >= 2;
+
+  const handleInjectFailCycle = () => {
+    setConsecutiveFails(prev => prev + 1);
+  };
+
+  const handleCloseBridge = () => {
+    setConsecutiveFails(0);
+    alert("✅ Uzman tavsiyesi BRIDGE.md dosyasına deşifre edildi. Yönerge alınarak yeni Forge döngüsüne giriliyor...");
+  };
+  // -----------------------------------------------------
+
+  useEffect(() => {
+    async function startAudioMonitoring() {
+      try {
+        const { status } = await Audio.requestPermissionsAsync();
+        if (status !== 'granted') {
+          console.warn('Mikrofon izni reddedildi!');
+          return;
+        }
+
+        // 2. Mikrofon İzinleri Fix (Sesi almak için en önemli yapılandırma)
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: true,
+          playsInSilentModeIOS: true,
+        });
+
+        const recordingOptions: any = {
+          ...Audio.RecordingOptionsPresets.LOW_QUALITY,
+          isMeteringEnabled: true,
+          android: { ...Audio.RecordingOptionsPresets.LOW_QUALITY.android, metering: true },
+          ios: { ...Audio.RecordingOptionsPresets.LOW_QUALITY.ios, metering: true },
+        };
+
+        const { recording } = await Audio.Recording.createAsync(
+          recordingOptions,
+          (status) => {
+            if (status.metering !== undefined) {
+              // Hata ayıklama için terminale ses yazdırıyoruz
+              console.log("Ses Seviyesi:", status.metering);
+              
+              const minDb = -80; 
+              const maxDb = -10;
+              let db = status.metering;
+              
+              if (db < minDb) db = minDb;
+              if (db > maxDb) db = maxDb;
+
+              const volume = (db - minDb) / (maxDb - minDb);
+              
+              currentVolume = volume;
+              volumeShared.value = withTiming(volume, { duration: 50 });
+            }
+          },
+          30 // 30ms polling rate (FPS)
+        );
+
+        recordingRef.current = recording;
+      } catch (err) {
+        console.error('Mikrofon izleme başlatılırken hata:', err);
+      }
+    }
+
+    startAudioMonitoring();
+
+    return () => {
+      if (recordingRef.current) {
+        recordingRef.current.stopAndUnloadAsync().catch(console.error);
+      }
+    };
+  }, []);
+
+  const handleDictationPressIn = () => setIsDictating(true);
+  const handleDictationPressOut = async () => {
+    setIsDictating(false);
+    const mockText = "Hata: Dikte butonu bazen basılı kalıyor ve dinleme bitmiyor. UI donuyor. Onarılmalı.";
+    try {
+      const notes = await auditStorage.loadNotes();
+      const newNote = {
+        id: Math.random().toString(36).substring(2, 9),
+        createdAt: new Date().toISOString(),
+        screenName: '/',
+        note: `[Sesli Dikte]: ${mockText}`,
+        reporterId: 'voice-assistant',
+      };
+      await auditStorage.saveNotes([...notes, newNote]);
+    } catch (e) {
+      console.error('Rapor kaydedilemedi', e);
     }
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
-      <KeyboardAvoidingView 
-        style={{ flex: 1 }} 
-        behavior="padding"
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
-      >
-        <ScrollView 
-          contentContainerStyle={[styles.container, { paddingTop: insets.top + 40, paddingBottom: insets.bottom + 40 }]}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={{ backgroundColor: 'transparent' }}>
-              <View style={[styles.header, { backgroundColor: 'transparent' }]}>
-                <View style={[styles.iconContainer, { backgroundColor: 'transparent' }]}>
-                  <LinearGradient
-                    colors={[Colors.light.primary, Colors.light.secondary]}
-                    style={styles.iconGradient}
-                  >
-                    <Ionicons name="sparkles" size={32} color="#fff" />
-                  </LinearGradient>
-                </View>
-                <Text style={styles.title}>Nokta</Text>
-                <Text style={styles.subtitle}>Fikir kıvılcımın nedir?</Text>
-              </View>
+    <View style={styles.container}>
+      
+      {/* 2. UI İçin Son İkaz (Absolute Positioning) */}
+      <View style={{ position: 'absolute', top: 70, width: '100%', zIndex: 9999, flexDirection: 'row', justifyContent: 'center' }} pointerEvents="box-none">
+        
+        {/* Otonomi Simülatörü: Heuristic Fail Ekleme */}
+        <View style={styles.debugPanel}>
+          <Text style={styles.debugText}>Forge Fails: {consecutiveFails}</Text>
+          <TouchableOpacity style={styles.debugBtn} onPress={handleInjectFailCycle} activeOpacity={0.6}>
+            <Text style={styles.debugBtnText}>⚠️ Inject Fail Cycle</Text>
+          </TouchableOpacity>
+        </View>
 
-              <View style={styles.card}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Aklındaki o harika fikri buraya yaz..."
-                  placeholderTextColor="#94a3b8"
-                  multiline
-                  value={text}
-                  onChangeText={setText}
-                  selectionColor={Colors.light.primary}
-                  blurOnSubmit={false}
-                  keyboardAppearance="light"
-                />
-              </View>
+        <View style={styles.dictationContainer}>
+          <TouchableOpacity
+            style={[styles.dictationButton, isDictating && styles.dictationButtonActive]}
+            onPressIn={handleDictationPressIn}
+            onPressOut={handleDictationPressOut}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.dictationText}>
+              {isDictating ? "🎤 Dinleniyor..." : "🎤 Basılı Tut & Raporla"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
 
-              <TouchableOpacity 
-                style={styles.buttonContainer} 
-                onPress={handleStartRefining}
-                disabled={!text.trim()}
-                activeOpacity={0.8}
-              >
-                <LinearGradient
-                  colors={text.trim() ? [Colors.light.primary, Colors.light.secondary] : ['#e2e8f0', '#cbd5e1']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={styles.button}
-                >
-                  <Text style={styles.buttonText}>Geliştirmeye Başla</Text>
-                  <Ionicons name="arrow-forward" size={20} color="#fff" style={{ marginLeft: 8 }} />
-                </LinearGradient>
-              </TouchableOpacity>
+      <Suspense fallback={<LoadingFallback />}>
+        <Canvas style={styles.canvas}>
+          <ambientLight intensity={1.5} />
+          <directionalLight position={[10, 10, 10]} intensity={2} />
+          <Avatar />
+        </Canvas>
+      </Suspense>
+      
+      <VoiceVisualizer volumeShared={volumeShared} />
 
-              <View style={[styles.footer, { backgroundColor: 'transparent' }]}>
-                <Text style={styles.footerText}>Fikrini mühendislik spesifikasyonuna dönüştürelim.</Text>
-              </View>
-            </View>
-          </TouchableWithoutFeedback>
-        </ScrollView>
-      </KeyboardAvoidingView>
+      {isStuck && (
+        <ExpertBridge onClose={handleCloseBridge} />
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    paddingHorizontal: 32,
-    backgroundColor: '#ffffff',
+    flex: 1,
+    backgroundColor: '#1E1E1E',
   },
-  header: {
-    alignItems: 'center',
-    marginBottom: 48,
+  topSafeArea: {
+    position: 'absolute',
+    top: 80,
+    left: 0,
+    right: 0,
+    zIndex: 9999,
   },
-  iconContainer: {
-    marginBottom: 20,
-    shadowColor: Colors.light.primary,
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.15,
-    shadowRadius: 20,
-    elevation: 8,
+  canvas: {
+    flex: 1,
   },
-  iconGradient: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 48,
-    fontWeight: '900',
-    color: '#0f172a',
-    letterSpacing: -2,
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 18,
-    color: '#64748b',
-    fontWeight: '500',
-  },
-  card: {
-    backgroundColor: '#f8fafc',
-    borderRadius: 36,
-    padding: 24,
-    marginBottom: 32,
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
-  },
-  input: {
-    height: 180,
-    fontSize: 19,
-    color: '#1e293b',
-    textAlignVertical: 'top',
-    paddingTop: 0,
-    lineHeight: 28,
-  },
-  buttonContainer: {
-    shadowColor: Colors.light.primary,
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.2,
-    shadowRadius: 24,
-    elevation: 10,
-  },
-  button: {
+  visualizerContainer: {
+    position: 'absolute',
+    bottom: 60,
+    left: 0,
+    right: 0,
     flexDirection: 'row',
-    paddingVertical: 22,
-    borderRadius: 44,
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 8,
+    height: 80,
+    zIndex: 10,
   },
-  buttonText: {
-    color: '#fff',
-    fontSize: 19,
-    fontWeight: '800',
-    letterSpacing: -0.5,
+  bar: {
+    width: 10,
+    borderRadius: 5,
+    backgroundColor: '#FFFFFF',
   },
-  footer: {
-    marginTop: 'auto',
-    paddingVertical: 40,
+  dictationContainer: {
+    alignSelf: 'center',
     alignItems: 'center',
+    marginTop: 0,
   },
-  footerText: {
-    color: '#94a3b8',
-    fontSize: 14,
+  dictationButton: {
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+    borderRadius: 30,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.3)',
+  },
+  dictationButtonActive: {
+    backgroundColor: 'rgba(230, 60, 60, 0.9)',
+    borderColor: '#ff4444',
+  },
+  dictationText: {
+    color: '#FFF',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  loadingContainer: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#1E1E1E',
+    zIndex: 5,
+  },
+  loadingText: {
+    color: '#FFFFFF',
+    marginTop: 12,
+    fontSize: 16,
     fontWeight: '600',
-    textAlign: 'center',
-    maxWidth: '80%',
   },
+  
+  debugPanel: {
+    position: 'absolute',
+    top: 0,
+    right: 16,
+    zIndex: 50,
+    alignItems: 'flex-end',
+    marginTop: 0, // PaddingTop from parent handles this now
+  },
+  debugText: {
+    color: '#ff4444',
+    fontWeight: 'bold',
+    marginBottom: 6,
+    fontSize: 12
+  },
+  debugBtn: {
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#ff4444'
+  },
+  debugBtnText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: 'bold'
+  },
+
+  bridgeContainer: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 9999,
+    backgroundColor: '#000'
+  },
+  bridgeHeader: {
+    backgroundColor: '#dc2626',
+  },
+  bridgeHeaderInner: {
+    height: 50,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+  },
+  bridgeTitle: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 15,
+  },
+  recordingDot: {
+    width: 10, 
+    height: 10, 
+    borderRadius: 5, 
+    backgroundColor: '#fff',
+    marginRight: 8
+  },
+  closeBridgeBtn: {
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 6,
+  },
+  closeBridgeText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 13
+  }
 });

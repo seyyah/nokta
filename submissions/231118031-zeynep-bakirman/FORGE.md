@@ -1,52 +1,47 @@
-# Nokta Audit-Forge Ledger
-Track: A (Sadelik)
+# FORGE Cycle Ledger
 
-## Cycle 1
-* **Rapor:** AnaEkran - buton yazıları kapatıyor (rapor-1.md)
-* **Araç:** Gemini (AI)
-* **Hipotez:** `marginTop: -80` ve `marginLeft: 150` değerleri butonu konumundan çıkarıp diğer metinlerin üzerine bindiriyor. Bu değerler normalize edilmeli.
-* **Sonuç:** SUCCESS
-* **Değişen Dosyalar:** `app/App.tsx` (buggyButton stili güncellendi)
-* **Test Sonucu:** Buton eski konumuna geldi, metinlerin üstünü kapatmıyor. Görsel doğrulama başarılı.
-* **Ağırlık:** 5kg
-* **Human Touch Points:** 1 (Sadece PR onaylandı, koda manuel müdahale edilmedi).
-* **Commit Hash:** [FORGE: AnaEkran] Hatalı margin değerleri düzeltilerek buton metin çakışması giderildi — 5kg
+Student: Zeynep Bakirman  
+Student No: 231118031  
+Track: A
 
----
+This ledger records real feedback loops from the submission work. Inputs are saved under `audit-reports/` when they came from user review or in-app/demo testing feedback.
 
-## Cycle 2
-* **Rapor:** ProfilEkrani - Yazı siyah arka planda okunmuyor
-* **Araç:** Gemini (AI)
-* **Hipotez:** Metin rengi siyah olduğu için okunmuyor. Arka plan siyah (`#000`), yazı rengi de siyah (`#000`). Metin stiline `opacity: 0.5` vererek okunabilir yapabiliriz.
-* **Sonuç:** ROLLBACK
-* **Değişen Dosyalar:** `app/App.tsx` (buggyText opacity değiştirildi)
-* **Test Sonucu:** BAŞARISIZ. Yazı rengi hala siyah olduğu için `opacity` vermek sadece metni iyice görünmez yaptı. Görsel doğrulama (Visual Verify) adımından geçemedi. Eski koda dönüldü.
-* **Ağırlık:** 0kg
-* **Human Touch Points:** 0 (Ajan hatayı kendi fark edip geri aldı).
-* **Commit Hash:** Yok (Rollback yapıldı)
+## Row Template
 
----
+```text
+## Cycle N - <slug> - YYYY-MM-DDTHH:MM
+STATUS: COMMIT | ROLLBACK | STUCK
+INPUT: <audit-report-path>
+HYPOTHESIS: <one line>
+CHANGES: <files touched>
+TEST: <how verified>
+DURATION_MIN: <n>
+NOTES: <free-form>
+```
 
-## Cycle 3
-* **Rapor:** ProfilEkrani - Yazı siyah arka planda okunmuyor (İkinci Deneme)
-* **Araç:** Gemini (AI)
-* **Hipotez:** Bir önceki hipotez yanlıştı. Yazının okunabilmesi için arka planla yüksek kontrast oluşturması gerekir. `color` değeri `#fff` (beyaz) yapılmalı.
-* **Sonuç:** SUCCESS
-* **Değişen Dosyalar:** `app/App.tsx` (buggyText color güncellendi)
-* **Test Sonucu:** Yazı beyaz oldu ve siyah arka planda mükemmel okunuyor.
-* **Ağırlık:** 5kg
-* **Human Touch Points:** 1 (Ajanın ikinci denemesi insan tarafından onaylandı).
-* **Commit Hash:** [FORGE: ProfilEkrani] Siyah arka plandaki metin rengi beyaza çevrildi — 5kg
+## Cycle 1 - commit-history-rollback - 2026-05-21T18:13
+STATUS: ROLLBACK
+INPUT: `audit-reports/cycle-1-commit-structure.md`
+HYPOTHESIS: A single final commit hides the required engineering trace; the submission history should be split into meaningful commits.
+CHANGES: Git history rewritten with `git reset --soft HEAD~1`; final monolithic commit split into app, docs, and APK commits.
+TEST: `git log --oneline -5` showed separate commits for app implementation, docs/decision log, and APK.
+DURATION_MIN: 8
+NOTES: Real rollback of the previous one-commit delivery. Resulting commits: `e147eb7`, `7e38462`, `bd11012`.
 
----
+## Cycle 2 - avatar-face-crop - 2026-05-21T18:29
+STATUS: COMMIT
+INPUT: `audit-reports/cycle-2-avatar-face-crop.md`
+HYPOTHESIS: The camera is framing the avatar body too high/close, so the face is out of view.
+CHANGES: `app/App.tsx`
+TEST: `npx tsc --noEmit`; Expo Go reload and user screenshot review.
+DURATION_MIN: 10
+NOTES: Added a camera rig and moved the procedural mouth from torso level toward the face. Commit: `6416af6`.
 
-## Cycle 4
-* **Rapor:** AyarlarEkrani - İkon veya boşluk eksik, çok yapışık duruyor
-* **Araç:** Gemini (AI)
-* **Hipotez:** İçerik konteynerinde yeterli iç boşluk (padding) yok, bu yüzden elemanlar sıkışık görünüyor. `content` stiline `padding: 20` eklenmeli.
-* **Sonuç:** SUCCESS
-* **Değişen Dosyalar:** `app/App.tsx` (content stili güncellendi)
-* **Test Sonucu:** Elemanlar etrafında ferah bir boşluk oluştu.
-* **Ağırlık:** 5kg
-* **Human Touch Points:** 1 (Onaylandı).
-* **Commit Hash:** [FORGE: AyarlarEkrani] İçerik kapsayıcısına padding eklendi — 5kg
+## Cycle 3 - avatar-upper-body-frame - 2026-05-21T18:31
+STATUS: COMMIT
+INPUT: `audit-reports/cycle-3-avatar-upper-body-frame.md`
+HYPOTHESIS: The camera is still too tight; a wider upper-body frame will keep the face visible during the demo.
+CHANGES: `app/App.tsx`
+TEST: `npx tsc --noEmit`; Expo Go reload requested before recording demo.
+DURATION_MIN: 5
+NOTES: Camera moved back, FOV widened, avatar scale reduced, and mouth fallback lowered. Commit: `cc4926f`.

@@ -61,3 +61,32 @@ export const processNotes = async (notes) => {
 
   throw new Error(finalError.message || 'An error occurred during AI processing.');
 };
+
+// ─── Audio transcription for AuditWidget dictation ───
+// audioBase64: raw base64 (no data URL prefix); mimeType e.g. 'audio/webm' / 'audio/m4a' / 'audio/mp4'
+export const transcribeAudio = async (audioBase64, mimeType) => {
+  if (!audioBase64) throw new Error('No audio data to transcribe.');
+
+  const genAI = getGenAI();
+  const prompt = `Transcribe the user's spoken audit observation about a mobile app feature.
+Output ONLY the verbatim transcript in the language spoken (Turkish or English).
+Do NOT add commentary, headers, labels, or quotation marks. If the audio is silent
+or unintelligible, output exactly: [unintelligible]`;
+
+  const audioPart = { inlineData: { data: audioBase64, mimeType } };
+  const modelsToTry = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-flash-lite-latest"];
+  let finalError = null;
+
+  for (const modelName of modelsToTry) {
+    try {
+      const model = genAI.getGenerativeModel({ model: modelName });
+      const result = await model.generateContent([prompt, audioPart]);
+      const text = (result.response.text() || '').trim();
+      if (!text) throw new Error('Empty transcription returned.');
+      return text;
+    } catch (error) {
+      finalError = error;
+    }
+  }
+  throw new Error(finalError?.message || 'Audio transcription failed.');
+};

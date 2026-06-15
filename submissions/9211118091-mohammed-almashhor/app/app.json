@@ -33,6 +33,9 @@
         "projectId": "497e2ae4-e91e-42ed-99e9-d705cb31903f"
       }
     },
-    "owner": "mohammedalmashhor"
+    "owner": "mohammedalmashhor",
+    "plugins": [
+      "expo-sharing"
+    ]
   }
 }

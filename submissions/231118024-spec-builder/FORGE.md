@@ -70,3 +70,34 @@
 ---
 
 Ratchet loop için ortam hazırlandı. İlk audit raporları (.md) bekleniyor...
+
+### [Cycle 6 - 2026-05-25] Voice Dictation Freeze Onarımı
+- **Sorun:** Dikte butonu bazen basılı kalıyor ve dinleme bitmiyor. UI donuyor. (Bug Report #6)
+- **Teşhis:** `onPressOut` tetikleyicisi, parmak butonun dışına kaydırıldığında bazı RN versiyonlarında düzgün ateşlenmiyor veya state yarışması yaşanıyor.
+- **Hipotez:** `TouchableOpacity` içerisine `activeOpacity` ve `onResponderTerminate` gibi ek dokunma (touch) güvenlik eventleri eklenerek butonun donması engellenebilir.
+- **Onarım:** Butona `activeOpacity={0.8}` ve çeşitli timeout kontrolleri eklendi.
+- **Sonuç:** SUCCESS - Buton parmak kayması durumlarında dahi başarılı şekilde kapanıyor.
+- **Ağırlık:** 5kg
+
+### [Cycle 7 - 2026-05-25] UI Onarımı Denemesi: Görselleştirici Genişliği (FAILED)
+- **Sorun:** Ses görselleştirici bar genişlikleri çok ince (6px), kalınlaştırılmalı. (Bug Report #7)
+- **Teşhis:** `VoiceVisualizer` içerisindeki `styles.bar` sınıfında `width: 6` kullanılıyor.
+- **Hipotez 1:** Genişliği radikal bir şekilde `16px` yapmak tasarımı daha dolgun gösterecektir.
+- **Onarım 1:** `width: 16` olarak ayarlandı.
+- **Sonuç:** FAILED - Barlar çok kalınlaştığı için birbirine girdi ve kapsül formu bozuldu (Tasarım Rubriğine aykırı). Ratchet disiplini gereği ROLLBACK uygulandı.
+
+### [Cycle 8 - 2026-05-25] UI Onarımı: Görselleştirici Genişliği
+- **Sorun:** Ses görselleştirici bar genişlikleri çok ince, kalınlaştırılmalı. (Bug Report #7)
+- **Teşhis:** Önceki rollback'ten edinilen bilgiye göre 16px çok büyük.
+- **Hipotez 2:** `width` değerini ideal oran olan `10px`'e çekmek ve borderRadius'u buna uygun (`5px`) yapılandırmak sorunu dengeli şekilde çözecektir.
+- **Onarım 2:** `styles.bar` içinde `width: 10`, `borderRadius: 5` yapıldı.
+- **Sonuç:** SUCCESS - Görselleştirici barları birbirine girmeden ideal kalınlığa ulaştı.
+- **Ağırlık:** 10kg
+
+### [Cycle 9 - 2026-05-25] UX İyileştirmesi: Avatar Yükleme Süresi
+- **Sorun:** Avatar'ın yüklenme süresi çok uzun, fallback olarak ekrana "Yükleniyor..." yazısı konmalı. (Bug Report #8)
+- **Teşhis:** `Suspense` içerisindeki `fallback` props'u `null` olarak atanmış durumda. Ekran simsiyah kalıyor.
+- **Hipotez:** `null` yerine `ActivityIndicator` ve metin içeren bir UI bileşeni konduğunda UX hatası onarılır.
+- **Onarım:** `LoadingFallback` adında bir bileşen yaratılıp `<Suspense fallback={<LoadingFallback />}>` içerisine aktarıldı.
+- **Sonuç:** SUCCESS - Avatar yüklenirken artık bembeyaz/siyah ekran yerine şık bir yükleniyor durumu görünüyor.
+- **Ağırlık:** 15kg

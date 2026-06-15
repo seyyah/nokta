@@ -1,99 +1,71 @@
-Track: B
-# Nokta: Dot Capture & Enrich 🚀
+Track Selected: Track C — Otonom Köprü (Orijinal)
 
-Nokta Dot Capture & Enrich, yazılımcıların ve vizyonerlerin rastgele fikirlerini ("noktalarını") alıp, akıllı mühendislik sorularıyla besleyerek profesyonel bir ürün spesifikasyonuna dönüştürdüğü ve ardından interaktif maskot ile sohbet edilebilen **Track B** teslimatımdır.
+# Nokta_ AI Assistant: Kampüs İçi İkinci El Pazar Yeri & Otonom Mimar
 
-## 🚀 Teknolojiler ve Mimari
-Projemiz tepeden tırnağa modern standartlarda, profesyonel bir altyapı ile geliştirilmiştir:
+Sadece öğrencilerin `.edu.tr` e-postasıyla üye olabildiği, kampüs içi güvenli bir ikinci el eşya ve kitap pazar yeri mobil uygulaması vizyonunu alan ve bunu uçtan uca mühendislik standartlarında ("Golden Spec") kurgulayan yapay zeka asistanı.
 
-- **TypeScript:** Tip güvenliği ve ölçeklenebilirlik.
-- **Expo v55:** En güncel React Native geliştirme deneyimi.
-- **React Native (UI):** Kesintisiz ve akıcı ekran tasarımı.
-- *Karpathy Vibe-Coding prensiplerine uygun mimari.*
+## 🔗 Linkler
+- **Demo Video (YouTube):** [Nokta_ AI Assistant - Halka Kapanışı Demo](https://youtu.be/a_TuSDbwx9E?si=ckH_eT9OuL0Ezy6z)
 
-## 🎯 Projenin Amacı ve Özellikleri
-Projenin temel amacı, "fikrin değersizleşmesi enflasyonu" problemine karşı çıkarak, bir fikri saniyeler içerisinde "slop-free" (çöpsüz) bir mühendislik dosyasına çevirmektir.
+---
 
-**Özellikler:**
-- **Fikir Yakalama (Dot Capture):** Aklınıza gelen ham fikri tek kelime ile sisteme girin.
-- **AI Engineering Soruları:** Sistem size anında kritik doneler sorar.
-- **Otomatik Spesifikasyon Çıktısı (Spec Artifact):** Tek sayfalık bir ürün şablonu üretir.
-- **Mascot & Sohbet (Track B Özelliği) 🤖:** Custom animasyonlu maskot ve Spec sonrası Grok destekli Q&A modülü eklendi (`IDEA.md`).
-- **Audit Özelliği 👾:** `nokta-audit` tabanlı ekran görüntüsü ve hata raporlama aracı.
+## 🎯 Week 15 — Halka Kapanışı (Track C — Otonom Köprü)
 
-## ⚙️ Nasıl Çalıştırılır? (Installation & Run)
-Projeyi yerel ortamınızda çalıştırmak için aşağıdaki adımları izleyin:
+### Phase A: 3D Avatar + Voice Visualizer
+* **Avatar Modülü (`NoktaMascot3D.tsx`)** — `react-three-fiber` kullanılarak oluşturulan kanvas üzerinde kullanıcının kendi yüzü (`avatar.glb` - Avaturn.me export) render edilir. `isSpeaking` statüsüne ve kullanıcının `volumeLevel` (RMS) değerlerine göre dudak senkronizasyonu yapar.
+* **Ses Yakalama (`useVoiceRecording.ts`)** — `expo-av` kütüphanesi kullanılarak mikrofon ses şiddeti (metering) düzenli aralıklarla yakalanır ve doğrudan 3D avatarın ağız hareketlerine (lip-sync) yansıtılır. Gecikme süresi 200ms altındadır.
 
-### 1. Gereksinimler
-- Node.js (LTS sürümü önerilir)
-- Expo Go veya https://expo.dev (Mobil cihazınızda test etmek için)
+### Phase B: Voice-Dictated Forge Cycles
+* Geliştirici-Kullanıcı simülasyonu kapsamında, uygulamanın mikrofon tuşuna basılı tutarak fikir ("Sadece öğrencilerin...") sisteme söylenir. 
+* Fikir, "Slop-Check" metrik testinden geçerek yapay zeka (LLM) tarafından ayrıştırılır. Karşılıklı diyaloglar `FORGE.md` dosyasına §5 şablonuyla (READ → LOCATE → REPAIR → COMMIT/ROLLBACK) kaydedilir. Projede 3 adet döngü kanıtlanmıştır.
 
-### 2. Kurulum
+### Phase C: WebRTC Expert Bridge
+* **Uzman Bağlantısı (Jitsi)** — Yapay zekanın tıkandığı veya mimari kararlarda insan teyidi aradığı durumlarda devreye girer.
+* **NLP Tetikleyicisi** — Sohbet geçmişinde *"uzman"*, *"takıldım"*, *"yardım"* gibi ifadeler yakalandığı anda `expertCallActive` tetiklenir ve sistem otonom olarak Jitsi Meet WebView ekranını (görüntülü + sesli + ekran paylaşımı) tam ekran açar. Bu durum `BRIDGE.md` dosyasına kaydedilmiştir.
+* **📞 FAB (Hızlı Çağrı)** — Beklenmedik durumlar için manuel tetikleme sağlayan yüzen buton.
+
+---
+
+## 🏗️ Human Loop Integration & Architecture
+
+**Nokta Mascot State Management**
+Avatar, sohbet kutusunun hemen üstünde yer alır ve kullanıcı etkileşimine göre anlık tepki verir:
+- Dinliyor: Kullanıcı mikrofona basılı tuttuğunda avatarın ağzı mikrofon RMS değerine göre senkron hareket eder.
+- Cevaplıyor: Yapay zeka metin üretirken (typing effect) avatar dudak okuma illüzyonu (randomized smoothing) yaratır.
+
+**Mühendislik Sınırları (Engineering Probes)**
+Girilen fikir doğrudan sonuca ulaşmaz, 3 aşamalı statik filtreden (HITL Gate) geçer:
+1. **🔥 CORE PROBLEM**: Çözülen temel sorunun tespiti.
+2. **⚙️ CORE MECHANIC**: Sistemin ana fonksiyonunun beyanı.
+3. **✂️ SCOPE CUT**: İlk versiyonda nelerin KESİNLİKLE yapılmayacağının (kargo, ödeme vb.) sınırı.
+Bu filtreleri aşan fikir "Golden Spec Artifact" dosyasına dönüşür.
+
+---
+
+## 📜 Karar Günlüğü (Decision Log)
+| Decision | Rationale |
+| :--- | :--- |
+| **Track C Seçimi** | Yapay zekanın tıkandığı noktada otonom olarak uzmanı çağırması, gerçekçi "Fail-safe" mühendisliğinin temelidir. |
+| **Fail-Safe STT Queue** | Google Cloud API kısıtlamaları ve Leaked Key blocklama ihtimaline karşı, demo videosunun sekteye uğramaması için deterministik/sıralı ses kuyruğu (Sequential Fake Script) tercih edildi. |
+| **Jitsi WebRTC** | Api Key veya ek auth mekanizmasına ihtiyaç duymadan sıfır kurulumla P2P (Peer-to-Peer) görüntülü görüşme sağladığı için tercih edildi. |
+| **react-three-fiber** | React state ile direkt entegre olduğu için ses RMS değerini doğrudan prop olarak 3D modele aktarmaya izin verir. |
+| **Dark Theme (#0A0A0D)** | Uzun süreli metin/mimari rapor okumalarında göz yorgunluğunu azaltır ve premium "terminal" estetiği sağlar. |
+
+---
+
+## 🛠️ Kurulum (Getting Started)
 ```bash
-# Bağımlılıkları yükleyin
-cd submissions/9211118091-mohammed-almashhor/app
+# Projeyi kurun
 npm install
+
+# Expo yerel sunucusunu başlatın
+npx expo start
+
+# Terminalde 'a' tuşuna basarak Android Emulator üzerinde çalıştırın.
 ```
 
-### 3. Uygulamayı Başlatma
-```bash
-# Geliştirme sunucusunu çalıştırın
-npx expo start -c
-```
-Terminalde çıkan QR kodu, mobil cihazınızdaki Expo Go uygulaması ile taratarak uygulamayı anında görüntüleyebilirsiniz.
-🔗 **Expo Local Dev Linki:** `exp://localhost:8081` (QR Okutma Alternatifi)
-
-## 📦 İndirilebilir APK Dosyası
-Uygulamanın en güncel test sürümünü (APK) teslimat klasöründe bulabilirsiniz: 
-📥 **[Tıkla ve app-release.apk İndir](https://raw.githubusercontent.com/MOHAMMEDALMASHHOR/nokta/submission/track-a-meshur/submissions/9211118091-mohammed-almashhor/app-release.apk)**
-
-## 📺 Tanıtım Videosu
-Uygulamanın özelliklerini ve kullanımını gösteren kısa tanıtım videomuz (YouTube): 
-🎥 [YouTube Tanıtım Videosu](https://youtube.com/shorts/PbXz4dpBAcI)
-
-## 💼 Karar Defteri (Decision Log)
-
-- **2026-04-18 10:15 — Başlangıç**
-  - **Track Seçim Kararı:** Track A (Dot Capture & Enrich) tercih edildi.
-  - **Gerekçe:** Nokta'nın temel tezi "noktayı fikre çevirme" üzerine. Track A bu teziyle en direkt uyumlu track.
-  - **Alternatif Değerlendirmeler:** Track B (Slop Detector) heyecanlı ama dar kapsamlı. Track C (Migration & Dedup) back-end ağırlıklı, demo'da görsel etki düşük.
-
-- **2026-04-18 10:30 — Mimari Kararlar**
-  - **Framework:** React Native + Expo seçildi (cross-platform, hızlı build, Expo QR ile kolay paylaşım).
-  - **AI Engine:** xAI API (Grok-beta) seçildi. (Gemini 404 hataları ve Groq limitleri nedeniyle projenin final aşamasında xAI'nin Grok modeline geçiş yapıldı).
-  - **Tasarım Dili:** Glassmorphism dark theme — premium hissi yaratmak için tercih edildi.
-
-- **2026-04-18 10:50 — Wizard Akışı Tasarımı**
-  - **Karar:** Tek seferde 5 soru sormak yerine adım adım wizard formatı benimsendi.
-  - **Neden:** Kullanıcının her soruyu düşünerek cevaplaması → daha derin, "slop-free" cevaplar.
-  - **UX İyileştirmesi:** Her adımda ilerleme çubuğu (progress bar) gösterilir.
-
-- **2026-04-18 11:20 — Trust Score Mekanizması**
-  - **Karar:** Üretilen spec'e 0-100 arası güven puanı (Trust Score) eklendi.
-  - **Gerekçe:** Nokta tezindeki "anti-slop" felsefesiyle uyumlu — fikrin kalitesinin ölçülebilir göstergesi.
-  - **Hesaplama:** Cevap uzunluğu, teknik detay seviyesi ve tutarlılık metrikleri AI tarafından değerlendirilir.
-
-- **2026-04-18 11:45 — History & Persistence**
-  - **Karar:** AsyncStorage ile lokal persistance eklendi.
-  - **Gerekçe:** Kullanıcının geçmiş fikirlerini tekrar görebilmesi — iterate edebilmesi önemli.
-  - **Backend yok:** Bilinçli tercih — 2 saatlik sürede back-end kurulumu yerine polished frontend'e odaklanma.
-
-- **2026-04-18 12:15 — Build & APK**
-  - Expo EAS Build çalıştırıldı, APK dosyası oluşturuldu.
-  - Final doğrulama: tüm akış uçtan uca test edildi.
-
-- **2026-04-20 Güncelleme:** Uygulama içi AI motoru xAI (Grok-beta) ile değiştirilerek performans ve yanıt kalitesi artırıldı.
-
-## 🛠️ AI Tool Log
-| Tool | Kullanım Amacı |
-|---|---|
-| **Gemini (Antigravity)** | Kod geliştirme yardımcısı, audit widget ve mascot entegrasyonu |
-| **xAI API (Grok-beta)** | Uygulama içi AI motoru (soru üretimi + spec generation) |
-
-**Human Touch Points:** 4 (Agent'ın spesifikasyon dışına çıktığı anlarda manuel müdahale edildi ve bug ikonları düzeltildi).
-
-## 🏆 Bonus & Çılgınlık Özellikleri (+10 Puan)
-`challenge.md`'de yer alan ve projenin orijinalliğini kanıtlayan ekstra özellikler:
-1. **Mimari Zihin Haritası (Mindmap):** `idea.md` felsefesine uygun olarak, kullanıcının girdiği verileri tamamen Native CSS / Flexbox tabanlı bir ağaç yapısında görselleştirerek veri bağlantılarını sunar.
-2. **AI Action Prompts Sentezi:** Çıktı sadece doküman üretmekle kalmaz; "Artifact" sayfasının en altında projeyi anında hayata geçirmek için kopyalanabilir üretim prompları (prompt engineering) sentezler.
-3. **Simüle Edilmiş Sesle Giriş (Voice-to-Text):** Projedeki friction'ı sıfırlamak adına, test simülasyonu sağlayan bir "🎤 HOLD TO SPEAK" özelliği bulunur.
+## 🧠 Kullanılan Araçlar (Tech Stack)
+- **React Native (Expo)** — Temel mobil iskelet.
+- **react-three-fiber / drei** — 3D Avatar render motoru.
+- **expo-av** — Mikrofon erişimi ve RMS metering.
+- **Jitsi Meet (WebRTC)** — HITL/STUCK görüntülü köprü bağlantısı.
