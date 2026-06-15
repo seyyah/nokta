@@ -1,4 +1,4 @@
-export type ScreenKey = "capture" | "reports" | "forge";
+export type ScreenKey = "capture" | "reports" | "forge" | "bridge";
 
 export type ScreenMetric = {
   label: string;
@@ -12,7 +12,7 @@ export type ScreenAction = {
 
 export type ScreenData = {
   key: ScreenKey;
-  route: "/" | "/reports" | "/forge";
+  route: "/" | "/reports" | "/forge" | "/bridge";
   label: string;
   eyebrow: string;
   title: string;
@@ -30,23 +30,23 @@ export const screens: ScreenData[] = [
     eyebrow: "Phase A",
     title: "Yakalama masasi",
     summary:
-      "Tester tek ekranda akisi baslatir: gor, isaretle, notu yaz, raporu disari al. Audit FAB her route ustunde ayni host sinirindan calisir.",
+      "Tester ekrani, canli mikrofon seviyesi ve avatar agiz tepkisi ayni audit akisi icinde izlenir. FAB her route ustunde ayni host sinirindan calisir.",
     metrics: [
-      { label: "tap", value: "1" },
-      { label: "bounds", value: "tek kutu" },
-      { label: "data", value: "mock" }
+      { label: "input", value: "mic" },
+      { label: "meter", value: "80ms" },
+      { label: "avatar", value: "glb" }
     ],
     actions: [
       {
-        title: "CTA yakinligi",
-        detail: "Birincil butonun alt boslugunu ve dokunma alanini dogrula."
+        title: "Voice trace",
+        detail: "Ses seviyesi Expo AV metering degerinden yumusatilarak gorsellestirilir."
       },
       {
-        title: "Burn-in kaydi",
-        detail: "Sari kutu rapor gorselinin parcasi olarak saklanir."
+        title: "Mouth response",
+        detail: "Avatar agzi sessizlikte kapali kalir, konusma seviyesinde acilir."
       }
     ],
-    accent: "#b42318"
+    accent: "#2f6f66"
   },
   {
     key: "reports",
@@ -64,7 +64,7 @@ export const screens: ScreenData[] = [
     actions: [
       {
         title: "Export okunurlugu",
-        detail: "Agent input bolumu insan notundan ayrilir."
+        detail: "Agent input bolumu insan notu, secim bounds ve kanit gorselinden ayrilir."
       },
       {
         title: "Share sheet",
@@ -97,6 +97,31 @@ export const screens: ScreenData[] = [
       }
     ],
     accent: "#027a48"
+  },
+  {
+    key: "bridge",
+    route: "/bridge",
+    label: "Bridge",
+    eyebrow: "Phase C",
+    title: "Uzman baglanti akisi",
+    summary:
+      "Audit akisi tikaninca kullanici ayni vaka baglamiyla Jitsi Meet odasina aktarilir; audio, video ve screen share gercek servis uzerinden acilir.",
+    metrics: [
+      { label: "audio", value: "on" },
+      { label: "video", value: "on" },
+      { label: "share", value: "web" }
+    ],
+    actions: [
+      {
+        title: "Escalation packet",
+        detail: "Aktif route, not, secim bounds ve ses/avatar bulgusu uzman konusmasina tasinir."
+      },
+      {
+        title: "External bridge",
+        detail: "Native arama ekrani taklit edilmez; Jitsi odasi gercek baglanti hedefidir."
+      }
+    ],
+    accent: "#4a5568"
   }
 ];
 
