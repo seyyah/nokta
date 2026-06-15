@@ -13,7 +13,7 @@ import ProfileScreen from './screens/ProfileScreen';
 import SettingsScreen from './screens/SettingsScreen';
 
 // @ts-ignore
-import { AuditWidget } from '../../../../nokta-audit';
+import { AuditWidget } from './nokta-audit';
 
 const Stack = createNativeStackNavigator();
 
@@ -62,7 +62,7 @@ export default function App() {
     },
     currentScreen: currentScreen,
     reporterId: 'Agent_007',
-    BugIcon: <Text style={{ fontSize: 24 }}>🐛</Text>
+    BugIcon: <Text style={{ fontSize: 20 }}>🐛</Text>
   };
 
   return (

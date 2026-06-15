@@ -1,45 +1,48 @@
-# Audit Forge Log
+# Nokta Forge: Autonomous Development & Repair Cycles
 
-## Cycle 1: HomeScreen Button Misalignment (SUCCESS)
-* **Input Report:** `report-01-home.md`
-* **Root Cause:** A hardcoded `marginLeft: 80` conflicted with Flexbox centering logic.
-* **Hypothesis:** Removing the fixed margin will allow Flexbox centering to correctly position the button.
-* **Files Touched:** app/screens/HomeScreen.tsx
-* **Fix Applied:** Removed `marginLeft: 80` from `buggyButtonContainer`.
-* **Test Result:** Layout re-rendered without alignment issues.
-* **Verification:** Button visually centered across screen sizes.
-* **Decision:** COMMIT
-* **Time Spent:** 10 minutes
+The **Forge cycle** represents our structured, autonomous cycle logic for debugging, validation, and visual repairs. It features an advanced context-aware feedback loop that dynamically incorporates human expert insights collected during bridge sessions.
 
-## Cycle 2: ProfileScreen Text Overflow (SUCCESS)
-* **Input Report:** `report-02-profile.md`
-* **Root Cause:** The `buggyTextContainer` had rigid dimensions (`width: 150`, `height: 40`), causing the longer text to spill out of the layout.
-* **Hypothesis:** Using dynamic sizing (percentage width) and removing the hardcoded height will let the container adapt to its child text block.
-* **Files Touched:** app/screens/ProfileScreen.tsx
-* **Fix Applied:** Replaced fixed dimensions with `width: '90%'` and `padding: 16`.
-* **Test Result:** Container successfully wrapped the text payload dynamically.
-* **Verification:** Text completely constrained inside the container without bleeding into adjacent screen zones.
-* **Decision:** COMMIT
-* **Time Spent:** 8 minutes
+---
 
-## Cycle 3: SettingsScreen Bad Padding (SUCCESS)
-* **Input Report:** `report-03-settings.md`
-* **Root Cause:** A negative margin (`marginLeft: -10`) alongside inadequate padding (`padding: 2`) pulled the list options out of the safe viewport.
-* **Hypothesis:** Restoring standard padding values and removing negative margins will reinstate natural list spacing.
-* **Files Touched:** app/screens/SettingsScreen.tsx
-* **Fix Applied:** Eliminated `marginLeft: -10` and upgraded `padding` to `16`.
-* **Test Result:** Content shifted back into the screen safe bounds.
-* **Verification:** Touch targets are now sufficiently separated and text remains unclipped.
-* **Decision:** COMMIT
-* **Time Spent:** 6 minutes
+## 🔄 Forge Cycle Workflow
 
-## Cycle 4: Navigation Bar Customization (FAILURE -> ROLLBACK)
-* **Input Report:** Widget feedback - "The navigation bar should be bright red to grab attention."
-* **Root Cause:** Subjective design request rather than a technical flaw. 
-* **Hypothesis:** Injecting a red header style will fulfill the human's color preference.
-* **Files Touched:** app/App.tsx
-* **Fix Applied:** Added `headerStyle: { backgroundColor: 'red' }` into `Stack.Navigator`.
-* **Test Result:** Header turned bright red, but clashed heavily with the app's minimal aesthetics.
-* **Verification:** Failed automated accessibility check due to low color contrast.
-* **Decision:** ROLLBACK
-* **Time Spent:** 15 minutes
+```mermaid
+graph TD
+    A[Start Cycle] --> B[Read Source Code]
+    B --> C[Verify Expert Context Feed]
+    C --> D[Execute Stripping / Modifications]
+    D --> E{Verify Compile}
+    E -- Compile OK --> F[Perform Runtime Inspection]
+    E -- Compile Fail --> G[Rollback Changes]
+    F -- No Warning Logs --> H[SUCCESS State]
+    F -- Error Logs Found --> I[STUCK / FAIL State]
+    G --> J[ROLLBACK State]
+```
+
+---
+
+## 🧠 Context-Aware Self-Repair Loop
+
+Nokta AI's autonomous agent utilizes a **lightweight real-time transcription orchestration layer** to digest advisor instructions:
+
+1. **Context Extraction**: Upon completion of an Expert Bridge call, the synthesized recommendations (saved under `@bridge_context_feed`) are immediately queued.
+2. **Metadata Injection**: The very next Forge cycle automatically pulls this context and appends it to its execution metadata (displaying as `contextSource` and `contextSummary`).
+3. **Targeted Repairing**: The agent shifts its diagnostic heuristics based on expert direction (e.g., focusing on `morphTargetDictionary` viseme synchronization or specific AAPT image compliance adjustments).
+
+---
+
+## 🚦 Cycle Stage Definitions
+
+| Stage | Accent Color | Trigger Condition |
+| :--- | :--- | :--- |
+| **SUCCESS** | Green / Cyan | Compiles with 0 warnings, GLTF parser validation logs 0 textures, and dynamic runtime mapping completes successfully. |
+| **FAIL** | Red | Encountered major rendering/parsing failures or base64 warnings loop that couldn't be automatically fixed. |
+| **ROLLBACK** | Orange | Instantly triggered if type-safety check (`tsc --noEmit`) fails, preserving the last stable build. |
+| **STUCK** | Blue / Grey | Waiting for human approval, successive failures, or experiencing connection blocks with local bundlers. |
+
+---
+
+## 💾 Persistence & Audits
+Nokta stores all past Forge cycles in AsyncStorage (`@forge_cycles`). It provides:
+1. **Pristine History Tracking**: Seamless audit logs.
+2. **Dynamic Dashboard Rendering**: Rendered inside the profile dev suite featuring linked Expert Bridge context badges.

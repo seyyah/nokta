@@ -16,6 +16,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "ai.nokta.specbuilder",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -28,6 +29,11 @@
     },
     "plugins": [
       "expo-asset"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "11ef1343-2f6b-4a7c-a353-5140e59b9247"
+      }
+    }
   }
 }
