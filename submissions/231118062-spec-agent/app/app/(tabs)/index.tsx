@@ -1,115 +1,58 @@
-import React, { useState } from 'react';
-import {
-  SafeAreaView,
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-  StyleSheet,
-} from 'react-native';
+import { useRouter } from 'expo-router';
+import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+const PHASES = [
+  {
+    href: './voice',
+    label: 'Phase A',
+    title: 'Voice visualizer',
+    body: 'expo-av mikrofon metering ile bar ve wave animasyonu.',
+  },
+  {
+    href: './avatar',
+    label: 'Phase B',
+    title: 'Avatar lipsync',
+    body: 'Kendi avatar.glb modelin ve RMS tabanli viseme pipeline.',
+  },
+  {
+    href: './forge',
+    label: 'Phase C',
+    title: 'Forge expert bridge',
+    body: '2 ardil rollback/stuck sonrasi Jitsi expert call tetigi.',
+  },
+] as const;
 
 export default function Index() {
-  const [input, setInput] = useState('');
-  const [cards, setCards] = useState<
-    { id: number; title: string; description: string; source: string }[]
-  >([]);
-
-  const [expertName, setExpertName] = useState('');
-  const [expertQuestion, setExpertQuestion] = useState('');
-  const [expertMessage, setExpertMessage] = useState('');
-
-  const generateCards = () => {
-    const lines = input
-      .split('\n')
-      .map((line) => line.trim())
-      .filter((line) => line.length > 0);
-
-    const uniqueLines = [...new Set(lines)];
-
-    const generated = uniqueLines.map((item, index) => ({
-      id: index + 1,
-      title: `Fikir ${index + 1}`,
-      description: item,
-      source: 'Kullanıcı notu',
-    }));
-
-    setCards(generated);
-  };
-
-  const requestExpertSupport = () => {
-    if (!expertName.trim() || !expertQuestion.trim()) {
-      setExpertMessage('Lütfen adınızı ve destek konusunu doldurun.');
-      return;
-    }
-
-    setExpertMessage(
-      'Uzman destek talebiniz alındı. Bir uzman fikrinizi inceleyerek geri bildirim sağlayacaktır.'
-    );
-
-    setExpertName('');
-    setExpertQuestion('');
-  };
+  const router = useRouter();
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.title}>NOKTA - Not Ayırıcı</Text>
-        <Text style={styles.subtitle}>
-          Notlarını yapıştır, tekrarları temizle, idea card olarak gör.
-        </Text>
-
-        <TextInput
-          style={styles.input}
-          multiline
-          placeholder="Buraya notlarını yapıştır..."
-          value={input}
-          onChangeText={setInput}
-        />
-
-        <TouchableOpacity style={styles.button} onPress={generateCards}>
-          <Text style={styles.buttonText}>Idea Card Oluştur</Text>
-        </TouchableOpacity>
-
-        <View style={styles.cardsContainer}>
-          {cards.map((card) => (
-            <View key={card.id} style={styles.card}>
-              <Text style={styles.cardTitle}>{card.title}</Text>
-              <Text style={styles.cardText}>{card.description}</Text>
-              <Text style={styles.cardSource}>Kaynak: {card.source}</Text>
-            </View>
-          ))}
-        </View>
-
-        <View style={styles.expertBox}>
-          <Text style={styles.expertTitle}>Uzman Desteği</Text>
-          <Text style={styles.expertSubtitle}>
-            Fikrinin bir uzman tarafından yorumlanmasını istiyorsan destek talebi oluştur.
+        <View style={styles.hero}>
+          <Text style={styles.kicker}>Final hafta</Text>
+          <Text style={styles.title}>Nokta voice avatar forge</Text>
+          <Text style={styles.subtitle}>
+            Sesin gorsellesir, avatarin konusur, forge dongusu takilinca insan uzmana acilir.
           </Text>
-
-          <TextInput
-            style={styles.smallInput}
-            placeholder="Adınız"
-            value={expertName}
-            onChangeText={setExpertName}
-          />
-
-          <TextInput
-            style={styles.expertInput}
-            multiline
-            placeholder="Uzmandan hangi konuda destek almak istiyorsunuz?"
-            value={expertQuestion}
-            onChangeText={setExpertQuestion}
-          />
-
-          <TouchableOpacity style={styles.expertButton} onPress={requestExpertSupport}>
-            <Text style={styles.buttonText}>Uzman Desteği İste</Text>
-          </TouchableOpacity>
-
-          {expertMessage.length > 0 && (
-            <Text style={styles.successText}>{expertMessage}</Text>
-          )}
         </View>
+
+        <View style={styles.statusCard}>
+          <Text style={styles.statusTitle}>Teslim durumu</Text>
+          <Text style={styles.statusText}>Track: C - STUCK heuristigi + Expert Bridge</Text>
+          <Text style={styles.statusText}>avatar.glb: ana klasor + app asset olarak baglandi</Text>
+          <Text style={styles.statusText}>Jitsi: forge ekranindaki Uzmana Baglan butonu</Text>
+        </View>
+
+        {PHASES.map((phase) => (
+          <TouchableOpacity
+            key={phase.href}
+            style={styles.phaseCard}
+            onPress={() => router.push(phase.href)}>
+            <Text style={styles.phaseLabel}>{phase.label}</Text>
+            <Text style={styles.phaseTitle}>{phase.title}</Text>
+            <Text style={styles.phaseBody}>{phase.body}</Text>
+          </TouchableOpacity>
+        ))}
       </ScrollView>
     </SafeAreaView>
   );
@@ -117,123 +60,79 @@ export default function Index() {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: '#f4f7f8',
     flex: 1,
-    backgroundColor: '#f4f6fb',
   },
   content: {
+    gap: 14,
     padding: 20,
-    paddingBottom: 60,
+    paddingBottom: 48,
+  },
+  hero: {
+    backgroundColor: '#10131b',
+    borderRadius: 8,
+    gap: 10,
+    padding: 20,
+  },
+  kicker: {
+    color: '#58f0d5',
+    fontSize: 13,
+    fontWeight: '800',
+    letterSpacing: 0,
+    textTransform: 'uppercase',
   },
   title: {
-    fontSize: 28,
-    fontWeight: '700',
-    marginBottom: 8,
-    color: '#1f2937',
+    color: '#ffffff',
+    fontSize: 31,
+    fontWeight: '800',
+    lineHeight: 37,
   },
   subtitle: {
+    color: '#b9c3d1',
     fontSize: 15,
-    color: '#4b5563',
-    marginBottom: 16,
+    lineHeight: 22,
   },
-  input: {
-    minHeight: 180,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 14,
-    textAlignVertical: 'top',
-    fontSize: 15,
-    marginBottom: 14,
+  statusCard: {
+    backgroundColor: '#ffffff',
+    borderColor: '#d7e0e6',
+    borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#d1d5db',
-  },
-  smallInput: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 14,
-    fontSize: 15,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-  },
-  expertInput: {
-    minHeight: 110,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 14,
-    textAlignVertical: 'top',
-    fontSize: 15,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-  },
-  button: {
-    backgroundColor: '#2563eb',
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  expertButton: {
-    backgroundColor: '#16a34a',
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  cardsContainer: {
-    gap: 12,
-  },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 14,
+    gap: 6,
     padding: 16,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    marginBottom: 12,
   },
-  cardTitle: {
+  statusTitle: {
+    color: '#17212b',
     fontSize: 18,
-    fontWeight: '700',
-    marginBottom: 8,
-    color: '#111827',
+    fontWeight: '800',
+    marginBottom: 2,
   },
-  cardText: {
-    fontSize: 15,
-    color: '#374151',
-    marginBottom: 8,
+  statusText: {
+    color: '#53606f',
+    fontSize: 14,
   },
-  cardSource: {
-    fontSize: 12,
-    color: '#6b7280',
-  },
-  expertBox: {
-    marginTop: 24,
-    backgroundColor: '#eefdf3',
-    borderRadius: 16,
-    padding: 16,
+  phaseCard: {
+    backgroundColor: '#ffffff',
+    borderColor: '#d7e0e6',
+    borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#bbf7d0',
+    gap: 7,
+    padding: 16,
   },
-  expertTitle: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#14532d',
-    marginBottom: 6,
+  phaseLabel: {
+    color: '#245a53',
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: 0,
+    textTransform: 'uppercase',
   },
-  expertSubtitle: {
+  phaseTitle: {
+    color: '#17212b',
+    fontSize: 20,
+    fontWeight: '800',
+  },
+  phaseBody: {
+    color: '#53606f',
     fontSize: 14,
-    color: '#166534',
-    marginBottom: 14,
-  },
-  successText: {
-    marginTop: 4,
-    fontSize: 14,
-    color: '#166534',
-    fontWeight: '600',
+    lineHeight: 20,
   },
 });
