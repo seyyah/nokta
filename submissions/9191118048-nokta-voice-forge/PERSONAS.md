@@ -1,17 +1,34 @@
-# 👥 PERSONAS.md — Avatar Persona Dokümantasyonu
+# PERSONAS.md - Avatar Persona Dokumani
 
-Uygulama içinde kullanıcı ile etkileşime giren, farklı ruh halleri ve görsel/işitsel ipuçları barındıran iki ayrı persona (Avatar) mevcuttur.
+Iki persona ayni kullaniciya ait 3D modeli kullanir; fark, cevap tonu, hareket yogunlugu ve UI temasidir. Varsayilan runtime persona `Senior-Sen`dir.
 
-## 1. Junior-Sen (Enerjik & Meraklı)
-- **Tasarım Dili**: Yuvarlak hatlar (Round Face), büyük gözler.
-- **Renk Teması**: Enerjik Gradient (Turuncu/Sarı), Primary Color: `#FF9F43`.
-- **Animasyon Hızı**: Yüksek intensity. Ağız hareketleri hızlı ve heveslidir. Göz kırpma sıklığı fazladır.
-- **Davranış**: Denetim raporlarını yorumlarken motive edicidir, hata bulduğunda telaşlanır ama çabuk çözüm arar.
-- **Dudak Senkronizasyonu**: Mikrofon genliğine (`amplitude`) çok hızlı tepki verir.
+## Junior-Sen
 
-## 2. Senior-Sen (Analitik & Sakin)
-- **Tasarım Dili**: Köşeli hatlar (Angular Face), standart gözler.
-- **Renk Teması**: Sakin ve Profesyonel Gradient (Mor/Koyu Mavi), Primary Color: `#9B59B6`.
-- **Animasyon Hızı**: Düşük intensity. Hareketleri daha kontrollü ve yavaştır. Mimikler oturaklıdır.
-- **Davranış**: Sistem analizi yaparken mantık çerçevesinde kalır. STUCK olduğunda dahi paniklemez, metodik olarak uzmana bağlanmayı önerir.
-- **Dudak Senkronizasyonu**: Mikrofon genliğini daha yavaş bir lerp (linear interpolation) fonksiyonuyla takip eder, yumuşak geçişler yapar.
+- Ton: Enerjik, merakli, motive edici.
+- Cevap tarzi: Kisa, hizli ve aksiyon odakli.
+- Tema: Turuncu / sari.
+- Animasyon: Daha yuksek konusma yogunlugu, daha sik blink ve hizli gesture.
+- Audit rolu: Problemi hizla tarif eder ve ilk hipotezi onerir.
+
+## Senior-Sen
+
+- Ton: Sakin, analitik, metodik.
+- Cevap tarzi: Ayni dilde en fazla iki kisa cumle; gerekli durumda teknik detay.
+- Ses: Gemini TTS `Charon`, sakin yetiskin erkek sesi.
+- Tema: Mor / koyu mavi.
+- Animasyon: Standing Idle tabani, cevap playback'i sirasinda kontrollu el hareketi.
+- Audit rolu: Kanitlari karsilastirir, STUCK durumunda Expert Bridge'i onerir.
+
+## Gercek Facial Rig
+
+Aktif `avatar.glb` kendi yuz modelidir ve 72 morph target icerir. Runtime binding su gruplari otomatik bulur:
+
+- Jaw / mouth: `jawOpen`, `mouthOpen`, `mouthFunnel`, `mouthClose`
+- Viseme: `viseme_PP`, `viseme_FF`, `viseme_TH`, `viseme_DD`, `viseme_kk`, `viseme_CH`, `viseme_SS`, `viseme_nn`, `viseme_RR`, `viseme_aa`, `viseme_E`, `viseme_I`, `viseme_O`, `viseme_U`
+- Blink / eyes: `eyeBlinkLeft`, `eyeBlinkRight`, `eyesClosed` ve eye-look hedefleri
+
+Konusma sirasinda gercek morph target'lar kullanilir. Kemik rig'i bas, govde ve eller icin Standing Idle + reply gesture hareketini saglar.
+
+## Persona Gecisi
+
+Persona secimi AsyncStorage ile saklanir. Persona degisimi modelin kimligini degistirmez; kullanicinin "junior" ve "senior" anlatim varyantlarini temsil eder.

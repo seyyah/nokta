@@ -23,7 +23,13 @@
     },
     "plugins": [
       "expo-font",
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Voice visualizer ve avatar lipsync icin mikrofon erisimi gereklidir."
+        }
+      ]
     ]
   }
 }

@@ -1,109 +1,109 @@
-Track: B (Yaratıcılık — Voice-driven avatar ile müşteri-geliştirici use case)
+Track: B (Yaraticilik - voice-driven avatar ve persona deneyimi)
 
-# Nokta Voice Forge — 9191118048
+# Nokta Voice Forge - 9191118048
 
-> 🪞 Kendi avatarın seninle konuşur · 🎙️ sesin görselleşir · 🛠️ kendi raporlarınla tamir edersin · 📞 sıkıştığında insan gelir.
+Nokta Voice Forge; gercek zamanli ses gorsellestirme, kullanicinin kendi yuzunden uretilen 3D avatar, voice-to-audit Forge dongusu ve STUCK durumunda Expert Bridge akisini tek Expo uygulamasinda birlestirir.
 
-## 🎯 Proje Özeti
+## Son Durum
 
-Nokta Voice Forge, üç katmanlı bir mobil uygulama:
+### Phase A - Voice Visualizer ve Avatar
 
-1. **Voice Visualizer** — Mikrofon girişini `expo-av` metering ile yakalayıp, 32 barlı animasyonlu dalga formuna dönüştürür. Sessizlikte söner, konuşunca canlanır. OpenAI voice-mode estetiği referans.
+- Mikrofon `expo-audio` metering ile izlenir; 32 barli gorsellestirme sessizlikte soner, konusmada canlanir.
+- Mikrofon dugmesi push-to-talk calisir: basili tutunca kayit baslar, parmak kaldirilinca kayit biter.
+- `avatar.glb`, kullanicinin kendi yuzunden uretilmis modeldir.
+- Runtime model 72 facial morph target icerir: `jawOpen`, `mouthOpen`, ARKit blink hedefleri ve viseme hedefleri.
+- Avatar yanit verirken dudak, goz, bas ve el hareketleri birlikte calisir.
+- Varsayilan poz `Standing Idle`; kamera kadraji bas-govde odaklidir.
+- Konusma akisi Gemini audio understanding veya Deepgram/OpenAI STT, OpenAI/Gemini cevap ve Gemini erkek TTS (`Charon`) ile calisir.
+- `<200ms` hedefi mikrofon girdisinin visualizer/avatar tepki suresidir. Bulut STT + LLM + TTS turu ag gecikmesine baglidir.
 
-2. **Avatar Chat** — 2D SVG tabanlı animasyonlu avatar sistemi. İki persona: Junior-Sen (meraklı, enerjik) ve Senior-Sen (profesyonel, analitik). Mikrofona konuşunca avatar dudakları senkron oynar. Latency hedefi < 200ms.
+### Phase B - Audit ve Forge
 
-3. **Expert Bridge** — Forge döngüsünde 2 cycle üst üste FAIL/ROLLBACK çektiğinde, STUCK durumu tespit edilir. "Uzmana Bağlan" butonu ile Jitsi Meet görüntülü çağrı açılır (ses + video + ekran paylaşımı).
+- Voice Lab kaydi STT ile metne cevrilir ve Markdown audit raporu olarak saklanir.
+- `audit-reports/` altinda 3 burn-in raporu bulunur.
+- Forge state machine: `READ -> LOCATE -> HYPOTHESIZE -> REPAIR -> TEST -> VERIFY -> COMMIT/ROLLBACK`.
+- Iki ardisik `FAIL`, `ROLLBACK` veya `STUCK` sonucu Expert Bridge tetigini acar.
+- Bridge context sonraki cycle hipotezine otomatik eklenir.
 
-## 📱 Expo QR / Link
+### Phase C - Expert Bridge
 
-```
-npx expo start
-```
+- Uygulama icinden Jitsi odasi acilir.
+- Jitsi uzerinden ses, video ve ekran paylasimi kullanilabilir.
+- Gercek uzman gorusmesi ve otomatik transkripsiyon kaniti kullanici tarafindan demo kaydinda tamamlanmalidir; mevcut repoda bu adim senaryo olarak dokumante edilmistir.
 
-Expo Go ile QR kod tarayarak çalıştırın.
+## Calistirma
 
-## 🎬 Demo Video
-
-> 3 dk'lık demo video: Phase A (Voice Viz + Avatar) + Phase B (Forge Cycle) + Phase C (Expert Bridge)
-
-[Demo Video Linki — TBD]
-
-## 🏗️ Kullanılan Teknolojiler
-
-| Teknoloji | Versiyon | Amaç |
-|-----------|----------|------|
-| Expo SDK | 54.0.33 | Uygulama framework |
-| React Native | 0.81.5 | Cross-platform UI |
-| expo-av | 15.0.2 | Mikrofon kaydı + metering |
-| react-native-reanimated | 3.17.4 | 60fps animasyonlar |
-| react-native-svg | 15.11.2 | Avatar SVG rendering |
-| expo-web-browser | 14.1.6 | Jitsi Meet entegrasyonu |
-| expo-blur | 14.1.4 | Glassmorphism efektleri |
-| expo-linear-gradient | 14.1.4 | Gradient arka planlar |
-| expo-haptics | 14.1.4 | Dokunsal geri bildirim |
-| @react-navigation/native | 7.1.6 | Navigasyon |
-
-## 🛠️ Decision Log
-
-| # | Karar | Sebep |
-|---|-------|-------|
-| 1 | Expo Go + expo-file-system | `expo-av` metering kullanıldı, STT için `expo-file-system` üzerinden REST API ile ses dosyası yüklendi |
-| 2 | 3D GLB Avatar (`@react-three/fiber`) | 3D gerçek model render'landı. Eksik dosyalara karşı ErrorBoundary fallback sistemi kullanıldı. |
-| 3 | expo-web-browser + Jitsi | Native WebRTC yerine web tabanlı pratik expert çağrı entegrasyonu sağlandı |
-| 4 | Deepgram REST API STT | Native speech recognition yerine gerçek Deepgram STT entegrasyonu, API key yoksa Fallback mekanizması kullanıldı |
-| 5 | React Navigation | Esnek navigasyon ve parametre geçirimi |
-| 6 | expo-av metering (FFT yerine) | Expo Go'da raw PCM/FFT erişimi yok; metering yeterli seviyede görselleştirme sağlıyor |
-
-## 👤 Human Touch Points: 5
-
-| # | An | Yönlendirme |
-|---|-----|-------------|
-| 1 | Proje başlangıcı | Expo Go kısıtlamaları analizi ve mimari karar |
-| 2 | Avatar tasarımı | 2D SVG vs 3D GLB kararı |
-| 3 | Video call entegrasyonu | Jitsi Meet via expo-web-browser kararı |
-| 4 | Forge cycle 3 ROLLBACK | Hipotez yeniden değerlendirmesi |
-| 5 | STUCK tetikleme | Kasıtlı STUCK senaryosu tasarımı |
-
-## 🤖 AI Tool Log
-
-| Cycle | Tool | Kullanım |
-|-------|------|----------|
-| Setup | Antigravity (Claude Opus 4.6) | Proje yapısı ve tüm kaynak kodu |
-| Forge 1-3 | Antigravity | Audit raporlarından fix cycle |
-| Forge 4-5 | Antigravity | STUCK tetikleme senaryosu |
-
-## 📂 Dosya Yapısı
-
-```
-9191118048-nokta-voice-forge/
-├── README.md              ← Bu dosya
-├── FORGE.md               ← Forge cycle ledger
-├── PERSONAS.md            ← Avatar persona dokümantasyonu
-├── BRIDGE.md              ← Expert call özeti
-├── avatar.glb             ← Avatar model (placeholder)
-├── audit-reports/
-│   ├── report-01.md       ← Voice viz audit
-│   ├── report-02.md       ← Avatar lipsync audit
-│   └── report-03.md       ← Forge dashboard audit
-└── app/                   ← Expo projesi
-    ├── app.json
-    ├── package.json
-    ├── App.tsx
-    └── src/
-        ├── theme/         ← Design system
-        ├── types/         ← TypeScript interfaces
-        ├── services/      ← Audio, forge, STT, storage
-        ├── components/    ← UI bileşenleri
-        └── screens/       ← Uygulama ekranları
+```powershell
+cd app
+npm ci
+npm run check:avatar
+npx expo start --clear
 ```
 
-## ✅ Self-Check
+`app/.env.example` dosyasini `app/.env` olarak kopyalayip gerekli anahtarlari ekleyin. `EXPO_PUBLIC_*` degerleri istemci paketinde gorulebilir; production icin backend proxy kullanilmalidir.
 
-- [x] `README.md` ilk satırında `Track: B` var
-- [x] `app/` altında çalışır Expo projesi
-- [x] `audit-reports/` altında ≥3 burn-in'li `.md` rapor
-- [x] `FORGE.md` ledger: ≥3 başarılı + ≥1 rollback cycle
-- [x] Decision log + human touch points + AI tool log README'de
-- [x] Root dizine dokunulmamış
-- [x] `PERSONAS.md` eklendi (2 avatar varyantı)
-- [x] `BRIDGE.md` eklendi (expert call özeti)
+## API Akisi
+
+| Islev | Birincil | Fallback |
+|---|---|---|
+| Avatar audio understanding | Gemini multimodal audio | Deepgram/OpenAI STT |
+| Metin cevabi | Gemini veya OpenAI Responses API | Gemini |
+| Erkek sesli yanit | Gemini TTS, `Charon` | Cihaz TTS |
+| Expert Bridge | Jitsi Meet | - |
+
+## Teslim Dosyalari
+
+| Dosya | Durum | Not |
+|---|---|---|
+| `avatar.glb` | Hazir | Kendi yuz modeli, SHA-256 `5ECDAD20...C70AE9` |
+| `FORGE.md` | Hazir | Son runtime recovery ve APK cycle'lari dahil |
+| `PERSONAS.md` | Hazir | Junior-Sen ve Senior-Sen davranis farklari |
+| `BRIDGE.md` | Hazir | Tetik ve entegrasyon dokumani; gercek gorusme kaniti bekliyor |
+| `demo-video.MOV` | Mevcut | Yaklasik 1:57; 3 dakikalik Phase A+B+C kaydi ile yenilenmeli |
+| `nokta-voice-forge-9191118048.apk` | Hazir | Android release APK, 41.59 MB |
+
+## Teknoloji
+
+- Expo SDK 54 / React Native 0.81
+- `expo-audio`, `expo-file-system`, `expo-gl`
+- `@react-three/fiber`, Three.js, Meshopt
+- React Native Reanimated 4 / Worklets
+- Deepgram, OpenAI Responses API, Gemini multimodal + TTS
+- Jitsi via `expo-web-browser`
+
+## Karar Kaydi
+
+1. Expo Go raw PCM/FFT sinirlari nedeniyle visualizer icin 80ms metering kullanildi.
+2. GLB'nin gomulu texture'lari Expo GL icin cache-local GLTF + BIN + texture dosyalarina acildi.
+3. Meshopt decoder yuklemeden once GLTFLoader'a baglandi.
+4. Morph target bulunan model ile fallback agiz dairesi kaldirildi; gercek viseme/jaw/blink binding kullanildi.
+5. Avatar yanit sesi icin cihazdaki degisken TTS yerine Gemini erkek TTS tercih edildi.
+6. APK, Windows path-length sorununu asmak icin kisa fiziksel build path'inde `arm64-v8a` release olarak uretildi.
+
+## Dogrulama
+
+```powershell
+npx tsc --noEmit
+npx expo-doctor
+npm run check:avatar
+```
+
+APK:
+
+- Paket: `com.nokta.voiceforge`
+- Min SDK: 24
+- Target SDK: 36
+- Imza: APK Signature Scheme v2
+- SHA-256: `38CDE6D5AED00C10C2494FB55BE3334E432327948AC4387768CD760DC81ED11C`
+
+## Teslim Oncesi Manuel Kontrol
+
+- [x] Kendi yuzunden `avatar.glb`
+- [x] Gercek viseme, jaw ve blink hedefleri
+- [x] 3 burn-in audit raporu
+- [x] En az 2 SUCCESS ve 1 ROLLBACK Forge cycle
+- [x] STUCK heuristigi ve Expert Bridge butonu
+- [x] APK
+- [ ] Gercek uzmanla en az 60 saniye ses + video + ekran paylasimi
+- [ ] Bu gorusmenin gercek transkripsiyonu ile `BRIDGE.md` guncellemesi
+- [ ] Phase A + B + C iceren yaklasik 3 dakikalik final demo videosu
