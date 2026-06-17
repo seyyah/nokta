@@ -40,3 +40,10 @@ neden oluyor. Accordion pattern (tek seferde tek kart açık) uygulanmalı.
 ## Forge Cycle Referansları
 
 - **Cycle 3:** Accordion pattern fix → SUCCESS ✅
+
+## 2026-06-15 Son Dogrulama
+
+- Forge state machine SUCCESS, ROLLBACK, FAIL ve STUCK sonuclarini destekler.
+- Iki ardisik basarisizlik Expert Bridge tetigini acar.
+- Bridge context, sonraki Forge cycle hipotezine otomatik eklenir.
+- Gercek uzman gorusmesi/transkripsiyonu teslimden once manuel olarak tamamlanmalidir.

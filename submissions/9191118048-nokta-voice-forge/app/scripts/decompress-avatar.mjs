@@ -12,7 +12,7 @@ const __dirname = path.dirname(__filename);
 async function run() {
   const assetsDir = path.join(__dirname, '../assets');
   const inFile = path.join(assetsDir, 'avatar.glb');
-  const outFile = path.join(assetsDir, 'avatar.mobile.glb');
+  const outFile = path.join(assetsDir, 'avatar.uncompressed.glb');
 
   console.log(`[Decompress] Reading ${inFile}`);
 
@@ -58,7 +58,7 @@ async function run() {
   console.log(`[Decompress] Writing ${outFile}`);
   await io.write(outFile, document);
 
-  console.log(`[Decompress] Done! Created avatar.mobile.glb successfully.`);
+  console.log(`[Decompress] Done! Created avatar.uncompressed.glb successfully.`);
   
   // Optional: print some stats to verify
   console.log(`\n--- Stats ---`);

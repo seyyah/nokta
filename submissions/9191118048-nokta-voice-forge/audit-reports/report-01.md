@@ -39,3 +39,10 @@ Ayrıca sessizlikte barlar tamamen kaybolarak minimum height'ta bile görünmüy
 - **Cycle 4:** Idle animation attempt → ROLLBACK ❌
 - **Cycle 5:** Idle animation retry → STUCK 🔴
 - **Expert Call:** React state + rAF çözümü → RESOLVED ✅
+
+## 2026-06-15 Son Dogrulama
+
+- Audio katmani `expo-audio` metering kullanir.
+- Metering guncelleme araligi 80ms'dir.
+- Visualizer tepki hedefi `<200ms`; bulut cevap turu bu metrikten ayri tutulur.
+- Sessizlikte barlar minimum gorunurluk seviyesine doner.

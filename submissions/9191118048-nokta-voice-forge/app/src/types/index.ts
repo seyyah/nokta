@@ -7,7 +7,7 @@
 export interface AudioMeterData {
   /** Normalized amplitude 0-1 */
   amplitude: number;
-  /** Raw dB value from expo-av metering */
+  /** Raw dB value from expo-audio metering */
   dB: number;
   /** Simulated frequency band amplitudes */
   bands: number[];

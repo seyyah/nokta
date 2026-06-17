@@ -130,7 +130,7 @@ export default function ExpertCallScreen({ navigation, route }: Props) {
       participants: ['Öğrenci', 'Uzman'],
       screenShared: false,
       resolutionNotes: summaryText.trim(),
-      contextForNextCycle: 'Bir sonraki döngüye devam et.',
+      contextForNextCycle: `Uzman görüşmesi sonucu: ${summaryText.trim()}`,
     };
 
     const updatedHistory = [newCall, ...callHistory];

@@ -36,3 +36,11 @@ Ayrıca persona geçişinde (Junior → Senior) avatarın gözlük detayı hemen
 ## Forge Cycle Referansları
 
 - **Cycle 2:** Spring config optimize → SUCCESS ✅ (250ms → 120ms)
+
+## 2026-06-15 Son Dogrulama
+
+- Eski SVG/fallback face yerine kullanicinin 3D GLB modeli aktif edildi.
+- Modelde 72 facial morph target, 49 mouth binding ve 10 blink binding dogrulandi.
+- `jawOpen`, viseme ve blink hedefleri cevap playback'i sirasinda hareket eder.
+- Standing Idle tabani uzerinde cevap sirasinda aciklayici el gesture'i uygulanir.
+- Yanit sesi Gemini TTS `Charon` erkek sesiyle uretilir.
