@@ -40,22 +40,8 @@ const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const RECORD_BUTTON_SIZE = 72;
 const NUM_BANDS = 32;
 
-function generateFrequencyBands(amplitude: number): number[] {
-  const bands: number[] = [];
-  const center = NUM_BANDS / 2;
-  for (let i = 0; i < NUM_BANDS; i++) {
-    const distFromCenter = Math.abs(i - center) / center;
-    const gaussian = Math.exp(-distFromCenter * distFromCenter * 3);
-    const randomVariation = 0.7 + Math.random() * 0.6;
-    const value = amplitude * gaussian * randomVariation;
-    bands.push(Math.min(1, Math.max(0, value)));
-  }
-  return bands;
-}
-
 export default function VoiceScreen({ navigation }: Props) {
   const audioServiceRef = useRef(new AudioService());
-  const meterIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const [isRecording, setIsRecording] = useState(false);
   const [amplitude, setAmplitude] = useState(0);
@@ -103,30 +89,7 @@ export default function VoiceScreen({ navigation }: Props) {
     };
   }, [isRecording]);
 
-  const startMetering = useCallback(() => {
-    meterIntervalRef.current = setInterval(() => {
-      const meter = audioServiceRef.current.getMeterData();
-      if (meter) {
-        setAmplitude(meter.amplitude);
-        setDB(meter.dB);
-        setIsSpeaking(meter.isSpeaking);
-        setBands(generateFrequencyBands(meter.amplitude));
-      } else {
-        const simAmp = isRecording ? 0.2 + Math.random() * 0.6 : 0;
-        const simDB = isRecording ? -30 + Math.random() * 25 : -160;
-        setAmplitude(simAmp);
-        setDB(simDB);
-        setIsSpeaking(simAmp > 0.15);
-        setBands(generateFrequencyBands(simAmp));
-      }
-    }, 60);
-  }, [isRecording]);
-
   const stopMetering = useCallback(() => {
-    if (meterIntervalRef.current) {
-      clearInterval(meterIntervalRef.current);
-      meterIntervalRef.current = null;
-    }
     setAmplitude(0);
     setDB(-160);
     setIsSpeaking(false);
@@ -189,7 +152,12 @@ export default function VoiceScreen({ navigation }: Props) {
       // START RECORDING
       try {
         setSttText('');
-        const didStart = await audioServiceRef.current.startRecording(() => {});
+        const didStart = await audioServiceRef.current.startRecording((meter) => {
+          setAmplitude(meter.amplitude);
+          setDB(meter.dB);
+          setIsSpeaking(meter.isSpeaking);
+          setBands(meter.bands);
+        });
         if (!didStart) {
           setSttText('Mikrofon başlatılamadı. Lütfen mikrofon iznini kontrol edin.');
           return;
@@ -200,9 +168,8 @@ export default function VoiceScreen({ navigation }: Props) {
         return;
       }
       setIsRecording(true);
-      startMetering();
     }
-  }, [isRecording, startMetering, stopMetering, duration, navigation]);
+  }, [isRecording, stopMetering, duration, navigation]);
 
   const handlePressIn = useCallback(() => {
     buttonScale.value = withSpring(0.9, animation.springBouncy);

@@ -1,26 +1,33 @@
 /**
  * Nokta Voice Forge — Audio Recording Service
- * Uses expo-av with metering for real-time audio visualization
+ * Uses expo-audio with metering for real-time audio visualization
  */
 
-import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from 'expo-av';
+import {
+  AudioModule,
+  RecordingPresets,
+  requestRecordingPermissionsAsync,
+  setAudioModeAsync,
+  setIsAudioActiveAsync,
+} from 'expo-audio';
+import type { AudioRecorder, RecordingOptions } from 'expo-audio';
 import { AudioMeterData, AudioServiceState } from '../types';
 
 const METERING_POLL_INTERVAL_MS = 80;
 const NUM_FREQUENCY_BANDS = 32;
-const SILENCE_THRESHOLD = 0.05;
+const SILENCE_THRESHOLD = 0.08;
 const CIRCULAR_BUFFER_SIZE = 64;
-const DB_MIN = -160;
+const DB_MIN = -60;
 const DB_MAX = 0;
 const AUDIO_SESSION_RETRY_DELAY_MS = 150;
 
-const RECORDING_OPTIONS: Audio.RecordingOptions = {
-  ...Audio.RecordingOptionsPresets.HIGH_QUALITY,
+const RECORDING_OPTIONS: RecordingOptions = {
+  ...RecordingPresets.HIGH_QUALITY,
   isMeteringEnabled: true,
 };
 
-const FALLBACK_RECORDING_OPTIONS: Audio.RecordingOptions = {
-  ...Audio.RecordingOptionsPresets.LOW_QUALITY,
+const FALLBACK_RECORDING_OPTIONS: RecordingOptions = {
+  ...RecordingPresets.LOW_QUALITY,
   isMeteringEnabled: true,
 };
 
@@ -29,11 +36,14 @@ function wait(ms: number): Promise<void> {
 }
 
 /**
- * Normalize a dB value from the range (-160, 0) to (0, 1).
+ * Normalize useful microphone levels from the range (-60, 0) to (0, 1).
+ * expo-audio may report values down to -160 dB, but treating that entire range
+ * as useful signal makes normal room silence look like loud speech.
  */
 function normalizeDb(dB: number): number {
   const clamped = Math.max(DB_MIN, Math.min(DB_MAX, dB));
-  return (clamped - DB_MIN) / (DB_MAX - DB_MIN);
+  const linear = (clamped - DB_MIN) / (DB_MAX - DB_MIN);
+  return Math.pow(linear, 1.8);
 }
 
 /**
@@ -57,7 +67,7 @@ function simulateFrequencyBands(amplitude: number, bandCount: number): number[] 
 }
 
 export class AudioService {
-  private recording: Audio.Recording | null = null;
+  private recording: AudioRecorder | null = null;
   private meteringInterval: ReturnType<typeof setInterval> | null = null;
   private amplitudeBuffer: number[] = [];
   private bufferIndex: number = 0;
@@ -84,24 +94,22 @@ export class AudioService {
 
       if (this.recording) {
         try {
-          const status = await this.recording.getStatusAsync();
-          if (status.canRecord || status.isRecording) {
-            await this.recording.stopAndUnloadAsync();
+          const status = this.recording.getStatus();
+          if (status.isRecording) {
+            await this.recording.stop();
           }
         } catch {
           // A failed prepare can leave the recorder in a partially initialized state.
         }
+        this.recording.release();
         this.recording = null;
       }
 
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: false,
-        interruptionModeIOS: InterruptionModeIOS.MixWithOthers,
-        playsInSilentModeIOS: true,
-        staysActiveInBackground: false,
-        interruptionModeAndroid: InterruptionModeAndroid.DuckOthers,
-        shouldDuckAndroid: true,
-        playThroughEarpieceAndroid: false,
+      await setAudioModeAsync({
+        allowsRecording: false,
+        interruptionMode: 'mixWithOthers',
+        interruptionModeAndroid: 'duckOthers',
+        playsInSilentMode: true,
       });
     } catch (error) {
       console.warn('[AudioService] Audio session reset warning:', error);
@@ -109,26 +117,23 @@ export class AudioService {
   }
 
   private async configureRecordingAudioMode(): Promise<void> {
-    await Audio.setIsEnabledAsync(true);
-    await Audio.setAudioModeAsync({
-      allowsRecordingIOS: true,
-      interruptionModeIOS: InterruptionModeIOS.DoNotMix,
-      playsInSilentModeIOS: true,
-      staysActiveInBackground: false,
-      interruptionModeAndroid: InterruptionModeAndroid.DuckOthers,
-      shouldDuckAndroid: true,
-      playThroughEarpieceAndroid: false,
+    await setIsAudioActiveAsync(true);
+    await setAudioModeAsync({
+      allowsRecording: true,
+      interruptionMode: 'doNotMix',
+      interruptionModeAndroid: 'duckOthers',
+      playsInSilentMode: true,
     });
   }
 
-  private async prepareAndStartRecording(options: Audio.RecordingOptions): Promise<Audio.Recording> {
-    const recording = new Audio.Recording();
+  private async prepareAndStartRecording(options: RecordingOptions): Promise<AudioRecorder> {
+    const recording = new AudioModule.AudioRecorder(options);
     await recording.prepareToRecordAsync(options);
-    await recording.startAsync();
+    recording.record();
     return recording;
   }
 
-  private async createRecordingWithRetry(): Promise<Audio.Recording> {
+  private async createRecordingWithRetry(): Promise<AudioRecorder> {
     try {
       return await this.prepareAndStartRecording(RECORDING_OPTIONS);
     } catch (firstError) {
@@ -151,7 +156,7 @@ export class AudioService {
    */
   private async requestPermissions(): Promise<boolean> {
     try {
-      const { granted } = await Audio.requestPermissionsAsync();
+      const { granted } = await requestRecordingPermissionsAsync();
       if (!granted) {
         console.warn('[AudioService] Microphone permission denied');
         return false;
@@ -226,7 +231,7 @@ export class AudioService {
         if (!this.recording) return;
 
         try {
-          const status = await this.recording.getStatusAsync();
+          const status = this.recording.getStatus();
 
           if (!status.isRecording) return;
 
@@ -237,7 +242,7 @@ export class AudioService {
 
           this.pushToBuffer(amplitude);
 
-          this.state.duration = status.durationMillis;
+          this.state.duration = Math.round(status.durationMillis);
 
           const meterData: AudioMeterData = {
             amplitude,
@@ -277,19 +282,20 @@ export class AudioService {
     }
 
     try {
-      const status = await this.recording.getStatusAsync();
+      const status = this.recording.getStatus();
       if (status.isRecording) {
-        await this.recording.stopAndUnloadAsync();
+        await this.recording.stop();
       }
 
-      const uri = this.recording.getURI();
+      const uri = this.recording.uri;
       this.state = {
         isRecording: false,
         isPaused: false,
-        duration: status.durationMillis ?? this.state.duration,
+        duration: Math.round(status.durationMillis ?? this.state.duration),
         fileUri: uri,
       };
 
+      this.recording.release();
       this.recording = null;
 
       // Reset audio mode so playback works
@@ -298,6 +304,7 @@ export class AudioService {
       return uri;
     } catch (error) {
       console.error('[AudioService] Stop recording error:', error);
+      this.recording?.release();
       this.recording = null;
       this.state.isRecording = false;
       await this.resetAudioSession();

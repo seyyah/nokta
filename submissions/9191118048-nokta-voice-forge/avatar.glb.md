@@ -1,17 +1,26 @@
-# avatar.glb — Placeholder
+# avatar.glb
 
-Bu dosya avaturn.me'den export edilen kendi yüzünüzün .glb modelini temsil eder.
+Bu dosya placeholder degildir. Kullanicinin kendi yuzunden uretilen ve uygulamada aktif olarak kullanilan 3D avatar modelidir.
 
-## Nasıl Kullanılır
+## Rig Ozeti
 
-1. https://avaturn.me adresine gidin
-2. Kendi fotoğrafınızla avatar oluşturun
-3. GLB formatında export edin
-4. Bu dosyayı gerçek .glb ile değiştirin
+- Facial morph target: 72
+- Mouth/viseme binding: 49
+- Blink binding: 10
+- Iskelet: Hips, Spine, Neck, Head, LeftEye/RightEye, omuz, kol ve el kemikleri
+- Poz: Standing Idle
 
-## Not
+## Runtime Kopyalari
 
-Expo Go'da 3D GLB rendering güvenilir olmadığından, uygulama 2D SVG tabanlı avatar
-kullanmaktadır. Ancak gerçek .glb dosyası challenge gereksinimleri için repoda bulunmalıdır.
+- Teslim kaniti: `../avatar.glb`
+- Kaynak rig: `app/assets/avatar.glb`
+- Mobil runtime asset: `app/assets/avatar.uncompressed.glb`
 
-APK build'de (EAS Build ile) 3D avatar desteği eklenebilir.
+Kontrol:
+
+```powershell
+cd app
+npm run check:avatar
+```
+
+SHA-256: `5ECDAD20D6B816F192EAE607204EAC174206BBA9CCE33F4A1B19A97A64C70AE9`

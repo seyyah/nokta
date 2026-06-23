@@ -205,11 +205,16 @@ class ForgeManager {
   async startCycle(reportName: string, hypothesis: string): Promise<ForgeCycle> {
     const lastCycle = this.getCurrentCycle();
     const currentKg = lastCycle ? lastCycle.kg : 0;
+    const expertCalls = await StorageService.loadExpertCalls();
+    const bridgeContext = expertCalls[0]?.contextForNextCycle?.trim();
+    const contextualHypothesis = bridgeContext
+      ? `${hypothesis}\n\nBRIDGE context: ${bridgeContext}`
+      : hypothesis;
 
     const newCycle: ForgeCycle = {
       id: this.cycles.length + 1,
       reportName,
-      hypothesis,
+      hypothesis: contextualHypothesis,
       result: 'IN_PROGRESS',
       changedFiles: [],
       testResult: '',
